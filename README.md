@@ -23,7 +23,9 @@ https://github.com/BrettSheleski/SmartThingsPublic/tree/master/devicetypes/brett
 I chose to make seperate device handlers instead of using child devices.  Just preference.
 
 TMRLifeFull.groovy - This combines both the plug control and control of the RGB ring light in one device.
+
 TMRLifePlug.groovy - This controls just the plug
+
 TMRLifeRingLIght - This controls just the RGB ring lights
 
 You can have more than one device in SmartThings for each plug.  When adding the device in the SmartThings IDE, simply edit the preferences to the IP address assigned to the device.
