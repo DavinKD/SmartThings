@@ -17,6 +17,18 @@ https://www.youtube.com/watch?v=O5GYh470m5k
 I then used this video to help me figure out the IO assignments
 https://www.youtube.com/watch?v=m_O24tTzv8g
 
+The IO assignments I used were...
+
+Io0=pwm1
+
+Io2=pwm2
+
+Io5=pwm3
+
+Io13=button1n
+
+Io15=relay1
+
 My device handlers are based off
 https://github.com/BrettSheleski/SmartThingsPublic/tree/master/devicetypes/brettsheleski/tasmota.src
 
