@@ -27,3 +27,5 @@ TMRLifePlug.groovy - This controls just the plug
 TMRLifeRingLIght - This controls just the RGB ring lights
 
 You can have more than one device in SmartThings for each plug.  When adding the device in the SmartThings IDE, simply edit the preferences to the IP address assigned to the device.
+
+With slight changes, I'm sure this could be used for many other devices flashed the same way.  See the tuya-convert wiki regarding which devices have been successfully flashed.
