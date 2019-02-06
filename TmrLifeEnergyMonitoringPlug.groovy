@@ -1,10 +1,11 @@
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "TMRLife Plug", namespace: "DavinDameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
+	definition(name: "TMRLife Energy Monitoring Plug", namespace: "DavinDameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
+        capability "Power Meter"
 
         command "reload"
         command "updateStatus"
@@ -21,18 +22,24 @@ metadata {
 	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#dcdcdc"
 	}        
 	
+    valueTile("power", "device.power", decoration: "flat", width: 3, height: 3) {
+        state "default", label:'${currentValue} W'
+    }
 	standardTile("refresh", "device.switch", width: 3, height: 3, inactiveLabel: false, decoration: "flat") {
 			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
 
 	main "switch"
-		details(["switch", "refresh"])
+		details(["switch", "power", "refresh"])
 	}
 
     
     preferences {
         
         input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
+        input(name: "turnOnRed", type: "boolean", title: "Turn on Red Light with Switch?", displayDuringSetup: true, required: false)
+        input(name: "turnOnBlue", type: "boolean", title: "Turn on Blue Light with Switch?", displayDuringSetup: true, required: false)
+        
 
 		section("Sonoff Host") {
 			
@@ -76,7 +83,6 @@ def refresh() {
 def refreshCallback(physicalgraph.device.HubResponse response){
 	log.debug "refreshCallback()"
     def jsobj = response?.json;
-
     log.debug "JSON: ${jsobj}";
     updateStatus(jsobj);
 
@@ -144,6 +150,17 @@ def off(){
     setPower("off")
 }
 
+def pause(millis) {
+   def passed = 0
+   def now = new Date().time
+   log.debug "pausing... at Now: $now"
+   /* This loop is an impolite busywait. We need to be given a true sleep() method, please. */
+   while ( passed < millis ) {
+       passed = new Date().time - now
+   }
+   log.debug "... DONE pausing."
+}
+
 def setPower(power){
 	log.debug "Setting power to: $power"
 
@@ -166,6 +183,46 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 	//Sometimes channel 1 will just say POWER, not POWER1
 	on = on || response.json."POWER" == "ON";
     setSwitchState(on);
+    pause(2000);
+    refresh();
+}
+
+def setPowerRed(power){
+	log.debug "Setting power2 to: $power"
+
+	def commandName = "Power2";
+	def payload = power;
+
+	log.debug "COMMAND: $commandName ($payload)"
+
+	def command = createCommand(commandName, payload, "setPowerRedCallback");;
+
+    	sendHubCommand(command);
+}
+
+def setPowerRedCallback(physicalgraph.device.HubResponse response){
+	log.debug "Finished Setting power (channel: 2), JSON: ${response.json}"
+
+   	def on = response.json."POWER2" == "ON";
+}
+
+def setPowerBlue(power){
+	log.debug "Setting power3 to: $power"
+
+	def commandName = "Power3";
+	def payload = power;
+
+	log.debug "COMMAND: $commandName ($payload)"
+
+	def command = createCommand(commandName, payload, "setPowerBlueCallback");;
+
+    	sendHubCommand(command);
+}
+
+def setPowerBlueCallback(physicalgraph.device.HubResponse response){
+	log.debug "Finished Setting power (channel: 3), JSON: ${response.json}"
+
+   	def on = response.json."POWER3" == "ON";
 }
 
 def updateStatus(status){
@@ -183,12 +240,41 @@ def updateStatus(status){
 	powerMask = powerMask << ("$powerChannel".toInteger() - 1); // shift the bits over 
 
 	def on = (powerMask & status.Status.Power);
-
+    
+    
+    log.debug "Watts: ${status.StatusSNS.ENERGY.Power}";
+	sendEvent(name: "power", value: status.StatusSNS.ENERGY.Power);
     setSwitchState(on);
 }
 
 def setSwitchState(on){
+	def turnOnRed = false;
+    def turnOnBlue = false;
+	turnOnRed = turnOnRed ?: settings?.turnOnRed ?: device.latestValue("turnOnRed");
+	turnOnBlue = turnOnBlue ?: settings?.turnOnBlue ?: device.latestValue("turnOnBlue");
+
 	log.debug "Setting switch to ${on ? 'ON' : 'OFF'}";
+    log.debug turnOnBlue;
+    log.debug turnOnRed;
+    if (on==true)
+    {
+    	if (turnOnRed=="true")
+        	{setPowerRed("on")
+            }
+    }
+    
+    if (on==true)
+    {
+    	if (turnOnBlue=="true")
+        	{setPowerBlue("on")
+            }
+	}    
+
+	if (!on)
+    {
+        setPowerRed("off");
+        setPowerBlue("off");
+    }
 
 	sendEvent(name: "switch", value: on ? "on" : "off", displayed: true);
 }

@@ -19,7 +19,7 @@ metadata {
 	// UI tile definitions
 	tiles(scale: 2) {
 
-	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3) {
+	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
 	    state "off", label:'${name}', action: "momentary.push", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
 	    state "on", label:'${name}', action: "momentary.push", icon: "st.switches.switch.off", backgroundColor:"#dcdcdc"
 	}        
