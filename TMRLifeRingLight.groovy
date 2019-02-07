@@ -20,7 +20,7 @@ metadata {
 
 	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
 	    state "off", label:'${name}', action: "switch.on", icon: "st.Lighting.light11", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor:"#dcdcdc"
+	    state "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor:"#00a0dc"
 	}        
 	
 	standardTile("refresh", "device.switch", width: 3, height: 3, inactiveLabel: false, decoration: "flat") {

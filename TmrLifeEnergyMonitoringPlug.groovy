@@ -19,7 +19,7 @@ metadata {
 
 	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
 	    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#dcdcdc"
+	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 	}        
 	
     valueTile("power", "device.power", decoration: "flat", width: 3, height: 3) {
