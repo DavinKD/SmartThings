@@ -55,11 +55,11 @@ https://smile.amazon.com/gp/product/B07544GPWR/ref=oh_aui_search_asin_title?ie=U
 
 The Kohree bulbs were easy.  Just set the module type to generic and use the following assignments.
 
-GIO?? - PWM1
-GIO?? - PWM2
-GIO?? - PWM3
-GIO?? - PWM4
-GIO?? - PWM5
+GIO04 - PWM1
+GIO12 - PWM2
+GIO14 - PWM3
+GIO13 - PWM4
+GIO05 - PWM5
 
 In SmartThings use the Tasmota RGBW Bulb device handler I posted here.  Just assign the IP address and optionally the LoopRate (Speed of the color loop).
 
