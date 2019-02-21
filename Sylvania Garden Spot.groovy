@@ -52,10 +52,9 @@ import groovy.transform.Field
     OFF: 	"Off"
 ]
 metadata {
-    definition (name: "Sylvania RGBW", namespace: "DavinDameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
+    definition (name: "Sylvania Garden Spot", namespace: "DavinDameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgb-color-bulb") {
 
         capability "Color Control"
-        capability "Color Temperature"
         capability "Configuration"
         capability "Polling"
         capability "Refresh"
@@ -155,14 +154,11 @@ metadata {
 	}
 
 	controlTile("levelSliderControl", "device.level", "slider",
-            height: 3, width: 2) {
+            height: 3, width: 4) {
     	state "level", action:"switch level.setLevel", label:'Ring Level'
 	}
 
-        controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range:"(2700..6500)") {
-            state "colorTemperature", action:"color temperature.setColorTemperature"
-        }
-        standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 2) {
+        standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 3) {
             state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
             state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#dcdcdc"
         }
@@ -185,7 +181,7 @@ metadata {
         }        
         
         main(["switch"])
-        details(["switch", "refresh", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop", "configure", "defaultColor"])
+        details(["switch", "refresh", "rgbSelector", "levelSliderControl", "colorLoop", "configure", "defaultColor"])
     }
 }
 
@@ -374,25 +370,6 @@ def off() {
 def setLevel(value, duration = settings.levelTransition) { //duration in seconds
 	if (value == 0) off()
     else zigbee.setLevel(value,duration)
-}
-
-def setColorTemperature(value) {
-    log.trace "setColorTemperature($value)"
-    value = value as Integer
-    if (value < 2700)
-    {
-    	value = 2700
-    }
-    if (value > 6500)
-    {
-    	value = 6500
-    }
-    def tempInMired = Math.round(1000000 / value)
-    def finalHex = zigbee.swapEndianHex(zigbee.convertToHexString(tempInMired, 4))
-
-    zigbee.command(COLOR_CONTROL_CLUSTER, 0x0A, "$finalHex 0000") +
-    zigbee.command(ON_OFF_CLUSTER, 0x01) +
-    zigbee.readAttribute(COLOR_CONTROL_CLUSTER, ATTRIBUTE_COLOR_TEMPERATURE)
 }
 
 private getScaledHue(value) {

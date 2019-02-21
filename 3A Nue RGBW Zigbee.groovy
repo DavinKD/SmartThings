@@ -10,6 +10,30 @@ on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expres
 for the specific language governing permissions and limitations under the License.
 Updated by Kevin X- 3A Smart Home on 1st Jun 2018
 */
+import groovy.transform.Field
+
+@Field final Map      BLACK = [name: "Black", rgb: "#000000", h: 0, s: 0, l: 0]
+
+@Field final IntRange PERCENT_RANGE = (0..100)
+
+@Field final IntRange HUE_RANGE = PERCENT_RANGE
+@Field final Integer  HUE_STEP = 5
+@Field final IntRange SAT_RANGE = PERCENT_RANGE
+@Field final Integer  SAT_STEP = 20
+@Field final Integer  HUE_SCALE = 1000
+@Field final Integer  COLOR_OFFSET = HUE_RANGE.getTo() * HUE_SCALE
+
+@Field final IntRange COLOR_TEMP_RANGE = (2200..7000)
+@Field final Integer  COLOR_TEMP_DEFAULT = COLOR_TEMP_RANGE.getFrom() + ((COLOR_TEMP_RANGE.getTo() - COLOR_TEMP_RANGE.getFrom())/2)
+@Field final Integer  COLOR_TEMP_STEP = 50 // Kelvin
+@Field final List     COLOR_TEMP_EXTRAS = []
+@Field final List     COLOR_TEMP_LIST = buildColorTempList(COLOR_TEMP_RANGE, COLOR_TEMP_STEP, COLOR_TEMP_EXTRAS)
+
+@Field final Map MODE = [
+    COLOR:	"Color",
+    WHITE:	"White",
+    OFF: 	"Off"
+]
 
 metadata {
 definition (name: "3A NUE ZigBee RGBW Light", namespace: "DavinDameron", author: "Davin Dameron") {
@@ -86,30 +110,47 @@ definition (name: "3A NUE ZigBee RGBW Light", namespace: "DavinDameron", author:
 
 // UI tile definitions
 tiles(scale: 2) {
-    multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true){
-        tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
-            attributeState "on", label:'${name}', action:"switch.off", icon:"st.lights.philips.hue-single", backgroundColor:"#00a0dc", nextState:"turningOff"
-            attributeState "off", label:'${name}', action:"switch.on", icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
-            attributeState "turningOn", label:'${name}', action:"switch.off", icon:"st.lights.philips.hue-single", backgroundColor:"#00a0dc", nextState:"turningOff"
-            attributeState "turningOff", label:'${name}', action:"switch.on", icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
-        }
-       tileAttribute ("device.level", key: "SLIDER_CONTROL") {
-       attributeState "level", action:"switch level.setLevel"
-       }
-        tileAttribute ("device.color", key: "COLOR_CONTROL") {
-            attributeState "color", action:"color control.setColor"
-        }
-    }
-    standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
+    //multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true){
+    //    tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
+    //        attributeState "on", label:'${name}', action:"switch.off", icon:"st.lights.philips.hue-single", backgroundColor:"#00a0dc", nextState:"turningOff"
+    //        attributeState "off", label:'${name}', action:"switch.on", icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
+    //        attributeState "turningOn", label:'${name}', action:"switch.off", icon:"st.lights.philips.hue-single", backgroundColor:"#00a0dc", nextState:"turningOff"
+    //        attributeState "turningOff", label:'${name}', action:"switch.on", icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
+    //    }
+    //   tileAttribute ("device.level", key: "SLIDER_CONTROL") {
+    //   attributeState "level", action:"switch level.setLevel"
+    //   }
+    //    tileAttribute ("device.color", key: "COLOR_CONTROL") {
+    //        attributeState "color", action:"color control.setColor"
+    //    }
+    //}
+   	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
+	    state "off", label:'${name}', action: "switch.on", icon: "st.Lighting.light11", backgroundColor:"#ffffff"
+	    state "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor:"#00a0dc"
+	}        
+    standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
         state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
     }
-    standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 2) {
+	controlTile("rgbSelector", "device.color", "color", height: 3, width: 2,
+	            inactiveLabel: false) {
+	    state "color", action: "color control.setColor", label:'Color'
+	}
+
+	controlTile("levelSliderControl", "device.level", "slider",
+            height: 3, width: 2) {
+    	state "level", action:"switch level.setLevel", label:'Level'
+	}
+
+        controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range:"(2700..6500)") {
+            state "colorTemperature", action:"color temperature.setColorTemperature"
+        }
+    standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 3) {
         state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
         state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#dcdcdc"
     }
 
     main(["switch"])
-    details(["switch", "colorTempSliderControl", "colorTemp", "refresh", "colorLoop"])
+    details(["switch", "refresh", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop"])
 }
 }
 
@@ -130,33 +171,43 @@ private getDEFAULT_LOOP_RATE() {"05"} //5 steps per sec
 
 // Parse incoming device messages to generate events
 def parse(String description) {
-log.debug "description is $description"
+	log.debug "description is $description"
 
-def finalResult = zigbee.getEvent(description)
-if (finalResult) {
-    log.debug finalResult
-    sendEvent(finalResult)
-}
-else {
-    def zigbeeMap = zigbee.parseDescriptionAsMap(description)
-    log.trace "zigbeeMap : $zigbeeMap"
+    def cmds = []
+	def finalResult = zigbee.getEvent(description)
+	if (finalResult) {
+    	log.debug finalResult
+    	sendEvent(finalResult)
+	}
+	else {
+    	def zigbeeMap = zigbee.parseDescriptionAsMap(description)
+    	log.trace "zigbeeMap : $zigbeeMap"
 
-    if (zigbeeMap?.clusterInt == COLOR_CONTROL_CLUSTER) {
-        if(zigbeeMap.attrInt == ATTRIBUTE_HUE){  //Hue Attribute
-            def hueValue = Math.round(zigbee.convertHexToInt(zigbeeMap.value) / 255 * 360)
-            cmds << createEvent(name: "hue", value: hueValue, displayed: false)
-            sendEvent(name: "hue", value: hueValue, displayed:false)
-        }
-        else if(zigbeeMap.attrInt == ATTRIBUTE_SATURATION){ //Saturation Attribute
-            def saturationValue = Math.round(zigbee.convertHexToInt(zigbeeMap.value) / 255 * 100)
-            cmds << createEvent(name: "saturation", value: saturationValue, displayed: false)
-            sendEvent(name: "saturation", value: saturationValue, displayed:false)
-        }
-    }
-    else {
-        log.info "DID NOT PARSE MESSAGE for description : $description"
-    }
-}
+    	if (zigbeeMap?.clusterInt == COLOR_CONTROL_CLUSTER) {
+        	if(zigbeeMap.attrInt == ATTRIBUTE_HUE){  //Hue Attribute
+            	def hueValue = Math.round(zigbee.convertHexToInt(zigbeeMap.value) / 254 * 100)
+            	cmds << createEvent(name: "hue", value: hueValue, displayed: false)
+                Integer boundedHue = boundInt(hueValue, PERCENT_RANGE)
+                Integer boundedSaturation = boundInt(device.currentValue("saturation"), PERCENT_RANGE)
+				String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)
+                cmds << createEvent(name: "color", value: rgbHex, displayed: false)
+            	//sendEvent(name: "hue", value: hueValue, displayed:false)
+        	}
+        	else if(zigbeeMap.attrInt == ATTRIBUTE_SATURATION){ //Saturation Attribute
+            	def saturationValue = Math.round(zigbee.convertHexToInt(zigbeeMap.value) / 254 * 100)
+            	cmds << createEvent(name: "saturation", value: saturationValue, displayed: false)
+                Integer boundedHue = boundInt(device.currentValue("hue"), PERCENT_RANGE)
+                Integer boundedSaturation = boundInt(saturationValue, PERCENT_RANGE)
+				String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)
+                cmds << createEvent(name: "color", value: rgbHex, displayed: false)
+            	//sendEvent(name: "saturation", value: saturationValue, displayed:false)
+			}
+    	}
+    	else {
+        	log.info "DID NOT PARSE MESSAGE for description : $description"
+    	}
+	}
+    return cmds
 }
 
 def on() {
@@ -270,6 +321,12 @@ private getScaledSaturation(value) {
     zigbee.convertToHexString(Math.round(value * 0xfe / 100.0), 2)
 }
 
+private Integer boundInt(Double value, IntRange theRange) {
+    value = Math.max(theRange.getFrom(), value)
+    value = Math.min(theRange.getTo(), value)
+    return value.toInteger()
+}
+
 def setColor(value){
 log.trace "setColor($value)"
 device.endpointId ="0B"
@@ -293,7 +350,14 @@ device.endpointId ="0B"
 zigbee.command(COLOR_CONTROL_CLUSTER, SATURATION_COMMAND, scaledSatValue, "0100")
 }
 
-
+private List buildColorTempList(IntRange kRange, Integer kStep, List kExtras) {
+    List colorTempList = [kRange.getFrom()] // start with range lower bound
+    Integer kFirstNorm = kRange.getFrom() + kStep - (kRange.getFrom() % kStep) // find the first value within thr range which is a factor of kStep
+    colorTempList += (kFirstNorm..kRange.getTo()).step(kStep) // now build the periodic list
+    colorTempList << kRange.getTo() // include range upper bound
+    colorTempList += kExtras // add in extra values
+    return colorTempList.sort().unique() // sort and de-dupe
+}
 
 def loopOn() {
     if (!state.loopRate) state.loopRate = DEFAULT_LOOP_RATE    
