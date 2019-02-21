@@ -64,3 +64,10 @@ GIO05 - PWM5
 In SmartThings use the Tasmota RGBW Bulb device handler I posted here.  Just assign the IP address and optionally the LoopRate (Speed of the color loop).
 
 The Lohas bulbs were way more difficult.  The LEDs are not connected directly to the ESP chip.  Instead they use 2 MY9231 chips.  In the latest Tasmota you can use the AILight module profile, but you'll need to compile a custom version to fix the color channels as they are in a different order from the AILight.  Channel1=Red, Channel2=Green, Channel3=Blue, Channel4=Cold White, Channel5=Also Cold White (wth).  The same device handler will work in SmartThings, but the color temp doesn't work.
+
+
+SP201 Based Plugs
+
+There's lots of these on Amazon, just shop around.  You can search for SP201 and they'll come up under many different names.  They flash pretty easily.  Be aware that the latest Tasmota has a bug that crashes when you have energy monitoring enabled with these.  I have an older .bin uploaded that you can use.  Otherwise, once they fix the bug, just use the custom template.
+
+https://github.com/arendst/Sonoff-Tasmota/wiki/User-created-templates
