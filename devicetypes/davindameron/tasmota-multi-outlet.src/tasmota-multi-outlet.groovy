@@ -8,11 +8,6 @@ metadata {
 
         	command "reload"
         	command "updateStatus"
-        	command "switch1"
-        	command "switch2"
-        	command "switch3"
-        	command "switch4"
-        	command "switch5"
         	command "turnon1"
         	command "turnoff1"
         	command "turnon2"
