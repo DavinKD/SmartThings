@@ -11,6 +11,7 @@ metadata {
         command "reload"
         command "updateStatus"
         command "ringpush"
+	command "reset"
         
         attribute "ringpush", "string"
 	}
