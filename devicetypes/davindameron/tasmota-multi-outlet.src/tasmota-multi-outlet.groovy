@@ -6,74 +6,74 @@ metadata {
 		capability "Refresh"
 		capability "Switch"
 
-        command "reload"
-        command "updateStatus"
-        command "switch1"
-        command "switch2"
-        command "switch3"
-        command "switch4"
-        command "switch5"
-        command "turnon1"
-        command "turnoff1"
-        command "turnon2"
-        command "turnoff2"
-        command "turnon3"
-        command "turnoff3"
-        command "turnon4"
-        command "turnoff4"
-        command "turnon5"
-        command "turnoff5"
+        	command "reload"
+        	command "updateStatus"
+        	command "switch1"
+        	command "switch2"
+        	command "switch3"
+        	command "switch4"
+        	command "switch5"
+        	command "turnon1"
+        	command "turnoff1"
+        	command "turnon2"
+        	command "turnoff2"
+        	command "turnon3"
+        	command "turnoff3"
+        	command "turnon4"
+        	command "turnoff4"
+        	command "turnon5"
+        	command "turnoff5"
         
 	}
 
 	// UI tile definitions
 	tiles(scale: 2) {
 
-	standardTile("switch", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
-	}        
-	
-	standardTile("switch1", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switchon1", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switchoff1", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
-	}        
-	
-	standardTile("switch2", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switchon2", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switchoff2", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
-	}        
-	
-	standardTile("switch3", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switchon3", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switchoff3", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
-	}        
-	
-	standardTile("switch4", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switchon4", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switchoff4", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
-	}        
-	
-	standardTile("switch5", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switchon5", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switchoff5", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
-	}        
-	
-	standardTile("refresh", "device.switch", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
-			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
+		standardTile("switch", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
+		    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		}        
+
+		standardTile("switch1", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
+		    state "off", label:'${name}', action: "switchon1", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "switchoff1", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		}        
+
+		standardTile("switch2", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
+		    state "off", label:'${name}', action: "switchon2", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "switchoff2", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		}        
+
+		standardTile("switch3", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
+		    state "off", label:'${name}', action: "switchon3", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "switchoff3", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		}        
+
+		standardTile("switch4", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
+		    state "off", label:'${name}', action: "switchon4", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "switchoff4", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		}        
+
+		standardTile("switch5", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
+		    state "off", label:'${name}', action: "switchon5", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "switchoff5", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		}        
+
+		standardTile("refresh", "device.switch", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
+				state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
 
-    
-	main "switch"
-		details(["switch", "switch1", "switch2", "switch3", "switch4", "switch5", "refresh"])
-}
 
-    
-preferences {
-        
-        input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
-	input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
-	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
+		main "switch"
+			details(["switch", "switch1", "switch2", "switch3", "switch4", "switch5", "refresh"])
+	}
+
+	preferences {
+
+		input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
+		input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
+		input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
+	}
 }
 
 def installed(){
