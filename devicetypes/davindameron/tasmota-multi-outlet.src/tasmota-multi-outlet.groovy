@@ -299,16 +299,16 @@ def updateStatus(status){
 	def on = (powerMask1 & status.Status.Power);
 	setSwitchState("1", on)
 	
-	def on = (powerMask2 & status.Status.Power);
+	on = (powerMask2 & status.Status.Power);
 	setSwitchState("2", on)
 
-	def on = (powerMask3 & status.Status.Power);
+	on = (powerMask3 & status.Status.Power);
 	setSwitchState("3", on)
 
-	def on = (powerMask4 & status.Status.Power);
+	on = (powerMask4 & status.Status.Power);
 	setSwitchState("4", on)
 
-	def on = (powerMask5 & status.Status.Power);
+	on = (powerMask5 & status.Status.Power);
 	setSwitchState("5", on)
 
 }
