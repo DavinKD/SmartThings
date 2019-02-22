@@ -35,28 +35,28 @@ metadata {
 		}        
 
 		standardTile("switch1", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-		    state "off", label:'${name}', action: "switchon1", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-		    state "on", label:'${name}', action: "switchoff1", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		    state "off", label:'${name}', action: "turnon1", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "turnoff1", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 		}        
 
 		standardTile("switch2", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-		    state "off", label:'${name}', action: "switchon2", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-		    state "on", label:'${name}', action: "switchoff2", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		    state "off", label:'${name}', action: "turnon2", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "turnoff2", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 		}        
 
 		standardTile("switch3", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-		    state "off", label:'${name}', action: "switchon3", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-		    state "on", label:'${name}', action: "switchoff3", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		    state "off", label:'${name}', action: "turnon3", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "turnoff3", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 		}        
 
 		standardTile("switch4", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-		    state "off", label:'${name}', action: "switchon4", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-		    state "on", label:'${name}', action: "switchoff4", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		    state "off", label:'${name}', action: "turnon4", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "turnoff4", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 		}        
 
 		standardTile("switch5", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
-		    state "off", label:'${name}', action: "switchon5", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-		    state "on", label:'${name}', action: "switchoff5", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		    state "off", label:'${name}', action: "turnon5", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "turnoff5", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 		}        
 
 		standardTile("refresh", "device.switch", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
