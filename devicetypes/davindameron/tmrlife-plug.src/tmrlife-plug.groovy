@@ -11,9 +11,6 @@ metadata {
         command "ringpush"
         
         attribute "ringpush", "string"
-	attribute "PowerChannel", "int"
-	attribute "PowerChannelRed", "int"
-	attribute "PowerChannelBlue", "int"
 	}
 
 	// UI tile definitions
