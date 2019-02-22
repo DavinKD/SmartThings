@@ -6,6 +6,7 @@ metadata {
 		capability "Refresh"
 		capability "Switch"
         capability "Power Meter"
+		capability "Energy Meter"
 
         command "reload"
         command "updateStatus"
@@ -18,19 +19,25 @@ metadata {
 	tiles(scale: 2) {
 
 	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+	    	state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 	}        
 	
-    valueTile("power", "device.power", decoration: "flat", width: 3, height: 3) {
-        state "default", label:'${currentValue} W'
-    }
+    	valueTile("power", "device.power", decoration: "flat", width: 3, height: 3) {
+		state "default", label:'${currentValue} W'
+	}
+	valueTile("energy", "device.energy", decoration: "flat", width: 3, height: 3) {
+		state "default", label: '${currentValue} kWh'
+	}
+	standardTile("reset", "device.energy", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
+		state "default", label: 'reset kWh', action: "reset"
+	}
 	standardTile("refresh", "device.switch", width: 3, height: 3, inactiveLabel: false, decoration: "flat") {
 			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
 
 	main "switch"
-		details(["switch", "power", "refresh"])
+		details(["switch", "power", "energy", "reset", "refresh"])
 	}
 
     
@@ -82,9 +89,21 @@ def refresh() {
 
 def refreshCallback(physicalgraph.device.HubResponse response){
 	log.debug "refreshCallback()"
-    def jsobj = response?.json;
-    log.debug "JSON: ${jsobj}";
-    updateStatus(jsobj);
+	def jsobj = response?.json;
+	log.debug "JSON: ${jsobj}";
+	updateStatus(jsobj);
+
+}
+
+def reset() {
+	log.debug "refresh()"
+	sendCommand("EnergyReset3", "0", resetCallback)
+}
+
+def resetCallBack() {
+	log.debug "refreshCallback()"
+	def jsobj = response?.json;
+	log.debug "JSON: ${jsobj}";
 
 }
 
@@ -241,8 +260,9 @@ def updateStatus(status){
 	def on = (powerMask & status.Status.Power);
     
     
-    log.debug "Watts: ${status.StatusSNS.ENERGY.Power}";
+    //log.debug "Watts: ${status.StatusSNS.ENERGY.Power}";
 	sendEvent(name: "power", value: status.StatusSNS.ENERGY.Power);
+	sendEvent(name: "energy", value: status.StatusSNS.ENERGY.Total);
     setSwitchState(on);
 }
 
