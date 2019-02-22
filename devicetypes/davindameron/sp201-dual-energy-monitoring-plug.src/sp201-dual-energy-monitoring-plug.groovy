@@ -10,7 +10,7 @@ metadata {
 
         command "reload"
         command "updateStatus"
-        command "ringpush"
+	command "reset"
         
         attribute "ringpush", "string"
 	}
@@ -97,13 +97,12 @@ def refreshCallback(physicalgraph.device.HubResponse response){
 
 def reset() {
 	log.debug "refresh()"
-	sendCommand("EnergyReset3", "0", resetCallback)
+	sendCommand("EnergyReset3", "0", resetCallBack)
 }
 
-def resetCallBack() {
-	log.debug "refreshCallback()"
-	def jsobj = response?.json;
-	log.debug "JSON: ${jsobj}";
+def resetCallBack(physicalgraph.device.HubResponse response) {
+	log.debug "refreshCallback($response)"
+	sendEvent(name: "energy", value: response.json.EnergyReset.Total);
 
 }
 
