@@ -33,6 +33,8 @@ metadata {
     preferences {
         
         input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
+        input(name: "turnOnRed", type: "boolean", title: "Turn on Red Light with Switch?", displayDuringSetup: true, required: false)
+        input(name: "turnOnBlue", type: "boolean", title: "Turn on Blue Light with Switch?", displayDuringSetup: true, required: false)
 
 		section("Sonoff Host") {
 			
@@ -168,6 +170,44 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
     setSwitchState(on);
 }
 
+def setPowerRed(power){
+	log.debug "Setting power2 to: $power"
+
+	def commandName = "Power2";
+	def payload = power;
+
+	log.debug "COMMAND: $commandName ($payload)"
+
+	def command = createCommand(commandName, payload, "setPowerRedCallback");;
+
+    	sendHubCommand(command);
+}
+
+def setPowerRedCallback(physicalgraph.device.HubResponse response){
+	log.debug "Finished Setting power (channel: 2), JSON: ${response.json}"
+
+   	def on = response.json."POWER2" == "ON";
+}
+
+def setPowerBlue(power){
+	log.debug "Setting power3 to: $power"
+
+	def commandName = "Power3";
+	def payload = power;
+
+	log.debug "COMMAND: $commandName ($payload)"
+
+	def command = createCommand(commandName, payload, "setPowerBlueCallback");;
+
+    	sendHubCommand(command);
+}
+
+def setPowerBlueCallback(physicalgraph.device.HubResponse response){
+	log.debug "Finished Setting power (channel: 3), JSON: ${response.json}"
+
+   	def on = response.json."POWER3" == "ON";
+}
+
 def updateStatus(status){
 
 	//refresh();
@@ -191,6 +231,25 @@ def setSwitchState(on){
 	log.debug "Setting switch to ${on ? 'ON' : 'OFF'}";
 
 	sendEvent(name: "switch", value: on ? "on" : "off", displayed: true);
+    if (on==true)
+    {
+	if (turnOnRed=="true")
+		{setPowerRed("on")
+	    }
+    }
+
+    if (on==true)
+    {
+	if (turnOnBlue=="true")
+		{setPowerBlue("on")
+	    }
+	}    
+
+	if (!on)
+    {
+	setPowerRed("off");
+	setPowerBlue("off");
+    }
 }
 
 def ping() {
