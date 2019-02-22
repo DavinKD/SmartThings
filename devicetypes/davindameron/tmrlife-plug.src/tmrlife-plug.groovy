@@ -33,7 +33,10 @@ metadata {
     preferences {
         
         input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
-        input(name: "turnOnRed", type: "boolean", title: "Turn on Red Light with Switch?", displayDuringSetup: true, required: false)
+        input(name: "PowerChannel", type: "integer", title: "Power Channel (1-8)", description: "Power Channel of the Relay", displayDuringSetup: true, required: true)
+        input(name: "PowerChannelRed", type: "integer", title: "Red LED Channel (1-8)", description: "Power Channel of the Red LED", displayDuringSetup: true, required: true)
+        input(name: "PowerChannelBlue", type: "integer", title: "Blue LED Channel (1-8)", description: "Power Channel of the Blue LED", displayDuringSetup: true, required: true)
+	input(name: "turnOnRed", type: "boolean", title: "Turn on Red Light with Switch?", displayDuringSetup: true, required: false)
         input(name: "turnOnBlue", type: "boolean", title: "Turn on Blue Light with Switch?", displayDuringSetup: true, required: false)
 
 		section("Sonoff Host") {
@@ -149,7 +152,8 @@ def off(){
 def setPower(power){
 	log.debug "Setting power to: $power"
 
-	def commandName = "Power1";
+	integer PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+	def commandName = "Power${PowerChannel}";
 	def payload = power;
 
 	log.debug "COMMAND: $commandName ($payload)"
@@ -164,16 +168,20 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 	
 	log.debug "Finished Setting power (channel: 1), JSON: ${response.json}"
 
-   	def on = response.json."POWER1" == "ON";
+	integer PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+   	def on = response.json."POWER${PowerChannel}" == "ON";
 	//Sometimes channel 1 will just say POWER, not POWER1
-	on = on || response.json."POWER" == "ON";
+	if(PowerChannel==1){
+		on = on || response.json."POWER" == "ON";
+	}
     setSwitchState(on);
 }
 
 def setPowerRed(power){
 	log.debug "Setting power2 to: $power"
 
-	def commandName = "Power2";
+	integer PowerChannel = PowerChannelRed ?: settings?.PowerChannelRed ?: device.latestValue("PowerChannelRed");
+	def commandName = "Power${PowerChannel}";
 	def payload = power;
 
 	log.debug "COMMAND: $commandName ($payload)"
@@ -186,13 +194,15 @@ def setPowerRed(power){
 def setPowerRedCallback(physicalgraph.device.HubResponse response){
 	log.debug "Finished Setting power (channel: 2), JSON: ${response.json}"
 
-   	def on = response.json."POWER2" == "ON";
+	integer PowerChannel = PowerChannelRed ?: settings?.PowerChannelRed ?: device.latestValue("PowerChannelRed");
+   	def on = response.json."POWER${PowerChannel}" == "ON";
 }
 
 def setPowerBlue(power){
 	log.debug "Setting power3 to: $power"
 
-	def commandName = "Power3";
+	integer PowerChannel = PowerChannelBlue ?: settings?.PowerChannelBlue ?: device.latestValue("PowerChannelBlue");
+	def commandName = "Power${PowerChannel}";
 	def payload = power;
 
 	log.debug "COMMAND: $commandName ($payload)"
@@ -205,7 +215,8 @@ def setPowerBlue(power){
 def setPowerBlueCallback(physicalgraph.device.HubResponse response){
 	log.debug "Finished Setting power (channel: 3), JSON: ${response.json}"
 
-   	def on = response.json."POWER3" == "ON";
+	integer PowerChannel = PowerChannelBlue ?: settings?.PowerChannelBlue ?: device.latestValue("PowerChannelBlue");
+	def on = response.json."POWER${PowerChannel}" == "ON";
 }
 
 def updateStatus(status){
@@ -218,9 +229,9 @@ def updateStatus(status){
 
 	def powerMask = 0b0001;
 
-	def powerChannel = 1;
+	integer PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 
-	powerMask = powerMask << ("$powerChannel".toInteger() - 1); // shift the bits over 
+	powerMask = powerMask << ("$PowerChannel".toInteger() - 1); // shift the bits over 
 
 	def on = (powerMask & status.Status.Power);
 
