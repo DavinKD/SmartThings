@@ -98,7 +98,7 @@ def refreshCallback(physicalgraph.device.HubResponse response){
 
 def reset() {
 	log.debug "refresh()"
-	sendCommand("EnergyReset3", "0", resetCallback)
+	sendCommand("EnergyReset3", "0", resetCallBack)
 }
 
 def resetCallBack() {
