@@ -333,7 +333,10 @@ def updateStatus(status){
 	setSwitchState("5", on)
 	
 	if (allOn){
-		setSwitchState("", on)
+		setSwitchState("", true)
+	}
+	else{
+		setSwitchState("", false)
 	}
 }
 
