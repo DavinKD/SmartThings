@@ -105,6 +105,8 @@ def resetCallBack(physicalgraph.device.HubResponse response) {
 	log.debug "refreshCallback()"
 	def jsobj = response?.json;
 	log.debug "JSON: ${jsobj}";
+	sendEvent(name: "energy", value: status.EnergyReset.Total);
+	
 
 }
 
