@@ -24,7 +24,6 @@ metadata {
         command "turnon5"
         command "turnoff5"
         
-        attribute "ringpush", "string"
 	}
 
 	// UI tile definitions
