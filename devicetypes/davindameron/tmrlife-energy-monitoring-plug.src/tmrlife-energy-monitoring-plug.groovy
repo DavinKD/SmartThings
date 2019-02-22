@@ -101,7 +101,7 @@ def reset() {
 	sendCommand("EnergyReset3", "0", resetCallBack)
 }
 
-def resetCallBack() {
+def resetCallBack(physicalgraph.device.HubResponse response) {
 	log.debug "refreshCallback()"
 	def jsobj = response?.json;
 	log.debug "JSON: ${jsobj}";
