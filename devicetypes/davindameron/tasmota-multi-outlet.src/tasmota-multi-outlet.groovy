@@ -292,22 +292,49 @@ def updateStatus(status){
 	powerMask3 = powerMask3 << ("$powerChannel3".toInteger() - 1); // shift the bits over 
 	powerMask4 = powerMask4 << ("$powerChannel4".toInteger() - 1); // shift the bits over 
 	powerMask5 = powerMask5 << ("$powerChannel5".toInteger() - 1); // shift the bits over 
+	
+	def allOn
+	
+	allOn = true
 
 	def on = (powerMask1 & status.Status.Power);
 	setSwitchState("1", on)
+	if (!on)
+	{
+		allOn = false
+	}
 	
 	on = (powerMask2 & status.Status.Power);
+	if (!on)
+	{
+		allOn = false
+	}
 	setSwitchState("2", on)
 
 	on = (powerMask3 & status.Status.Power);
+	if (!on)
+	{
+		allOn = false
+	}
 	setSwitchState("3", on)
 
 	on = (powerMask4 & status.Status.Power);
+	if (!on)
+	{
+		allOn = false
+	}
 	setSwitchState("4", on)
 
 	on = (powerMask5 & status.Status.Power);
+	if (!on)
+	{
+		allOn = false
+	}
 	setSwitchState("5", on)
-
+	
+	if (allOn){
+		setSwitchState("", on)
+	}
 }
 
 def setSwitchState(channel, on){
