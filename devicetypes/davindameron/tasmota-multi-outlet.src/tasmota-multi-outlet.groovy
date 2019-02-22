@@ -228,7 +228,7 @@ def turnon5(){
 	setPower("5", "on")
 }
 
-def turnoff1(){
+def turnoff5(){
 	setPower("5", "off")
 }
 
