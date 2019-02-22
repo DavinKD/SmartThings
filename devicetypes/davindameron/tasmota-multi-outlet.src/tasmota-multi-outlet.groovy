@@ -245,23 +245,25 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 	
 	log.debug "Finished Setting power, JSON: ${response.json}"
 
-   	def on = response.json."POWER1" == "ON";
+   	//def on = response.json."POWER1" == "ON";
 	//Sometimes channel 1 will just say POWER, not POWER1
-	on = on || response.json."POWER" == "ON";
-    	setSwitchState("1", on);
+	//on = on || response.json."POWER" == "ON";
+    	//setSwitchState("1", on);
     	
-   	on = response.json."POWER2" == "ON";
-    	setSwitchState("2", on);
+   	//on = response.json."POWER2" == "ON";
+    	//setSwitchState("2", on);
    	
-   	on = response.json."POWER3" == "ON";
-    	setSwitchState("3", on);
+   	//on = response.json."POWER3" == "ON";
+    	//setSwitchState("3", on);
    	
-   	on = response.json."POWER4" == "ON";
-    	setSwitchState("4", on);
+   	//on = response.json."POWER4" == "ON";
+    	//setSwitchState("4", on);
    	
-   	on = response.json."POWER5" == "ON";
-    	setSwitchState("5", on);
-   	
+   	//on = response.json."POWER5" == "ON";
+    	//setSwitchState("5", on);
+	
+	//We only get back the status for the one channel we just changed.  Call refresh to set the switch status for all the channels.
+   	refresh()
     	
 }
 
