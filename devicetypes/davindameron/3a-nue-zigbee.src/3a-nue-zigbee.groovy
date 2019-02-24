@@ -54,7 +54,7 @@ definition (name: "3A NUE ZigBee", namespace: "davindameron", author: "Davin Dam
     fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300", outClusters: "0019"
     fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300, 1000", outClusters: "0019"
     fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300, 1000", outClusters: "0019", "manufacturer":"3A Feibit", "model":"RGBW Light", deviceJoinName: "3A-Feibit RGBW Light"
-
+	preferences{
        input(
              "switchTransition",
              "number",
