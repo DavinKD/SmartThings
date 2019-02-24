@@ -36,7 +36,7 @@ import groovy.transform.Field
 ]
 
 metadata {
-definition (name: "3A NUE ZigBee", namespace: "davindameron", author: "Davin Dameron") {
+definition (name: "3A NUE ZigBee", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
 
     capability "Color Control"
     capability "Configuration"
