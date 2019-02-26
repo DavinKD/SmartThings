@@ -1,7 +1,7 @@
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "TMRLife Energy Monitoring Plug", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
+	definition(name: "TMRLife Energy Monitoring Plug", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug", mnmn:"SmartThings", vid:"generic-switch-power-energy") {
 		capability "Switch"
 		capability "Polling"
 		capability "Refresh"
