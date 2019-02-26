@@ -257,6 +257,10 @@ def configure() {
 
 def updated() {
 
+    if (state.updatedTime) {
+        if ((state.updatedTime + 5000) > now()) return null
+    }
+
      String switchTransition
     if (settings.switchTransition) {
         switchTransition = hex((settings.switchTransition * 10),4) //OnOffTransitionTime in 1/10th sec (big endian)
