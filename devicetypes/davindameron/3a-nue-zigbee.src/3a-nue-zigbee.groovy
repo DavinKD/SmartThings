@@ -36,123 +36,109 @@ import groovy.transform.Field
 ]
 
 metadata {
-definition (name: "3A NUE ZigBee", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
+	definition (name: "3A NUE ZigBee", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
 
-    capability "Color Control"
-    capability "Configuration"
-    capability "Polling"
-    capability "Refresh"
-    capability "Switch"
-    capability "Switch Level"
+    	capability "Color Control"
+    	capability "Configuration"
+    	capability "Polling"
+	capability "Refresh"
+	capability "Switch"
+	capability "Switch Level"
     
-    command "loopOn"
-    command "loopOff"
-    command "setLoopRate", ["number"]
-    command "setColorTransition", ["number"]
+	command "loopOn"
+	command "loopOff"
+	command "setLoopRate", ["number"]
+	command "setColorTransition", ["number"]
 
 
-    fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300", outClusters: "0019"
-    fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300, 1000", outClusters: "0019"
-    fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300, 1000", outClusters: "0019", "manufacturer":"3A Feibit", "model":"RGBW Light", deviceJoinName: "3A-Feibit RGBW Light"
+	fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300", outClusters: "0019"
+	fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300, 1000", outClusters: "0019"
+	fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0300, 1000", outClusters: "0019", "manufacturer":"3A Feibit", "model":"RGBW Light", deviceJoinName: "3A-Feibit RGBW Light"
+	}
 	preferences{
-       input(
-             "switchTransition",
-             "number",
-             title: "Dim duration for On/Off",
-             range: "0..10",
-             description: "0-10 seconds",
-             defaultValue: 2,
-             required: false,
-             displayDuringSetup: true
-            )
-       input(
-             "levelTransition",
-             "number",
-             title: "Dim duration for level change",
-             range: "0..10",
-             description: "0-10 seconds",
-             defaultValue: 4,
-             required: false,
-             displayDuringSetup: true
-            )
-       input(
-             "colorTransition",
-             "number",
-             title: "Time to transition color",
-             range: "0..10",
-             description: "0-10 seconds",
-             defaultValue: 2,
-             required: false,
-             displayDuringSetup: true
-            )             
- 	   input(
-             "pulseDuration",
-             "number",
-             title: "Pulse dim up/down duration",
-             range: "1..10",
-             description: "1-10 seconds",
-             defaultValue: 4,
-             required: false,
-             displayDuringSetup: true
-            )
- 	   input(
-             "loopRate",
-             "number",
-             title: "Color loop rate in steps per second",
-             range: "1..20",
-             description: "range 1-25",
-             defaultValue: 5,
-             required: false,
-             displayDuringSetup: true
-            )  
+		input(
+			"switchTransition",
+			"number",
+			title: "Dim duration for On/Off",
+			range: "0..10",
+			description: "0-10 seconds",
+			defaultValue: 2,
+			required: false,
+			displayDuringSetup: true
+            	)
+		input(
+			"levelTransition",
+			"number",
+			title: "Dim duration for level change",
+			range: "0..10",
+			description: "0-10 seconds",
+			defaultValue: 4,
+			required: false,
+			displayDuringSetup: true
+		)
+		input(
+			"colorTransition",
+			"number",
+			title: "Time to transition color",
+			range: "0..10",
+			description: "0-10 seconds",
+			defaultValue: 2,
+			required: false,
+			displayDuringSetup: true
+		)             
+		input(
+			"pulseDuration",
+			"number",
+			title: "Pulse dim up/down duration",
+			range: "1..10",
+			description: "1-10 seconds",
+			defaultValue: 4,
+			required: false,
+			displayDuringSetup: true
+		)
+		input(
+			"loopRate",
+			"number",
+			title: "Color loop rate in steps per second",
+			range: "1..20",
+			description: "range 1-25",
+			defaultValue: 5,
+			required: false,
+			displayDuringSetup: true
+		)  
 	}
 
-}
 
 // UI tile definitions
-tiles(scale: 2) {
-    //multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true){
-    //    tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
-    //        attributeState "on", label:'${name}', action:"switch.off", icon:"st.lights.philips.hue-single", backgroundColor:"#00a0dc", nextState:"turningOff"
-    //        attributeState "off", label:'${name}', action:"switch.on", icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
-    //        attributeState "turningOn", label:'${name}', action:"switch.off", icon:"st.lights.philips.hue-single", backgroundColor:"#00a0dc", nextState:"turningOff"
-    //        attributeState "turningOff", label:'${name}', action:"switch.on", icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
-    //    }
-    //   tileAttribute ("device.level", key: "SLIDER_CONTROL") {
-    //   attributeState "level", action:"switch level.setLevel"
-    //   }
-    //    tileAttribute ("device.color", key: "COLOR_CONTROL") {
-    //        attributeState "color", action:"color control.setColor"
-    //    }
-    //}
-   	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switch.on", icon: "st.Lighting.light11", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor:"#00a0dc"
-	}        
-    standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
-        state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
-    }
-	controlTile("rgbSelector", "device.color", "color", height: 3, width: 2,
-	            inactiveLabel: false) {
-	    state "color", action: "color control.setColor", label:'Color'
+	tiles(scale: 2) {
+		standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
+		state "off", label:'${name}', action: "switch.on", icon: "st.Lighting.light11", backgroundColor:"#ffffff"
+		state "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor:"#00a0dc"
+		}        
+		standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
+		state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
+		}
+		controlTile("rgbSelector", "device.color", "color", height: 3, width: 2,
+		inactiveLabel: false) {
+		state "color", action: "color control.setColor", label:'Color'
+		}
+
+		controlTile("levelSliderControl", "device.level", "slider",
+		height: 3, width: 2) {
+		state "level", action:"switch level.setLevel", label:'Level'
+		}
+
+		controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range:"(2700..6500)") {
+		state "colorTemperature", action:"color temperature.setColorTemperature"
+		}
+		standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 3) {
+		state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
+		state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#dcdcdc"
+		}
+
+		main(["switch"])
+		details(["switch", "refresh", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop"])
 	}
-
-	controlTile("levelSliderControl", "device.level", "slider",
-            height: 3, width: 2) {
-    	state "level", action:"switch level.setLevel", label:'Level'
-	}
-
-        controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range:"(2700..6500)") {
-            state "colorTemperature", action:"color temperature.setColorTemperature"
-        }
-    standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 3) {
-        state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
-        state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#dcdcdc"
-    }
-
-    main(["switch"])
-    details(["switch", "refresh", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop"])
-}
 }
 
 //Globals
