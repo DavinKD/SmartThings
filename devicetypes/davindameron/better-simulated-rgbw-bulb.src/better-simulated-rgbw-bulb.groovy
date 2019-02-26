@@ -25,7 +25,7 @@ import groovy.transform.Field
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Better Simulated RGBW Bulb", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
+	definition(name: "Better Simulated RGBW Bulb", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
@@ -50,8 +50,8 @@ metadata {
 	tiles(scale: 2) {
 
 	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+	    state "off", label:'${name}', action: "switch.on", icon: "st.Lighting.light11", backgroundColor:"#ffffff"
+	    state "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor:"#00a0dc"
 	}        
 	
 	standardTile("refresh", "device.switch", width: 3, height: 3, inactiveLabel: false, decoration: "flat") {
