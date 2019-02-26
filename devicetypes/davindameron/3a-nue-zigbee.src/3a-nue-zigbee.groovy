@@ -104,7 +104,8 @@ definition (name: "3A NUE ZigBee", namespace: "davindameron", author: "Davin Dam
              defaultValue: 5,
              required: false,
              displayDuringSetup: true
-            )           
+            )  
+	}
 
 }
 
