@@ -210,51 +210,20 @@ zigbee.off()
 
 }
 
-//def refresh() {
-//refreshAttributes() + configureAttributes()
-//}
-
-//def poll() {
-//refreshAttributes()
-//}
-
-//def configure() {
-//log.debug "Configuring Reporting and Bindings."
-//configureAttributes() + refreshAttributes()
-//setColor(5000)
-//}
 def refresh() {
-    [
-        "st rattr 0x${device.deviceNetworkId} ${endpointId} 6 0", "delay 500", //on-off
-        "st rattr 0x${device.deviceNetworkId} ${endpointId} 8 0", "delay 500", //level
-        "st rattr 0x${device.deviceNetworkId} ${endpointId} 0x0300 0", "delay 500", //hue
-        "st rattr 0x${device.deviceNetworkId} ${endpointId} 0x0300 1", "delay 500", //sat
-        "st rattr 0x${device.deviceNetworkId} ${endpointId} 0x0300 7", "delay 500", //color temp
-        "st rattr 0x${device.deviceNetworkId} ${endpointId} 0x0300 8" //color mode
-    ]
+refreshAttributes() + configureAttributes()
 }
 
-def configure() {    
-    zigbee.onOffConfig() +
-    zigbee.levelConfig() +
-    zigbee.colorTemperatureConfig() +
-	[        
-        //hue
-        "zcl global send-me-a-report 0x0300 0 0x20 1 3600 {01}", "delay 500",
-        "send 0x${device.deviceNetworkId} ${endpointId} 1", "delay 1000",
-
-        //saturation
-        "zcl global send-me-a-report 0x0300 1 0x20 1 3600 {01}", "delay 500",
-        "send 0x${device.deviceNetworkId} ${endpointId} 1", "delay 1500",
-
-        //color mode
-        "zcl global send-me-a-report 0x0300 8 0x30 1 3600 {}", "delay 500",
-        "send 0x${device.deviceNetworkId} ${endpointId} 1", "delay 1500",        
-        
-        "zdo bind 0x${device.deviceNetworkId} ${endpointId} 1 0x0300 {${device.zigbeeId}} {}", "delay 500"
-	] +
-    zigbee.writeAttribute(LEVEL_CONTROL_CLUSTER, 0x0010, 0x21, "0014") //OnOffTransitionTime in 1/10th sec, set to 2 sec, note big endian
+def poll() {
+refreshAttributes()
 }
+
+def configure() {
+log.debug "Configuring Reporting and Bindings."
+configureAttributes() + refreshAttributes()
+//setColor(5000)
+}
+
 
 def updated() {
 
@@ -337,6 +306,12 @@ device.endpointId ="0B"
 zigbee.setLevel(value) + ["delay 100"] + zigbee.levelRefresh()
 }
 */
+
+//def setLevel(value, duration = settings.levelTransition) { //duration in seconds
+//	if (value == 0) off()
+//    else zigbee.setLevel(value,duration)
+//}
+
 private getScaledHue(value) {
     zigbee.convertToHexString(Math.round(value * 0xfe / 100.0), 2)
 }
