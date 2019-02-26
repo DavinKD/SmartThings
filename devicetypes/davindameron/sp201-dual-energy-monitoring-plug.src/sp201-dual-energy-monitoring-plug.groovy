@@ -29,7 +29,7 @@ metadata {
 	valueTile("energy", "device.energy", decoration: "flat", width: 3, height: 3) {
 		state "default", label: '${currentValue} kWh'
 	}
-	standardTile("reset", "device.energy", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
+	standardTile("reset", "device.switch", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
 		state "default", label: 'reset kWh', action: "reset"
 	}
 	standardTile("refresh", "device.switch", width: 3, height: 3, inactiveLabel: false, decoration: "flat") {
