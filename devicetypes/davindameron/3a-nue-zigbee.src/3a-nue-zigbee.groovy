@@ -36,7 +36,7 @@ import groovy.transform.Field
 ]
 
 metadata {
-	definition (name: "3A NUE ZigBee", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
+	definition (name: "3A NUE ZigBee", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgb-color-bulb") {
 
     	capability "Color Control"
     	capability "Configuration"
@@ -128,9 +128,10 @@ metadata {
 		state "level", action:"switch level.setLevel", label:'Level'
 		}
 
-		controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range:"(2700..6500)") {
-		state "colorTemperature", action:"color temperature.setColorTemperature"
-		}
+//		controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range:"(2700..6500)") {
+//		state "colorTemperature", action:"color temperature.setColorTemperature"
+//		}
+
 		standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 3) {
 		state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
 		state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#dcdcdc"
