@@ -261,8 +261,7 @@ def updateStatus(status){
 	def on = (powerMask & status.Status.Power);
     
     
-	//sendEvent(name: "power", value: status.StatusSNS.ENERGY.Power);
-	sendEvent(name: "power", value: status.StatusSNS.ENERGY.Total);
+	sendEvent(name: "power", value: status.StatusSNS.ENERGY.Power);
 	sendEvent(name: "energy", value: status.StatusSNS.ENERGY.Total);
     setSwitchState(on);
 }
