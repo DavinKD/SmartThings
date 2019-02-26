@@ -12,7 +12,6 @@ metadata {
         command "updateStatus"
 	command "reset"
         
-        attribute "ringpush", "string"
 	}
 
 	// UI tile definitions
