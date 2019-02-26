@@ -59,7 +59,7 @@ metadata {
 		}
 
 
-		main "switch"
+		main("switch")
 			details(["switch", "switch1", "switch2", "switch3", "switch4", "switch5", "refresh"])
 	}
 
