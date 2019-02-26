@@ -227,9 +227,9 @@ def refresh() {
 refreshAttributes() + configureAttributes()
 }
 
-def poll() {
-refreshAttributes()
-}
+//def poll() {
+//refreshAttributes()
+//}
 
 def configure() {
 log.debug "Configuring Reporting and Bindings."
