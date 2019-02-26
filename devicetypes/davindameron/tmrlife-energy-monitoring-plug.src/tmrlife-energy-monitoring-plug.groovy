@@ -2,18 +2,16 @@ metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
 	definition(name: "TMRLife Energy Monitoring Plug", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
+		capability "Switch"
 		capability "Polling"
 		capability "Refresh"
-		capability "Switch"
-        capability "Power Meter"
+        	capability "Power Meter"
 		capability "Energy Meter"
 
-        command "reload"
-        command "updateStatus"
-        command "ringpush"
-	command "reset"
+		command "reload"
+		command "updateStatus"
+		command "reset"
         
-        attribute "ringpush", "string"
 	}
 
 	// UI tile definitions
@@ -23,10 +21,9 @@ metadata {
 	    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
 	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 	}        
-	
-    valueTile("power", "device.power", decoration: "flat", width: 3, height: 3) {
-        state "default", label:'${currentValue} W'
-    }
+	valueTile("power", "device.power", decoration: "flat", width: 3, height: 3) {
+            state "default", label:'${currentValue} W'
+    	}
 	valueTile("energy", "device.energy", decoration: "flat", width: 3, height: 3) {
 		state "default", label: '${currentValue} kWh'
 	}
@@ -37,7 +34,7 @@ metadata {
 			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
 
-	main "switch"
+	main("switch")
 		details(["switch", "power", "energy", "reset", "refresh"])
 	}
 
