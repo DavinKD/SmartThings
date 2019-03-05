@@ -198,6 +198,13 @@ def parse(String description) {
     return cmds
 }
 
+/**
+ * PING is used by Device-Watch in attempt to reach the Device
+ * */
+def ping() {
+	return zigbee.onOffRefresh()
+}
+
 def on() {
 device.endpointId ="0B"
 zigbee.on()
