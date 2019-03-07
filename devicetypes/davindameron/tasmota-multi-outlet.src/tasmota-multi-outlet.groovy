@@ -68,41 +68,50 @@ metadata {
 		input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
 		input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
 		input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
+		input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
+	}
+}
+
+def doLogging(value){
+	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
+	if (debugLogging=="true")
+	{
+		doLogging value;
 	}
 }
 
 def installed(){
-	log.debug "installed()"
+	doLogging "installed()"
     reload();
 }
 
 def updated(){
-	log.debug "updated()"
+	doLogging "updated()"
     reload();
 	runEvery5Minutes(refresh)
 }
 
 def reload(){
-	log.debug "reload()"
+	doLogging "reload()"
     refresh();
 }
 
 def poll() {
-	log.debug "POLL"
+	doLogging "POLL"
 	sendCommand("Status", "0", refreshCallback)
 }
 
 def refresh() {
-	log.debug "refresh()"
+	doLogging "refresh()"
 	sendCommand("Status", "0", refreshCallback)
 }
 
 
 def refreshCallback(physicalgraph.device.HubResponse response){
-	log.debug "refreshCallback()"
+	doLogging "refreshCallback()"
     def jsobj = response?.json;
 
-    log.debug "JSON: ${jsobj}";
+    doLogging "JSON: ${jsobj}";
     updateStatus(jsobj);
 
 }
@@ -131,10 +140,10 @@ def createCommand(String command, payload, callback){
     def username = username ?: settings?.username ?: device.latestValue("username");
     def password = password ?: settings?.password ?: device.latestValue("password");
 
-    log.debug "createCommandAction(${command}:${payload}) to device at ${ipAddress}:80"
+    doLogging "createCommandAction(${command}:${payload}) to device at ${ipAddress}:80"
 
 	if (!ipAddress) {
-		log.warn "aborting. ip address of device not set"
+		doLogging "aborting. ip address of device not set"
 		return null;
 	}
 
@@ -154,7 +163,7 @@ def createCommand(String command, payload, callback){
 	}
 
     def dni = null;
-    log.debug path;
+    doLogging path;
 
     def params = [
         method: "GET",
@@ -228,12 +237,12 @@ def turnoff5(){
 }
 
 def setPower(channel, power){
-	log.debug "Setting power for channel $channel to $power"
+	doLogging "Setting power for channel $channel to $power"
 
 	def commandName = "Power$channel";
 	def payload = power;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging "COMMAND: $commandName ($payload)"
 
 	def command = createCommand(commandName, payload, "setPowerCallback");;
 
@@ -243,7 +252,7 @@ def setPower(channel, power){
 def setPowerCallback(physicalgraph.device.HubResponse response){
 	
 	
-	log.debug "Finished Setting power, JSON: ${response.json}"
+	doLogging "Finished Setting power, JSON: ${response.json}"
 
    	//def on = response.json."POWER1" == "ON";
 	//Sometimes channel 1 will just say POWER, not POWER1
@@ -341,12 +350,12 @@ def updateStatus(status){
 }
 
 def setSwitchState(channel, on){
-	log.debug "Setting switch for channel $channel to ${on ? 'ON' : 'OFF'}";
+	doLogging "Setting switch for channel $channel to ${on ? 'ON' : 'OFF'}";
 
 	sendEvent(name: "switch$channel", value: on ? "on" : "off", displayed: true);
 }
 
 def ping() {
-	log.debug "ping()"
+	doLogging "ping()"
 	return refresh()
 }
