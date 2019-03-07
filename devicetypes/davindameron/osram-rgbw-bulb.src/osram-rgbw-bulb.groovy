@@ -137,7 +137,9 @@ metadata {
              defaultValue: 5,
              required: false,
              displayDuringSetup: true
-            )           
+            )      
+	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
+
     }       
     
     tiles(scale: 2) {
@@ -209,10 +211,18 @@ private getDEFAULT_LOOP_RATE() {"05"} //5 steps per sec
 
 private getMOVE_TO_HUE_AND_SATURATION_COMMAND() { 0x06 }
 
+def doLogging(value){
+	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
+	if (debugLogging=="true")
+	{
+		log.debug value;
+	}
+}
+
 def parse(String description) {
-     log.trace "parse($description)"
-     log.trace "current hue:  ${device.currentValue("hue")}"
-     log.trace "current saturation:  ${device.currentValue("saturation")}"
+     doLogging("parse($description)");
+     doLogging("current hue:  ${device.currentValue("hue")}");
+     doLogging("current saturation:  ${device.currentValue("saturation")}");
    
     def result = zigbee.getEvent(description)
     def cmds = []
@@ -262,9 +272,9 @@ def parse(String description) {
             }               
         }
         else if (zigbeeMap?.clusterInt == 0x8021) {
-            log.debug "*** received Configure Reporting response: ${zigbeeMap.data}"
+            doLogging("*** received Configure Reporting response: ${zigbeeMap.data}");
         }
-        else { log.debug "*** unparsed response: ${zigbeeMap}" }
+        else { doLogging("*** unparsed response: ${zigbeeMap}") }
     }
     
     return cmds
@@ -277,7 +287,7 @@ def updated() {
     }
     state.updatedTime = now()
 
-    log.debug "--- Updated with: ${settings}"
+    doLogging("--- Updated with: ${settings}");
 
     String switchTransition
     if (settings.switchTransition) {
@@ -377,7 +387,7 @@ def setLevel(value, duration = settings.levelTransition) { //duration in seconds
 }
 
 def setColorTemperature(value) {
-    log.trace "setColorTemperature($value)"
+    doLogging("setColorTemperature($value)");
     value = value as Integer
     if (value < 2700)
     {
@@ -404,15 +414,15 @@ private getScaledSaturation(value) {
 }
 
 private Map buildColorHSMap(hue, saturation) {
-	log.trace "Executing 'buildColorHSMap(${hue}, ${saturation})'"
+	doLogging("Executing 'buildColorHSMap(${hue}, ${saturation})'");
     Map colorHSMap = [hue: 0, saturation: 0]
     try {
         colorHSMap.hue = hue.toFloat().toInteger()
         colorHSMap.saturation = saturation.toFloat().toInteger()
     } catch (NumberFormatException nfe) {
-        log.warn "Couldn't transform one of hue ($hue) or saturation ($saturation) to integers: $nfe"
+        doLogging("Couldn't transform one of hue ($hue) or saturation ($saturation) to integers: $nfe");
     }
-    log.trace colorHSMap
+    doLogging(colorHSMap);
     return colorHSMap
 }
 
@@ -432,24 +442,24 @@ private Integer boundInt(Double value, IntRange theRange) {
 }
 
 def setSaturation(saturationPercent) {
-    log.trace "Executing 'setSaturation' ${saturationPercent}/100"
+    doLogging("Executing 'setSaturation' ${saturationPercent}/100");
     Integer currentHue = device.currentValue("hue")
     setColor(currentHue, saturationPercent)
 }
 
 def setHue(huePercent) {
-    log.trace "Executing 'setHue' ${huePercent}/100"
+    doLogging("Executing 'setHue' ${huePercent}/100");
     Integer currentSaturation = device.currentValue("saturation")
     setColor(huePercent, currentSaturation)
 }
 
 def setColor(Integer huePercent, Integer saturationPercent) {
-    log.trace "Executing 'setColor' from separate values hue: $huePercent, saturation: $saturationPercent"
+    doLogging("Executing 'setColor' from separate values hue: $huePercent, saturation: $saturationPercent");
     setColor(buildColorHSMap(huePercent, saturationPercent)) // call the capability version method overload
 }
 
 def setColor(String rgbHex) {
-    log.trace "Executing 'setColor' from hex $rgbHex"
+    doLogging("Executing 'setColor' from hex $rgbHex");
     if (hex == "#000000") {
         off()
     } else {
@@ -460,7 +470,7 @@ def setColor(String rgbHex) {
 }
 
 def setColor(Map value) {
-    log.trace "setColor($value)"
+    doLogging("setColor($value)");
     
     zigbee.on() +
     zigbee.command(COLOR_CONTROL_CLUSTER, MOVE_TO_HUE_AND_SATURATION_COMMAND,
@@ -528,7 +538,7 @@ def blinkOff() {
 }
 
 def setDefaultColor() {
-	log.info "Setting default color"
+	doLogging("Setting default color");
     def cmds = 
     [
     sendEvent(name: "switch", value: "wait", descriptionText: "Setting default color/level", displayed: true, isChange: true),
