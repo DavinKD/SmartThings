@@ -78,36 +78,44 @@ metadata {
 
     
     preferences {
-        
+	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
 	}
 }
 
 
+def doLogging(value){
+	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
+	if (debugLogging=="true")
+	{
+		doLogging value;
+	}
+}
+
 def installed(){
-	log.debug "installed()"
+	doLogging "installed()"
 }
 
 def updated(){
-	log.debug "updated()"
+	doLogging "updated()"
 }
 
 def reload(){
-	log.debug "reload()"
+	doLogging "reload()"
 }
 
 def poll() {
-	log.debug "POLL"
+	doLogging "POLL"
 }
 
 def refresh() {
-	log.debug "refresh()"
+	doLogging "refresh()"
 }
 
 
 
 
 def setColorTemperature(kelvin) {
-    log.trace "executing 'setColorTemperature' ${kelvin}K"
+    doLogging "executing 'setColorTemperature' ${kelvin}K"
     sendEvent(name: "colorTemperature", value: kelvin)
 }
 
@@ -122,7 +130,7 @@ def off(){
 
 
 def setPower(power){
-	log.debug "Setting power to: $power [${device.currentValue("switch")}]"
+	doLogging "Setting power to: $power [${device.currentValue("switch")}]"
     if(power != device.currentValue("switch"))
     {
 		def on = power == "on";
@@ -132,7 +140,7 @@ def setPower(power){
 }
 
 def setLevel(level){
-	log.debug "Setting level to: $level"
+	doLogging "Setting level to: $level"
     sendEvent(name:"level", value:level);
 
 }
@@ -140,15 +148,15 @@ def setLevel(level){
 
 
 private Map buildColorHSMap(hue, saturation) {
-	log.trace "Executing 'buildColorHSMap(${hue}, ${saturation})'"
+	doLogging "Executing 'buildColorHSMap(${hue}, ${saturation})'"
     Map colorHSMap = [hue: 0, saturation: 0]
     try {
         colorHSMap.hue = hue.toFloat().toInteger()
         colorHSMap.saturation = saturation.toFloat().toInteger()
     } catch (NumberFormatException nfe) {
-        log.warn "Couldn't transform one of hue ($hue) or saturation ($saturation) to integers: $nfe"
+        doLogging "Couldn't transform one of hue ($hue) or saturation ($saturation) to integers: $nfe"
     }
-    log.trace colorHSMap
+    doLogging colorHSMap
     return colorHSMap
 }
 
@@ -168,27 +176,27 @@ private Integer boundInt(Number value, IntRange theRange) {
 }
 
 def setSaturation(saturationPercent) {
-    log.trace "Executing 'setSaturation' ${saturationPercent}/100"
+    doLogging "Executing 'setSaturation' ${saturationPercent}/100"
     Integer currentHue = device.currentValue("hue")
     setColor(currentHue, saturationPercent)
     // setColor will call done() for us
 }
 
 def setHue(huePercent) {
-    log.trace "Executing 'setHue' ${huePercent}/100"
+    doLogging "Executing 'setHue' ${huePercent}/100"
     Integer currentSaturation = device.currentValue("saturation")
     setColor(huePercent, currentSaturation)
     // setColor will call done() for us
 }
 
 def setColor(Integer huePercent, Integer saturationPercent) {
-    log.trace "Executing 'setColor' from separate values hue: $huePercent, saturation: $saturationPercent"
+    doLogging "Executing 'setColor' from separate values hue: $huePercent, saturation: $saturationPercent"
     //Map colorHSMap = buildColorHSMap(huePercent, saturationPercent)
     setColor(buildColorHSMap(huePercent, saturationPercent)) // call the capability version method overload
 }
 
 def setColor(String rgbHex) {
-    log.trace "Executing 'setColor' from hex $rgbHex"
+    doLogging "Executing 'setColor' from hex $rgbHex"
     if (hex == "#000000") {
         // setting to black? turn it off.
         off()
@@ -200,11 +208,11 @@ def setColor(String rgbHex) {
 }
 
 def setColor(Map colorHSMap) {
-    log.trace "Executing 'setColor(Map)' ${colorHSMap}"
+    doLogging "Executing 'setColor(Map)' ${colorHSMap}"
     Integer boundedHue = boundInt(colorHSMap?.hue?:0, PERCENT_RANGE)
     Integer boundedSaturation = boundInt(colorHSMap?.saturation?:0, PERCENT_RANGE)
     String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)
-    log.debug "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
+    doLogging "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
 
 	sendEvent(name: "hue", value: boundedHue)
     sendEvent(name: "saturation", value: boundedSaturation)
@@ -219,13 +227,13 @@ def updateStatus(status){
 }
 
 def setSwitchState(on){
-	log.debug "Setting switch to ${on ? 'ON' : 'OFF'}";
+	doLogging "Setting switch to ${on ? 'ON' : 'OFF'}";
 
 	sendEvent(name: "switch", value: on ? "on" : "off", displayed: true);
 }
 
 
 def ping() {
-	log.debug "ping()"
+	doLogging "ping()"
 	return refresh()
 }
