@@ -90,6 +90,7 @@ metadata {
              displayDuringSetup: true
             )           
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
+    }
 }
 
 def doLogging(value){
