@@ -44,6 +44,7 @@ metadata {
         input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
         input(name: "turnOnRed", type: "boolean", title: "Turn on Red Light with Switch?", displayDuringSetup: true, required: false)
         input(name: "turnOnBlue", type: "boolean", title: "Turn on Blue Light with Switch?", displayDuringSetup: true, required: false)
+	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
         
 
 		section("Sonoff Host") {
@@ -57,54 +58,60 @@ metadata {
 	}
 }
 
+def doLogging(value){
+	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
+	if (debugLogging=="true")
+	{
+		log.debug value;
+	}
+}
+
 def installed(){
-	log.debug "installed()"
+	doLogging("installed()");
     reload();
 }
 
 def updated(){
-	log.debug "updated()"
+	doLogging("updated()")
     reload();
 	runEvery5Minutes(refresh)
 }
 
 def reload(){
-	log.debug "reload()"
+	doLogging("reload()");
     refresh();
 }
 
 
 def poll() {
-	log.debug "POLL"
+	doLogging("POLL");
 	sendCommand("Status", "0", refreshCallback)
 }
 
 def refresh() {
-	log.debug "refresh()"
+	doLogging("refresh()");
 	sendCommand("Status", "0", refreshCallback)
 }
 
 
 def refreshCallback(physicalgraph.device.HubResponse response){
-	log.debug "refreshCallback()"
+	doLogging("refreshCallback()");
     def jsobj = response?.json;
-    log.debug "JSON: ${jsobj}";
+    doLogging("JSON: ${jsobj}");
     updateStatus(jsobj);
 
 }
 
 def reset() {
-	log.debug "refresh()"
+	doLogging("refresh()");
 	sendCommand("EnergyReset3", "0", resetCallBack)
 }
 
 def resetCallBack(physicalgraph.device.HubResponse response) {
-	log.debug "refreshCallback()"
+	doLogging("refreshCallback()");
 	def jsobj = response?.json;
-	log.debug "JSON: ${jsobj}";
+	doLogging("JSON: ${jsobj}");
 	sendEvent(name: "energy", value: response.json.EnergyReset.Total);
-	
-
 }
 
 def sendCommand(String command, callback) {
@@ -121,10 +128,10 @@ def createCommand(String command, payload, callback){
     def username = username ?: settings?.username ?: device.latestValue("username");
     def password = password ?: settings?.password ?: device.latestValue("password");
 
-    log.debug "createCommandAction(${command}:${payload}) to device at ${ipAddress}:80"
+    doLogging("createCommandAction(${command}:${payload}) to device at ${ipAddress}:80");
 
 	if (!ipAddress) {
-		log.warn "aborting. ip address of device not set"
+		doLogging("aborting. ip address of device not set");
 		return null;
 	}
 
@@ -144,7 +151,7 @@ def createCommand(String command, payload, callback){
 	}
 
     def dni = null;
-    log.debug path;
+    doLogging(path);
 
     def params = [
         method: "GET",
@@ -172,21 +179,21 @@ def off(){
 def pause(millis) {
    def passed = 0
    def now = new Date().time
-   log.debug "pausing... at Now: $now"
+   doLogging("pausing... at Now: $now");
    /* This loop is an impolite busywait. We need to be given a true sleep() method, please. */
    while ( passed < millis ) {
        passed = new Date().time - now
    }
-   log.debug "... DONE pausing."
+   doLogging("... DONE pausing.");
 }
 
 def setPower(power){
-	log.debug "Setting power to: $power"
+	doLogging("Setting power to: $power");
 
 	def commandName = "Power1";
 	def payload = power;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setPowerCallback");;
 
@@ -196,7 +203,7 @@ def setPower(power){
 def setPowerCallback(physicalgraph.device.HubResponse response){
 	
 	
-	log.debug "Finished Setting power (channel: 1), JSON: ${response.json}"
+	doLogging("Finished Setting power (channel: 1), JSON: ${response.json}");
 
    	def on = response.json."POWER1" == "ON";
 	//Sometimes channel 1 will just say POWER, not POWER1
@@ -207,12 +214,12 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 }
 
 def setPowerRed(power){
-	log.debug "Setting power2 to: $power"
+	doLogging("Setting power2 to: $power");
 
 	def commandName = "Power2";
 	def payload = power;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setPowerRedCallback");;
 
@@ -220,18 +227,18 @@ def setPowerRed(power){
 }
 
 def setPowerRedCallback(physicalgraph.device.HubResponse response){
-	log.debug "Finished Setting power (channel: 2), JSON: ${response.json}"
+	doLogging("Finished Setting power (channel: 2), JSON: ${response.json}");
 
    	def on = response.json."POWER2" == "ON";
 }
 
 def setPowerBlue(power){
-	log.debug "Setting power3 to: $power"
+	doLogging("Setting power3 to: $power");
 
 	def commandName = "Power3";
 	def payload = power;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setPowerBlueCallback");;
 
@@ -239,7 +246,7 @@ def setPowerBlue(power){
 }
 
 def setPowerBlueCallback(physicalgraph.device.HubResponse response){
-	log.debug "Finished Setting power (channel: 3), JSON: ${response.json}"
+	doLogging("Finished Setting power (channel: 3), JSON: ${response.json}");
 
    	def on = response.json."POWER3" == "ON";
 }
@@ -272,9 +279,9 @@ def setSwitchState(on){
 	turnOnRed = turnOnRed ?: settings?.turnOnRed ?: device.latestValue("turnOnRed");
 	turnOnBlue = turnOnBlue ?: settings?.turnOnBlue ?: device.latestValue("turnOnBlue");
 
-	log.debug "Setting switch to ${on ? 'ON' : 'OFF'}";
-    log.debug turnOnBlue;
-    log.debug turnOnRed;
+	doLogging("Setting switch to ${on ? 'ON' : 'OFF'}");
+    doLogging(turnOnBlue);
+    doLogging(turnOnRed);
     if (on==true)
     {
     	if (turnOnRed=="true")
@@ -299,6 +306,6 @@ def setSwitchState(on){
 }
 
 def ping() {
-	log.debug "ping()"
+	doLogging("ping()");
 	return refresh()
 }
