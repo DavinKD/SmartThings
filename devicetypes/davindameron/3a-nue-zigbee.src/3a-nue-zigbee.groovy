@@ -106,6 +106,8 @@ metadata {
 			required: false,
 			displayDuringSetup: true
 		)  
+		input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
+		
 	}
 
 
@@ -157,19 +159,27 @@ private getDEFAULT_COLOR_TRANSITION() {"1400"} //2 secs (little endian)
 private getDEFAULT_PULSE_DURATION() {"2800"} //4 secs (little endian)
 private getDEFAULT_LOOP_RATE() {"05"} //5 steps per sec
 
+def doLogging(value){
+	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
+	if (debugLogging=="true")
+	{
+		log.debug value;
+	}
+}
+
 // Parse incoming device messages to generate events
 def parse(String description) {
-	log.debug "description is $description"
+	doLogging "description is $description"
 
     def cmds = []
 	def finalResult = zigbee.getEvent(description)
 	if (finalResult) {
-    	log.debug finalResult
+    	doLogging finalResult
     	sendEvent(finalResult)
 	}
 	else {
     	def zigbeeMap = zigbee.parseDescriptionAsMap(description)
-    	log.trace "zigbeeMap : $zigbeeMap"
+    	doLogging "zigbeeMap : $zigbeeMap"
 
     	if (zigbeeMap?.clusterInt == COLOR_CONTROL_CLUSTER) {
         	if(zigbeeMap.attrInt == ATTRIBUTE_HUE){  //Hue Attribute
@@ -226,7 +236,7 @@ refreshAttributes()
 }
 
 def configure() {
-log.debug "Configuring Reporting and Bindings."
+doLogging "Configuring Reporting and Bindings."
 configureAttributes() + refreshAttributes()
 //setColor(5000)
 }
@@ -334,7 +344,7 @@ private Integer boundInt(Double value, IntRange theRange) {
 }
 
 def setColor(value){
-log.trace "setColor($value)"
+doLogging "setColor($value)"
 device.endpointId ="0B"
 zigbee.on() + setHue(value.hue) + ["delay 100"] + setSaturation(value.saturation) + ["delay 100"]+ refreshAttributes()
 //sendEvent(name: "color", value: value.hex, isStateChange: true)
