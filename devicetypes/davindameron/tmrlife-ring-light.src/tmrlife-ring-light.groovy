@@ -77,6 +77,8 @@ metadata {
     preferences {
         
         input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
+	input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
+	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
         input(
              "loopRate",
              "number",
@@ -87,16 +89,14 @@ metadata {
              required: false,
              displayDuringSetup: true
             )           
+	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
+}
 
-
-		section("Sonoff Host") {
-			
-		}
-
-		section("Authentication") {
-			input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
-			input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
-		}
+def doLogging(value){
+	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
+	if (debugLogging=="true")
+	{
+		log.debug value;
 	}
 }
 
@@ -106,37 +106,37 @@ def setLoopRate(def nValue) {
 }
 
 def installed(){
-	log.debug "installed()"
+	doLogging("installed()");
     reload();
 }
 
 def updated(){
-	log.debug "updated()"
+	doLogging("updated()");
     reload();
 	runEvery5Minutes(refresh)
 }
 
 def reload(){
-	log.debug "reload()"
+	doLogging("reload()");
     refresh();
 }
 
 def poll() {
-	log.debug "POLL"
+	doLogging("POLL");
 	sendCommand("Status", "0", refreshCallback)
 }
 
 def refresh() {
-	log.debug "refresh()"
+	doLogging("refresh()");
 	sendCommand("Status", "0", refreshCallback)
 }
 
 
 def refreshCallback(physicalgraph.device.HubResponse response){
-	log.debug "refreshCallback()"
+	doLogging("refreshCallback()");
     def jsobj = response?.json;
 
-    log.debug "JSON: ${jsobj}";
+    doLogging("JSON: ${jsobj}");
     updateStatus(jsobj);
 
 }
@@ -155,10 +155,10 @@ def createCommand(String command, payload, callback){
     def username = username ?: settings?.username ?: device.latestValue("username");
     def password = password ?: settings?.password ?: device.latestValue("password");
 
-    log.debug "createCommandAction(${command}:${payload}) to device at ${ipAddress}:80"
+    doLogging("createCommandAction(${command}:${payload}) to device at ${ipAddress}:80");
 
 	if (!ipAddress) {
-		log.warn "aborting. ip address of device not set"
+		doLogging("aborting. ip address of device not set");
 		return null;
 	}
 
@@ -178,7 +178,7 @@ def createCommand(String command, payload, callback){
 	}
 
     def dni = null;
-    log.debug path;
+    doLogging(path);
 
     def params = [
         method: "GET",
@@ -205,12 +205,12 @@ def off(){
 
 
 def setPower(power){
-	log.debug "Setting power to: $power"
+	doLogging("Setting power to: $power");
 
 	def commandName = "Power2";
 	def payload = power;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setPowerCallback");;
 
@@ -220,19 +220,19 @@ def setPower(power){
 def setPowerCallback(physicalgraph.device.HubResponse response){
 	
 	
-	log.debug "Finished Setting power (channel: 2), JSON: ${response.json}"
+	doLogging("Finished Setting power (channel: 2), JSON: ${response.json}");
 
    	def on = response.json."POWER2" == "ON";
     setSwitchState(on);
 }
 
 def setLevel(level){
-	log.debug "Setting level to: $level"
+	doLogging("Setting level to: $level");
 
 	def commandName = "Dimmer";
 	def payload = level;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setLevelCallback");;
 
@@ -242,26 +242,26 @@ def setLevel(level){
 def setLevelCallback(physicalgraph.device.HubResponse response){
 	
 	
-	log.debug "Finished Setting level (channel: 2), JSON: ${response.json}"
+	doLogging("Finished Setting level (channel: 2), JSON: ${response.json}");
 
    	def on = response.json."POWER2" == "ON";
     def level = response.json."Dimmer";
-    log.debug "SendEvent level to $level";
+    doLogging("SendEvent level to $level");
     sendEvent(name:"level", value:level);
 
 	setSwitchState(on);
 }
 
 private Map buildColorHSMap(hue, saturation) {
-	log.trace "Executing 'buildColorHSMap(${hue}, ${saturation})'"
+	doLogging("Executing 'buildColorHSMap(${hue}, ${saturation})'");
     Map colorHSMap = [hue: 0, saturation: 0]
     try {
         colorHSMap.hue = hue.toFloat().toInteger()
         colorHSMap.saturation = saturation.toFloat().toInteger()
     } catch (NumberFormatException nfe) {
-        log.warn "Couldn't transform one of hue ($hue) or saturation ($saturation) to integers: $nfe"
+        doLogging("Couldn't transform one of hue ($hue) or saturation ($saturation) to integers: $nfe");
     }
-    log.trace colorHSMap
+    doLogging(colorHSMap);
     return colorHSMap
 }
 
@@ -281,27 +281,27 @@ private Integer boundInt(Number value, IntRange theRange) {
 }
 
 def setSaturation(saturationPercent) {
-    log.trace "Executing 'setSaturation' ${saturationPercent}/100"
+    doLogging("Executing 'setSaturation' ${saturationPercent}/100");
     Integer currentHue = device.currentValue("hue")
     setColor(currentHue, saturationPercent)
     // setColor will call done() for us
 }
 
 def setHue(huePercent) {
-    log.trace "Executing 'setHue' ${huePercent}/100"
+    doLogging("Executing 'setHue' ${huePercent}/100");
     Integer currentSaturation = device.currentValue("saturation")
     setColor(huePercent, currentSaturation)
     // setColor will call done() for us
 }
 
 def setColor(Integer huePercent, Integer saturationPercent) {
-    log.trace "Executing 'setColor' from separate values hue: $huePercent, saturation: $saturationPercent"
+    doLogging("Executing 'setColor' from separate values hue: $huePercent, saturation: $saturationPercent");
     //Map colorHSMap = buildColorHSMap(huePercent, saturationPercent)
     setColor(buildColorHSMap(huePercent, saturationPercent)) // call the capability version method overload
 }
 
 def setColor(String rgbHex) {
-    log.trace "Executing 'setColor' from hex $rgbHex"
+    doLogging("Executing 'setColor' from hex $rgbHex");
     if (hex == "#000000") {
         // setting to black? turn it off.
         off()
@@ -313,16 +313,16 @@ def setColor(String rgbHex) {
 }
 
 def setColor(Map colorHSMap) {
-    log.trace "Executing 'setColor(Map)' ${colorHSMap}"
+    doLogging("Executing 'setColor(Map)' ${colorHSMap}");
     Integer boundedHue = boundInt(colorHSMap?.hue?:0, PERCENT_RANGE)
     Integer boundedSaturation = boundInt(colorHSMap?.saturation?:0, PERCENT_RANGE)
     String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)
-    log.debug "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
+    doLogging("bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex");
 
 	def commandName = "Color";
 	def payload = rgbHex;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setColorCallback");
 
@@ -333,24 +333,10 @@ def setColor(Map colorHSMap) {
     sendEvent(name: "color", value: rgbHex)
 }
 
-//def setColor(color){
-//	log.debug "Setting color to: $color"
-//
-//	def commandName = "Color";
-//	def payload = color.hex;
-//
-//	log.debug "COMMAND: $commandName ($payload)"
-//
-//	def command = createCommand(commandName, payload, "setColorCallback");
-//
-//	sendHubCommand(command);
-//	sendEvent(name: "color", value: color.hex, isStateChange: true);
-//}
-
 def setColorCallback(physicalgraph.device.HubResponse response){
 	
 	
-	log.debug "Finished Setting color (channel: 2), JSON: ${response.json}"
+	doLogging("Finished Setting color (channel: 2), JSON: ${response.json}");
 
     def on = response.json."POWER2" == "ON";
 	setSwitchState(on);
@@ -372,26 +358,27 @@ def updateStatus(status){
 	def on = (powerMaskRing & status.Status.Power);
 
     setSwitchState(on);
-	log.debug "Scheme [${status.StatusSTS.Scheme}]"
+	doLogging("Scheme [${status.StatusSTS.Scheme}]");
     on = status.StatusSTS.Scheme == 2;
   
     setLoopState(on);
 }
 
 def setSwitchState(on){
-	log.debug "Setting switch to ${on ? 'ON' : 'OFF'}";
+	doLogging("Setting switch to ${on ? 'ON' : 'OFF'}");
 
 	sendEvent(name: "switch", value: on ? "on" : "off", displayed: true);
 }
 
 
 def ping() {
-	log.debug "ping()"
+	doLogging("ping()");
 	return refresh()
 }
 
 def loopOn() {
-    def loopRate = loopRate ?: settings?.loopRate ?: device.latestValue("loopRate");
+	doLogging("loopOn()");
+	def loopRate = loopRate ?: settings?.loopRate ?: device.latestValue("loopRate");
 	setSpeed(loopRate);
 	setLoop("2");
     
@@ -402,16 +389,17 @@ def loopOn() {
 }
 
 def loopOff() {
+	doLogging("loopOff()");
 	setLoop("0");
 }
 
 def setLoop(power){
-	log.debug "Setting Fade to: $power"
+	doLogging("Setting Fade to: $power");
 
 	def commandName = "Scheme";
 	def payload = power;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setLoopCallback");;
 
@@ -421,25 +409,25 @@ def setLoop(power){
 def setLoopCallback(physicalgraph.device.HubResponse response){
 	
 	
-	log.debug "Finished Setting Fade , JSON: ${response.json}"
-	log.debug "Scheme [${response.json.Scheme}]"
+	doLogging("Finished Setting Fade , JSON: ${response.json}");
+	doLogging("Scheme [${response.json.Scheme}]");
    	def on = response.json.Scheme == 2;
     setLoopState(on);
 }
 
 def setLoopState(on){
-	log.debug "Setting Loop to ${on ? 'ON' : 'OFF'}";
+	doLogging("Setting Loop to ${on ? 'ON' : 'OFF'}");
 
 	sendEvent(name: "colorLoop", value: on ? "on" : "off", displayed: true, isStateChange: true);
 }
 
 def setSpeed(value){
-	log.debug "Setting Speed to: $value"
+	doLogging("Setting Speed to: $value");
 
 	def commandName = "Speed";
 	def payload = value;
 
-	log.debug "COMMAND: $commandName ($payload)"
+	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setSpeedCallback");;
 
@@ -449,7 +437,7 @@ def setSpeed(value){
 def setSpeedCallback(physicalgraph.device.HubResponse response){
 	
 	
-	log.debug "Finished Setting Speed , JSON: ${response.json}"
+	doLogging("Finished Setting Speed , JSON: ${response.json}");
 
 }
 
