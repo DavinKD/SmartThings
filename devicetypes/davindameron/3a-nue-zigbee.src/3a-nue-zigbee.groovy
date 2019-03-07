@@ -202,7 +202,7 @@ def parse(String description) {
 			}
     	}
     	else {
-        	log.info "DID NOT PARSE MESSAGE for description : $description"
+        	doLogging "DID NOT PARSE MESSAGE for description : $description"
     	}
 	}
     return cmds
