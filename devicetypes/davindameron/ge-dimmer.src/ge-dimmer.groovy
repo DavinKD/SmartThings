@@ -1,8 +1,6 @@
 /**
  *  GE/Jasco Z-Wave Plus Dimmer Switch
  *
- *  Copyright 2017 Chris Nussbaum
- *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
  *
@@ -12,19 +10,9 @@
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  *  for the specific language governing permissions and limitations under the License.
  *
- *	Author: Chris Nussbaum
- *	Date: 04/19/2017
- *
- *	Changelog:
- *
- *  0.16 (08/03/2017) - Fix bug with status not getting updated when turned on/off from SmartThings
- *  0.15 (04/28/2017) - Fix bug with setting level to 100%
- *  0.14 (04/24/2017) - Fix bug in setting and refreshing dimmer delays
- *  0.13 (04/23/2017) - Fix bug with button press events
- *  0.12 (04/23/2017) - Fix bug with reporting back dimmer levels
- *  0.11 (04/23/2017) - Fix bug in configure() command that was preventing devices from joining properly
- *  0.10 (04/19/2017) -	Initial 0.1 Beta.
- *
+ *	Author:  Davin Dameron
+ *	Based off work by: Chris Nussbaum https://github.com/nuttytree/Nutty-SmartThings/tree/master/devicetypes/nuttytree
+ *	Date: 03/07/2019
  *
  *   Button Mappings:
  *
@@ -34,7 +22,7 @@
  *
  */
 metadata {
-	definition (name: "GE Dimmer", namespace: "davindameron", author: "Chris Nussbaum", mnmn:"SmartThings", vid:"generic-dimmer") {
+	definition (name: "GE Dimmer", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-dimmer") {
 		capability "Actuator"
 		capability "Button"
 		capability "Configuration"
