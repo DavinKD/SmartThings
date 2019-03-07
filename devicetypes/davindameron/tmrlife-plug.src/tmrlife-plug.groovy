@@ -133,7 +133,7 @@ def createCommand(String command, payload, callback){
 	}
 
     def dni = null;
-    log.debug path;
+    doLogging(path);
 
     def params = [
         method: "GET",
