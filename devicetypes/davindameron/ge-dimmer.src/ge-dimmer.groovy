@@ -128,12 +128,12 @@ metadata {
 //			}
 //		}
         
-	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 3, canChangeIcon: true) {
+	standardTile("switch", "device.switch", decoration: "flat", width: 2, height: 2, canChangeIcon: true) {
 	    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
 	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 	}        
 	controlTile("levelSliderControl", "device.level", "slider",
-            height: 3, width: 2) {
+            height: 2, width: 2) {
     	state "level", action:"switch level.setLevel", label:'Ring Level'
 	}
         standardTile("doubleUp", "device.button", width: 3, height: 2, decoration: "flat") {
@@ -202,7 +202,7 @@ metadata {
 		}
 
 		main "switch"
-        details(["switch", "doubleUp", "doubleDown",
+        details(["switch", "levelSliderControl", "doubleUp", "doubleDown",
         		 "indicator", "inverted", "refresh",
                  "zwaveStepsLabel", "zwaveSteps", "zwaveDelayLabel", "zwaveDelay",
                  "manualStepsLabel", "manualSteps", "manualDelayLabel", "manualDelay",
