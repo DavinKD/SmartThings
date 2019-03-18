@@ -56,7 +56,7 @@ def execute(String command){
 	log.debug "execute($command)";
 	
 	if (command) {
-		def json = command.json;
+		def json = new groovy.json.JsonSlurper().parseText(command);
     		if (json) {
 			log.debug("execute: Values received: ${json}")
 			def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
