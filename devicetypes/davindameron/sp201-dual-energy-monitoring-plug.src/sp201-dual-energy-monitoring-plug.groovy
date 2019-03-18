@@ -63,7 +63,7 @@ def installed(){
     reload();
 }
 
-def Execute(string command, string value){
+def Execute(String command, String value){
 	log.debug "Command: $command";
 	log.debug "Value: $value";
 }
