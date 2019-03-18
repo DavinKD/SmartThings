@@ -68,9 +68,8 @@ def installed(){
     reload();
 }
 
-def execute(String command, String value){
+def execute(String command){
 	log.debug "Command: $command";
-	log.debug "Value: $value";
 }
 
 
