@@ -59,8 +59,8 @@ metadata {
 	}
 }
 
-def deviceNotification(String value){
-	log.debug "Value: $value";
+def deviceNotification(String notification){
+	log.debug "Value: $notification";
 }
 
 def installed(){
