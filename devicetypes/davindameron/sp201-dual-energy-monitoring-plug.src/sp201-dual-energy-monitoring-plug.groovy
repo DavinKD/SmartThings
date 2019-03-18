@@ -7,6 +7,7 @@ metadata {
 		capability "Refresh"
         	capability "Power Meter"
 		capability "Energy Meter"
+		capability "Execute"
 
         	command "reload"
         	command "updateStatus"
@@ -61,6 +62,12 @@ def installed(){
 	doLogging("installed()");
     reload();
 }
+
+def Execute(string command, string value){
+	log.debug "Command: $command";
+	log.debug "Value: $value";
+}
+
 
 def updated(){
 	doLogging("updated()");
