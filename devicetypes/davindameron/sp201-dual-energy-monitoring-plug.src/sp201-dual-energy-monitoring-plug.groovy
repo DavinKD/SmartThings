@@ -59,7 +59,7 @@ metadata {
 	}
 }
 
-def deviceNotification(string value){
+def deviceNotification(String value){
 	log.debug "Value: $value";
 }
 
