@@ -5,6 +5,7 @@ metadata {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
+		capability "Execute"
 
         command "reload"
         command "updateStatus"
@@ -50,6 +51,11 @@ metadata {
 		}
 	}
 }
+
+def execute(String command){
+	log.debug "Command: $command";
+}
+
 
 def doLogging(value){
 	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
