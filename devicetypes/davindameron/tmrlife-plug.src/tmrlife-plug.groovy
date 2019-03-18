@@ -53,7 +53,31 @@ metadata {
 }
 
 def execute(String command){
-	log.debug "Command: $command";
+	log.debug "execute($command)";
+	
+	if (command) {
+		def json = command.json;
+    		if (json) {
+			log.debug("execute: Values received: ${json}")
+			def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+			if (json."POWER${PowerChannel}") {
+				log.debug("execute: got power channel")
+			   	def on = json."POWER${PowerChannel}" == "ON";
+				if(PowerChannel==1){
+					on = on || response.json."POWER" == "ON";
+				}
+				log.debug("execute: setting switch state")
+			    setSwitchState(on);
+			}
+		}
+		else {
+			log.debug("execute: No json received: ${command}")
+		}
+	else {
+		log.debug("execute: No command received")
+  	}
+
+	
 }
 
 
