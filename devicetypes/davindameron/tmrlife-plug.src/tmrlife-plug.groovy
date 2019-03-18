@@ -73,6 +73,7 @@ def execute(String command){
 		else {
 			log.debug("execute: No json received: ${command}")
 		}
+	}
 	else {
 		log.debug("execute: No command received")
   	}
