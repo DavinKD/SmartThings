@@ -8,6 +8,7 @@ metadata {
         	capability "Power Meter"
 		capability "Energy Meter"
 		capability "Execute"
+		capability "Notification"
 
         	command "reload"
         	command "updateStatus"
@@ -56,6 +57,10 @@ metadata {
 			input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
 		}
 	}
+}
+
+def deviceNotification(string value){
+	log.debug "Value: $value";
 }
 
 def installed(){
