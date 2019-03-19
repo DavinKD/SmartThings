@@ -96,8 +96,8 @@ def execute(String command){
 					sendEvent(name: "energy", value: json."ENERGY"."Total");
 				}						
 				if (json."StatusSNS"){
-					sendEvent(name: "power", value: json."ENERGY"."Power");
-					sendEvent(name: "energy", value: json."ENERGY"."Total");
+					sendEvent(name: "power", value: json."StatusSNS"."ENERGY"."Power");
+					sendEvent(name: "energy", value: json."StatusSNS"."ENERGY"."Total");
 				}
 				if (json."StatusSTS"){
 					if (json."StatusSTS"."POWER${powerChannel}") {
