@@ -46,6 +46,7 @@ metadata {
         input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
         input(name: "turnOnBlue", type: "boolean", title: "Turn on Blue Light with Switch?", displayDuringSetup: true, required: false)
         input(name: "usePlug2", type: "boolean", title: "Control Plug 2 (Leave off for plug 1)?", displayDuringSetup: true, required: false)
+        input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
 
 		section("Sonoff Host") {
@@ -71,58 +72,82 @@ def installed(){
 def execute(String command){
 	log.debug "execute($command)";
 	
-	if (command) {
-		def json = new groovy.json.JsonSlurper().parseText(command);
-    		if (json) {
-			log.debug("execute: Values received: ${json}")
-			def powerChannel = 1;
-			def usePlug2 = usePlug2 ?: settings?.usePLug2 ?: device.latestValue("usePlug2");
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT=="true"){
+		if (command) {
+			def json = new groovy.json.JsonSlurper().parseText(command);
+			if (json) {
+				log.debug("execute: Values received: ${json}")
+				def powerChannel = 1;
+				def usePlug2 = usePlug2 ?: settings?.usePLug2 ?: device.latestValue("usePlug2");
 
-			if (usePlug2 == "true")
-			{
-			powerChannel = 2;
-			}
-			if (json."POWER${PowerChannel}") {
-				log.debug("execute: got power channel")
-			   	def on = json."POWER${PowerChannel}" == "ON";
-				if(PowerChannel==1){
-					on = on || response.json."POWER" == "ON";
+				if (usePlug2 == "true")
+				{
+				powerChannel = 2;
 				}
-				log.debug("execute: setting switch state")
-			    setSwitchState(on);
-			}
-			if (json."ENERGY"){
-				if (json."ENERGY"."Power"){
-					log.debug "got power: ${json."ENERGY"."Power"}"
-					sendEvent(name: "power", value: json."ENERGY"."Power");
+				if (json."POWER${PowerChannel}") {
+					log.debug("execute: got power channel")
+					def on = json."POWER${PowerChannel}" == "ON";
+					log.debug("execute: setting switch state")
+				    setSwitchState(on);
 				}
-				if (json."ENERGY"."Total"){
-					log.debug "got energy: ${json."ENERGY"."Total"}"
-					sendEvent(name: "energy", value: json."ENERGY"."Total");
+				if (json."ENERGY"){
+					if (json."ENERGY"."Power"){
+						log.debug "got power: ${json."ENERGY"."Power"}"
+						sendEvent(name: "power", value: json."ENERGY"."Power");
+					}
+					if (json."ENERGY"."Total"){
+						log.debug "got energy: ${json."ENERGY"."Total"}"
+						sendEvent(name: "energy", value: json."ENERGY"."Total");
+					}
+				}						
+				if (json."StatusSNS"){
+					if (json."StatusSNS"."ENERGY"."Power"){
+						log.debug "got power: ${json."StatusSNS"."ENERGY"."Power"}"
+						sendEvent(name: "power", value: json."ENERGY"."Power");
+					}
+					if (json."StatusSNS"."ENERGY"."Total"){
+						log.debug "got energy: ${json."StatusSNS"."ENERGY"."Total"}"
+						sendEvent(name: "energy", value: json."ENERGY"."Total");
+					}
 				}
-			}						
+				if (json."StatusSTS"){
+					if (json."StatusSTS"."POWER${PowerChannel}") {
+						log.debug("execute: got power channel")
+						def on = json."StatusSTS"."POWER${PowerChannel}" == "ON";
+						log.debug("execute: setting switch state")
+						setSwitchState(on);
+					}
+				}
 
+
+			}
+			else {
+				log.debug("execute: No json received: ${command}")
+			}
 		}
 		else {
-			log.debug("execute: No json received: ${command}")
+			log.debug("execute: No command received")
 		}
 	}
-	else {
-		log.debug("execute: No command received")
-  	}
-
 	
 }
 
 def updated(){
 	doLogging("updated()");
-    reload();
-	runEvery5Minutes(refresh)
+	reload();
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		runEvery5Minutes(refresh)
+	}
 }
 
 def reload(){
 	doLogging("reload()");
-    refresh();
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+	    refresh();
+	}
 }
 
 
@@ -141,7 +166,10 @@ def refreshCallback(physicalgraph.device.HubResponse response){
 	doLogging("refreshCallback()");
 	def jsobj = response?.json;
 	doLogging("JSON: ${jsobj}");
-	updateStatus(jsobj);
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		updateStatus(jsobj);
+	}
 
 }
 
@@ -152,7 +180,10 @@ def reset() {
 
 def resetCallBack(physicalgraph.device.HubResponse response) {
 	doLogging("refreshCallback($response)");
-	sendEvent(name: "energy", value: response.json.EnergyReset.Total);
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		sendEvent(name: "energy", value: response.json.EnergyReset.Total);
+	}
 
 }
 
@@ -257,23 +288,26 @@ def doLogging(value){
 }
 
 def setPowerCallback(physicalgraph.device.HubResponse response){
-	def usePlug2 = usePlug2 ?: settings?.usePLug2 ?: device.latestValue("usePlug2");
-	def on = response.json."POWER1" == "ON";
-	if (usePlug2=="true")
-	{
-		doLogging("Finished Setting power (channel: 2), JSON: ${response.json}");
-        on = response.json."POWER2" == "ON";
-    }
-    else
-    {
-		doLogging("Finished Setting power (channel: 1), JSON: ${response.json}");
-        
-        //Sometimes channel 1 will just say POWER, not POWER1
-        on = on || response.json."POWER" == "ON";
-   	}
-    setSwitchState(on);
-    pause(2000);
-    refresh();
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		def usePlug2 = usePlug2 ?: settings?.usePLug2 ?: device.latestValue("usePlug2");
+		def on = response.json."POWER1" == "ON";
+		if (usePlug2=="true")
+		{
+			doLogging("Finished Setting power (channel: 2), JSON: ${response.json}");
+		on = response.json."POWER2" == "ON";
+		}
+		else
+		{
+			doLogging("Finished Setting power (channel: 1), JSON: ${response.json}");
+
+		//Sometimes channel 1 will just say POWER, not POWER1
+		on = on || response.json."POWER" == "ON";
+		}
+		setSwitchState(on);
+		pause(2000);
+		refresh();
+	}
 }
 
 def setPowerBlue(power){
@@ -292,7 +326,10 @@ def setPowerBlue(power){
 def setPowerBlueCallback(physicalgraph.device.HubResponse response){
 	doLogging("Finished Setting power (channel: 3), JSON: ${response.json}");
 
-   	def on = response.json."POWER3" == "ON";
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+	   	def on = response.json."POWER3" == "ON";
+	}
 }
 
 def updateStatus(status){
@@ -325,24 +362,18 @@ def updateStatus(status){
 
 def setSwitchState(on){
 	def turnOnRed = false;
-    def turnOnBlue = false;
+	def turnOnBlue = false;
 	turnOnBlue = turnOnBlue ?: settings?.turnOnBlue ?: device.latestValue("turnOnBlue");
-
 	doLogging("Setting switch to ${on ? 'ON' : 'OFF'}");
-    doLogging(turnOnBlue);
-    if (on==true)
-
-	{
-    	if (turnOnBlue=="true")
-        	{setPowerBlue("on")
-            }
+	doLogging(turnOnBlue);
+	if (on==true) {
+		if (turnOnBlue=="true") {
+			setPowerBlue("on")
+		}
 	}    
-
-	if (!on)
-    {
-        setPowerBlue("off");
-    }
-
+	if (!on) {
+		setPowerBlue("off");
+	}
 	sendEvent(name: "switch", value: on ? "on" : "off", displayed: true);
 }
 
