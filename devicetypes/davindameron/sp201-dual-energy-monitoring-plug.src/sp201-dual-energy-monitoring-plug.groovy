@@ -69,9 +69,49 @@ def installed(){
 }
 
 def execute(String command){
-	log.debug "Command: $command";
-}
+	log.debug "execute($command)";
+	
+	if (command) {
+		def json = new groovy.json.JsonSlurper().parseText(command);
+    		if (json) {
+			log.debug("execute: Values received: ${json}")
+			def powerChannel = 1;
+			def usePlug2 = usePlug2 ?: settings?.usePLug2 ?: device.latestValue("usePlug2");
 
+			if (usePlug2 == "true")
+			{
+			powerChannel = 2;
+			}
+			if (json."POWER${PowerChannel}") {
+				log.debug("execute: got power channel")
+			   	def on = json."POWER${PowerChannel}" == "ON";
+				if(PowerChannel==1){
+					on = on || response.json."POWER" == "ON";
+				}
+				log.debug("execute: setting switch state")
+			    setSwitchState(on);
+			}
+			if (json."ENERGY"."Power"){
+				log.debug "got power: ${json."ENERGY"."Power"}"
+				sendEvent(name: "power", value: json."ENERGY"."Power");
+			}
+			if (json."ENERGY"."Total"){
+				log.debug "got energy: ${json."ENERGY"."Total"}"
+				sendEvent(name: "energy", value: json."ENERGY"."Total");
+			}
+						
+
+		}
+		else {
+			log.debug("execute: No json received: ${command}")
+		}
+	}
+	else {
+		log.debug("execute: No command received")
+  	}
+
+	
+}
 
 def updated(){
 	doLogging("updated()");
