@@ -92,24 +92,12 @@ def execute(String command){
 				    setSwitchState(on);
 				}
 				if (json."ENERGY"){
-					if (json."ENERGY"."Power"){
-						log.debug "got power: ${json."ENERGY"."Power"}"
-						sendEvent(name: "power", value: json."ENERGY"."Power");
-					}
-					if (json."ENERGY"."Total"){
-						log.debug "got energy: ${json."ENERGY"."Total"}"
-						sendEvent(name: "energy", value: json."ENERGY"."Total");
-					}
+					sendEvent(name: "power", value: json."ENERGY"."Power");
+					sendEvent(name: "energy", value: json."ENERGY"."Total");
 				}						
 				if (json."StatusSNS"){
-					if (json."StatusSNS"."ENERGY"."Power"){
-						log.debug "got power: ${json."StatusSNS"."ENERGY"."Power"}"
-						sendEvent(name: "power", value: json."ENERGY"."Power");
-					}
-					if (json."StatusSNS"."ENERGY"."Total"){
-						log.debug "got energy: ${json."StatusSNS"."ENERGY"."Total"}"
-						sendEvent(name: "energy", value: json."ENERGY"."Total");
-					}
+					sendEvent(name: "power", value: json."ENERGY"."Power");
+					sendEvent(name: "energy", value: json."ENERGY"."Total");
 				}
 				if (json."StatusSTS"){
 					if (json."StatusSTS"."POWER${powerChannel}") {
