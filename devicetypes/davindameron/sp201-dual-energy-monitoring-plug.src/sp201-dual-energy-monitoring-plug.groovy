@@ -70,14 +70,14 @@ def installed(){
 }
 
 def execute(String command){
-	log.debug "execute($command)";
+	doLogging "execute($command)";
 	
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT=="true"){
 		if (command) {
 			def json = new groovy.json.JsonSlurper().parseText(command);
 			if (json) {
-				log.debug("execute: Values received: ${json}")
+				doLogging("execute: Values received: ${json}")
 				def powerChannel = 1;
 				def usePlug2 = usePlug2 ?: settings?.usePLug2 ?: device.latestValue("usePlug2");
 
@@ -86,9 +86,9 @@ def execute(String command){
 				powerChannel = 2;
 				}
 				if (json."POWER${powerChannel}") {
-					log.debug("execute: got power channel")
+					doLogging("execute: got power channel")
 					def on = json."POWER${powerChannel}" == "ON";
-					log.debug("execute: setting switch state")
+					doLogging("execute: setting switch state")
 				    setSwitchState(on);
 				}
 				if (json."ENERGY"){
@@ -101,9 +101,9 @@ def execute(String command){
 				}
 				if (json."StatusSTS"){
 					if (json."StatusSTS"."POWER${powerChannel}") {
-						log.debug("execute: got power channel")
+						doLogging("execute: got power channel")
 						def on = json."StatusSTS"."POWER${powerChannel}" == "ON";
-						log.debug("execute: setting switch state")
+						doLogging("execute: setting switch state")
 						setSwitchState(on);
 					}
 				}
@@ -111,11 +111,11 @@ def execute(String command){
 
 			}
 			else {
-				log.debug("execute: No json received: ${command}")
+				doLogging("execute: No json received: ${command}")
 			}
 		}
 		else {
-			log.debug("execute: No command received")
+			doLogging("execute: No command received")
 		}
 	}
 	
