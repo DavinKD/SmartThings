@@ -85,9 +85,9 @@ def execute(String command){
 				{
 				powerChannel = 2;
 				}
-				if (json."POWER${PowerChannel}") {
+				if (json."POWER${powerChannel}") {
 					log.debug("execute: got power channel")
-					def on = json."POWER${PowerChannel}" == "ON";
+					def on = json."POWER${powerChannel}" == "ON";
 					log.debug("execute: setting switch state")
 				    setSwitchState(on);
 				}
@@ -112,9 +112,9 @@ def execute(String command){
 					}
 				}
 				if (json."StatusSTS"){
-					if (json."StatusSTS"."POWER${PowerChannel}") {
+					if (json."StatusSTS"."POWER${powerChannel}") {
 						log.debug("execute: got power channel")
-						def on = json."StatusSTS"."POWER${PowerChannel}" == "ON";
+						def on = json."StatusSTS"."POWER${powerChannel}" == "ON";
 						log.debug("execute: setting switch state")
 						setSwitchState(on);
 					}
