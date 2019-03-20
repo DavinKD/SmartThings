@@ -464,9 +464,12 @@ def setColor(Map colorHSMap) {
 
     sendHubCommand(command);
 
-	sendEvent(name: "hue", value: boundedHue)
-    sendEvent(name: "saturation", value: boundedSaturation)
-    sendEvent(name: "color", value: rgbHex)
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		sendEvent(name: "hue", value: boundedHue)
+		sendEvent(name: "saturation", value: boundedSaturation)
+		sendEvent(name: "color", value: rgbHex)
+	}
 }
 
 def setColorCallback(physicalgraph.device.HubResponse response){
