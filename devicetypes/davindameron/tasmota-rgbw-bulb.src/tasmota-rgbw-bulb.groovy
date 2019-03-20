@@ -147,7 +147,7 @@ def execute(String command){
 				//color
 				if (json."Color") {
 					doLogging "SendEvent Color to ${json."Color".substring(0,6)}"
-					sendEvent(name: "color", value: json."Color".substring(0,6))
+					//sendEvent(name: "color", value: json."Color".substring(0,6))
 					
 				}
 				if (json."HSBColor") {
@@ -157,8 +157,12 @@ def execute(String command){
 					iHue = iHue / 360 * 100
 					doLogging "SendEvent hue to ${iHue}"
 					doLogging "SendEvent saturation to ${iSaturation}"
+					String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)					
+
+					doLogging "SendEvent Color to ${rgbHex}"
 					sendEvent(name: "hue", value: iHue)
 					sendEvent(name: "saturation", value: iSaturation)
+					sendEvent(name: "color", value: rgbHex)
 				}
 				//Loop
 				if (json."Scheme") {
