@@ -150,7 +150,7 @@ def execute(String command){
 					
 				}
 				if (json."HSBColor") {
-					def hsbColor[] = json."HSBColor".split(',')
+					Strting hsbColor[] = json."HSBColor".split(',')
 					def hue = hsbColor[0] / 360 * 100
 					def saturation = hsbColor[1]
 					doLogging "SendEvent hue to ${hue}"
