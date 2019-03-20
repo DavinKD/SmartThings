@@ -157,7 +157,7 @@ def execute(String command){
 					iHue = iHue / 360 * 100
 					doLogging "SendEvent hue to ${iHue}"
 					doLogging "SendEvent saturation to ${iSaturation}"
-					String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)					
+					String rgbHex = colorUtil.hsvToHex(iHue, iSaturation)					
 
 					doLogging "SendEvent Color to ${rgbHex}"
 					sendEvent(name: "hue", value: iHue)
