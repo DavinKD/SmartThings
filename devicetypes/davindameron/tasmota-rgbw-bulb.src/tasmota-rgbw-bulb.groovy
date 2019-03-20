@@ -150,7 +150,9 @@ def execute(String command){
 					
 				}
 				if (json."HSBColor") {
-					def (hue, saturation, brightness) = json."HSBColor".tokenize( ',' )
+					def values = json."HSBColor".split(',')
+					hue = values[0]
+					saturation = values[1]
 					hue = hue / 360 * 100
 					doLogging "SendEvent hue to ${hue}"
 					doLogging "SendEvent saturation to ${saturation}"
