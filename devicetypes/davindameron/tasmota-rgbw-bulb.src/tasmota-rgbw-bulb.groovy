@@ -87,6 +87,7 @@ metadata {
         input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
 	input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
 	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
+        input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
         input(
              "loopRate",
@@ -113,23 +114,56 @@ def execute(String command){
 			def json = new groovy.json.JsonSlurper().parseText(command);
 			if (json) {
 				doLogging("execute: Values received: ${json}")
+				if (json."StatusSTS"){
+					json = json."StatusSTS"
+				}
 				def powerChannel = 1;
 				if (json."POWER${powerChannel}") {
 					doLogging("execute: got power channel")
 					def on = json."POWER${powerChannel}" == "ON";
 					doLogging("execute: setting switch state")
-				    setSwitchState(on);
+					setSwitchState(on);
 				}
-				if (json."StatusSTS"){
-					if (json."StatusSTS"."POWER${powerChannel}") {
+				if(powerChannel==1) {
+					if (json."POWER") {
 						doLogging("execute: got power channel")
-						def on = json."StatusSTS"."POWER${powerChannel}" == "ON";
+						def on = json."POWER" == "ON";
 						doLogging("execute: setting switch state")
 						setSwitchState(on);
 					}
 				}
-
-
+				//Color Temp
+				if (json."CT") {
+					def kelvin = Math.round((json.CT + 6)*13.84)
+					doLogging "Kelvin is ${kelvin}"
+				}
+				//level
+				if (json."Dimmer") {
+					def level = json."Dimmer";
+					doLogging "SendEvent level to $level";
+					sendEvent(name:"level", value:level);
+				}
+				//color
+				if (json."Color") {
+					doLogging "SendEvent Color to ${json."Color".substring(0,6)}"
+					sendEvent(name: "color", json."Color".substring(0,6))
+					
+				}
+				if (json."HSBColor") {
+					def hsbColor[] = json."HSBColor".split(',')
+					def hue = hsbColor[0] / 360 * 100
+					def saturation = hsbColor[1]
+					doLogging "SendEvent hue to ${hue}"
+					doLogging "SendEvent saturation to ${saturation}"
+					sendEvent(name: "hue", value: hue)
+					sendEvent(name: "saturation", value: saturation)
+				}
+				//Loop
+				if (json."Scheme") {
+					doLogging "Scheme [${json.Scheme}]"
+					def on = json.Scheme == 2;
+					setLoopState(on);
+				}
 			}
 			else {
 				doLogging("execute: No json received: ${command}")
@@ -162,13 +196,19 @@ def installed(){
 
 def updated(){
 	doLogging "updated()"
-    reload();
-	runEvery5Minutes(refresh)
+	reload();
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		runEvery5Minutes(refresh)
+	}
 }
 
 def reload(){
 	doLogging "reload()"
-    refresh();
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		refresh();
+	}
 }
 
 def poll() {
@@ -184,10 +224,13 @@ def refresh() {
 
 def refreshCallback(physicalgraph.device.HubResponse response){
 	doLogging "refreshCallback()"
-    def jsobj = response?.json;
+	def jsobj = response?.json;
 
-    doLogging "JSON: ${jsobj}";
-    updateStatus(jsobj);
+	doLogging "JSON: ${jsobj}";
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		updateStatus(jsobj);
+	}
 
 }
 
@@ -266,16 +309,19 @@ def setColorTemperatureCallback(physicalgraph.device.HubResponse response){
 	
 	
 	doLogging "Finished Setting Color Temperature (channel: 1), JSON: ${response.json}"
-    def kelvin = Math.round((response.json.CT + 6)*13.84)
-    doLogging "Kelvin is ${kelvin}"
-    
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		def kelvin = Math.round((response.json.CT + 6)*13.84)
+		doLogging "Kelvin is ${kelvin}"
 
-   	def on = response.json."POWER1" == "ON";
-	on = on || response.json."POWER" == "ON";
-    def level = response.json."Dimmer";
-    doLogging "SendEvent level to $level";
-    sendEvent(name:"level", value:level);
-	setSwitchState(on);
+
+		def on = response.json."POWER1" == "ON";
+		on = on || response.json."POWER" == "ON";
+		def level = response.json."Dimmer";
+		doLogging "SendEvent level to $level";
+		sendEvent(name:"level", value:level);
+		setSwitchState(on);
+	}
 }
 
 def on(){
@@ -317,24 +363,27 @@ def setLevelCallback(physicalgraph.device.HubResponse response){
 	
 	
 	doLogging "Finished Setting level (channel: 2), JSON: ${response.json}"
-
-   	def on = response.json."POWER1" == "ON";
-	on = on || response.json."POWER" == "ON";
-    def level = response.json."Dimmer";
-    doLogging "SendEvent level to $level";
-    sendEvent(name:"level", value:level);
-
-	setSwitchState(on);
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		def on = response.json."POWER1" == "ON";
+		on = on || response.json."POWER" == "ON";
+		def level = response.json."Dimmer";
+		doLogging "SendEvent level to $level";
+		sendEvent(name:"level", value:level);
+		setSwitchState(on);
+	}
 }
 
 def setPowerCallback(physicalgraph.device.HubResponse response){
 	
 	
 	doLogging "Finished Setting power (channel: 2), JSON: ${response.json}"
-
-   	def on = response.json."POWER1" == "ON";
-	on = on || response.json."POWER" == "ON";
-    setSwitchState(on);
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		def on = response.json."POWER1" == "ON";
+		on = on || response.json."POWER" == "ON";
+		setSwitchState(on);
+	}
 }
 
 private Map buildColorHSMap(hue, saturation) {
@@ -418,28 +467,17 @@ def setColor(Map colorHSMap) {
     sendEvent(name: "color", value: rgbHex)
 }
 
-//def setColor(color){
-//	doLogging "Setting color to: $color"
-//    
-//	def commandName = "Color";
-//	def payload = color.hex;
-//
-//	doLogging "COMMAND: $commandName ($payload)"
-//
-//	def command = createCommand(commandName, payload, "setColorCallback");
-//
-//	sendHubCommand(command);
-//	sendEvent(name: "color", value: color.hex, isStateChange: true);
-//}
-
 def setColorCallback(physicalgraph.device.HubResponse response){
 	
 	
 	doLogging "Finished Setting color (channel: 2), JSON: ${response.json}"
 
-    def on = response.json."POWER1" == "ON";
-	on = on || response.json."POWER" == "ON";
-	setSwitchState(on);
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		def on = response.json."POWER1" == "ON";
+		on = on || response.json."POWER" == "ON";
+		setSwitchState(on);
+	}
 }
 def updateStatus(status){
 
@@ -508,9 +546,12 @@ def setLoopCallback(physicalgraph.device.HubResponse response){
 	
 	
 	doLogging "Finished Setting Fade , JSON: ${response.json}"
-	doLogging "Scheme [${response.json.Scheme}]"
-   	def on = response.json.Scheme == 2;
-    setLoopState(on);
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		doLogging "Scheme [${response.json.Scheme}]"
+		def on = response.json.Scheme == 2;
+		setLoopState(on);
+	}
 }
 
 def setLoopState(on){
