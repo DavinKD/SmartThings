@@ -136,6 +136,7 @@ def execute(String command){
 				if (json."CT") {
 					def kelvin = Math.round((json.CT + 6)*13.84)
 					doLogging "Kelvin is ${kelvin}"
+					sendEvent(name: "colorTemperature", value: kelvin)
 				}
 				//level
 				if (json."Dimmer") {
@@ -302,8 +303,11 @@ def setColorTemperature(kelvin) {
 	def command = createCommand(commandName, payload, "setColorTemperatureCallback");;
 
    	sendHubCommand(command);
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
 
-	sendEvent(name: "colorTemperature", value: kelvin)
+		sendEvent(name: "colorTemperature", value: kelvin)
+	}
 }
 
 def setColorTemperatureCallback(physicalgraph.device.HubResponse response){
