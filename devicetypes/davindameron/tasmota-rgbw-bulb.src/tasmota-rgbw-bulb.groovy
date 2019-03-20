@@ -151,13 +151,13 @@ def execute(String command){
 				}
 				if (json."HSBColor") {
 					def values = json."HSBColor".split(',')
-					hue = values[0]
-					saturation = values[1]
-					hue = hue / 360 * 100
-					doLogging "SendEvent hue to ${hue}"
-					doLogging "SendEvent saturation to ${saturation}"
-					sendEvent(name: "hue", value: hue)
-					sendEvent(name: "saturation", value: saturation)
+					Integer iHue = values[0].toInteger
+					Integer iSaturation = values[1].toInteger
+					iHue = iHue / 360 * 100
+					doLogging "SendEvent hue to ${iHue}"
+					doLogging "SendEvent saturation to ${iSaturation}"
+					sendEvent(name: "hue", value: iHue)
+					sendEvent(name: "saturation", value: iSaturation)
 				}
 				//Loop
 				if (json."Scheme") {
