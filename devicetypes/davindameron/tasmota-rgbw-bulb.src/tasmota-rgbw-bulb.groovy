@@ -494,25 +494,22 @@ def setColorCallback(physicalgraph.device.HubResponse response){
 }
 def updateStatus(status){
 
-	//refresh();
-	// Device power status(es) are reported back by the Status.Power property
-	// The Status.Power property contains the on/off state of all channels (in case of a Sonoff 4CH or Sonoff Dual)
-	// This is binary-encoded where each bit represents the on/off state of a particular channel
-	// EG: 7 in binary is 0111.  In this case channels 1, 2, and 3 are ON and channel 4 is OFF
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		def powerMaskRing = 0b0001;
 
-	def powerMaskRing = 0b0001;
+		def powerChannelRing = 1;
 
-	def powerChannelRing = 1;
+		powerMaskRing = powerMaskRing << ("$powerChannelRing".toInteger() - 1); // shift the bits over 
 
-	powerMaskRing = powerMaskRing << ("$powerChannelRing".toInteger() - 1); // shift the bits over 
+		def on = (powerMaskRing & status.Status.Power);
 
-	def on = (powerMaskRing & status.Status.Power);
+	    setSwitchState(on);
+		doLogging "Scheme [${status.StatusSTS.Scheme}]"
+	    on = status.StatusSTS.Scheme == 2;
 
-    setSwitchState(on);
-	doLogging "Scheme [${status.StatusSTS.Scheme}]"
-    on = status.StatusSTS.Scheme == 2;
-  
-    setLoopState(on);
+	    setLoopState(on);
+	}
 }
 
 def setSwitchState(on){
