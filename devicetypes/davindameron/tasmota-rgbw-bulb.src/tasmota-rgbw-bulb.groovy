@@ -118,14 +118,14 @@ def execute(String command){
 					json = json."StatusSTS"
 				}
 				def powerChannel = 1;
-				if (json."POWER${powerChannel}") {
+				if (json."POWER${powerChannel}"!=null) {
 					doLogging("execute: got power channel")
 					def on = json."POWER${powerChannel}" == "ON";
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 				}
 				if(powerChannel==1) {
-					if (json."POWER") {
+					if (json."POWER"!=null) {
 						doLogging("execute: got power channel")
 						def on = json."POWER" == "ON";
 						doLogging("execute: setting switch state")
@@ -133,24 +133,24 @@ def execute(String command){
 					}
 				}
 				//Color Temp
-				if (json."CT") {
+				if (json."CT"!=null) {
 					def kelvin = Math.round((json.CT + 6)*13.84)
 					doLogging "Kelvin is ${kelvin}"
 					sendEvent(name: "colorTemperature", value: kelvin)
 				}
 				//level
-				if (json."Dimmer") {
+				if (json."Dimmer"!=null) {
 					def level = json."Dimmer";
 					doLogging "SendEvent level to $level";
 					sendEvent(name:"level", value:level);
 				}
 				//color
-				if (json."Color") {
+				if (json."Color"!=null) {
 					doLogging "SendEvent Color to ${json."Color".substring(0,6)}"
 					//sendEvent(name: "color", value: json."Color".substring(0,6))
 					
 				}
-				if (json."HSBColor") {
+				if (json."HSBColor"!=null) {
 					def values = json."HSBColor".split(',')
 					Integer iHue = values[0].toInteger()
 					Integer iSaturation = values[1].toInteger()
