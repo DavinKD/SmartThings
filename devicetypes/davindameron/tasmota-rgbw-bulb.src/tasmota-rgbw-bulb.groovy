@@ -30,19 +30,20 @@ metadata {
 		capability "Refresh"
 		capability "Switch"
 		capability "Color Control"
-        capability "Color Temperature"
-        capability "Switch Level"
+		capability "Color Temperature"
+        	capability "Switch Level"
+		capability "Execute"
 
-        command "reload"
-        command "updateStatus"
-        command "ringpush"
-     	command "loopOn"
-    	command "loopOff"
-    	command "setLoopRate", ["number"]
-        
-        attribute "colorLabel", "string"
-        attribute "tempLabel", "string"
-        attribute "dimmerLabel", "string"
+		command "reload"
+		command "updateStatus"
+		command "ringpush"
+		command "loopOn"
+		command "loopOff"
+		command "setLoopRate", ["number"]
+
+		attribute "colorLabel", "string"
+		attribute "tempLabel", "string"
+		attribute "dimmerLabel", "string"
        
 	}
 
@@ -101,6 +102,44 @@ metadata {
 
 
 	}
+}
+
+def execute(String command){
+	doLogging "execute($command)";
+	
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT=="true"){
+		if (command) {
+			def json = new groovy.json.JsonSlurper().parseText(command);
+			if (json) {
+				doLogging("execute: Values received: ${json}")
+				def powerChannel = 1;
+				if (json."POWER${powerChannel}") {
+					doLogging("execute: got power channel")
+					def on = json."POWER${powerChannel}" == "ON";
+					doLogging("execute: setting switch state")
+				    setSwitchState(on);
+				}
+				if (json."StatusSTS"){
+					if (json."StatusSTS"."POWER${powerChannel}") {
+						doLogging("execute: got power channel")
+						def on = json."StatusSTS"."POWER${powerChannel}" == "ON";
+						doLogging("execute: setting switch state")
+						setSwitchState(on);
+					}
+				}
+
+
+			}
+			else {
+				doLogging("execute: No json received: ${command}")
+			}
+		}
+		else {
+			doLogging("execute: No command received")
+		}
+	}
+	
 }
 
 def doLogging(value){
