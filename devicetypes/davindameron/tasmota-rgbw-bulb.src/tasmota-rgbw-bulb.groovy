@@ -156,8 +156,8 @@ def execute(String command){
 					hue = hue / 360 * 100
 					doLogging "SendEvent hue to ${hue}"
 					doLogging "SendEvent saturation to ${saturation}"
-					sendEvent(name: "hue", value: hue)
-					sendEvent(name: "saturation", value: saturation)
+					//sendEvent(name: "hue", value: hue)
+					//sendEvent(name: "saturation", value: saturation)
 				}
 				//Loop
 				if (json."Scheme") {
