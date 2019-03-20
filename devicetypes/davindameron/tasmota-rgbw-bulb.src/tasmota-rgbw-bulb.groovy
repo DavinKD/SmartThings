@@ -424,9 +424,9 @@ def setSaturation(saturationPercent) {
 
 def setHue(huePercent) {
     doLogging "Executing 'setHue' ${huePercent}/100"
+    Integer currentHue = huePercent
     Integer currentSaturation = device.currentValue("saturation")
-	String sSat = currentSaturation
-    setColor(huePercent, sSat)
+    setColor(huePercent, currentSaturation)
     // setColor will call done() for us
 }
 
