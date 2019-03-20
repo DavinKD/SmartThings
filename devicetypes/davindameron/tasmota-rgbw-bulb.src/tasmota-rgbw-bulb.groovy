@@ -146,7 +146,7 @@ def execute(String command){
 				//color
 				if (json."Color") {
 					doLogging "SendEvent Color to ${json."Color".substring(0,6)}"
-					//sendEvent(name: "color", value: json."Color".substring(0,6))
+					sendEvent(name: "color", value: json."Color".substring(0,6))
 					
 				}
 				if (json."HSBColor") {
