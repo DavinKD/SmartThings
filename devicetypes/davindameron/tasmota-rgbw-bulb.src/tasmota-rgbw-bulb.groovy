@@ -165,7 +165,7 @@ def execute(String command){
 					sendEvent(name: "color", value: rgbHex)
 				}
 				//Loop
-				if (json."Scheme") {
+				if (json."Scheme"!=null) {
 					doLogging "Scheme [${json.Scheme}]"
 					def on = json.Scheme == 2;
 					setLoopState(on);
