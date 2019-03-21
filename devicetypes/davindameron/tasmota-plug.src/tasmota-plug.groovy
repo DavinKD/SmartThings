@@ -354,13 +354,14 @@ def setPower(power){
 		doBacklog = true
 		backlogValue += "%20Power${PowerChannelLed3}%20${power}"
 	}
+	def commandName = ""
+	dev payload = ""
 	if (doBacklog) {
-		def commandName = backlogValue;
-		def payload = "";
+		commandName = backlogValue;
 	}
 	else {
-		def commandName = "Power${PowerChannel}";
-		def payload = power;
+		commandName = "Power${PowerChannel}";
+		payload = power;
 	}
 	doLogging("COMMAND: $commandName ($payload)");
 
