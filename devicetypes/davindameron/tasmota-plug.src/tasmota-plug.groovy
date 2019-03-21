@@ -354,9 +354,14 @@ def setPower(power){
 		doBacklog = true
 		backlogValue += "%20Power${PowerChannelLed3}%20${power}"
 	}
-	def commandName = "Power${PowerChannel}";
-	def payload = power;
-
+	if (doBacklog) {
+		def commandName = backlogValue;
+		def payload = "";
+	}
+	else {
+		def commandName = "Power${PowerChannel}";
+		def payload = power;
+	}
 	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setPowerCallback");;
@@ -409,7 +414,7 @@ def updateStatus(status){
 			gotPowerState = true
 		}
 		setSwitchState(on);
-		
+		def json = status.StatusSTS
 		if (gotPowerState) {
 			if (on) {
 				def led1On = false
