@@ -62,12 +62,14 @@ def execute(String command){
 				def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 				
 				def on = false
+				def gotPowerState = false
 
 				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
 					on = json."POWER${PowerChannel}" == "ON";
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
+					gotPowerState = true
 				}
 				if(PowerChannel==1) {
 					if (json."POWER"!=null) {
@@ -75,128 +77,131 @@ def execute(String command){
 						on = json."POWER" == "ON";
 						doLogging("execute: setting switch state")
 						setSwitchState(on);
+						gotPowerState = true
 					}
 				}
 				
-				if (on) {
-					def led1On = false
-					def led2On = false
-					def led3On = false
-					def didRefresh = false
-					if (turnOnLed1=="true") {
-						if (json."POWER${PowerChannelLed1}"!=null) {
-							led1On = json."POWER${PowerChannelLed1}" == "ON"
-							if (led1On) {
-								//Do Nothing
+				if (gotPowerState) {
+					if (on) {
+						def led1On = false
+						def led2On = false
+						def led3On = false
+						def didRefresh = false
+						if (turnOnLed1=="true") {
+							if (json."POWER${PowerChannelLed1}"!=null) {
+								led1On = json."POWER${PowerChannelLed1}" == "ON"
+								if (led1On) {
+									//Do Nothing
+								}
+								else
+								{
+									setPowerLed("on", PowerChannelLed1)
+								}
 							}
-							else
-							{
-								setPowerLed("on", PowerChannelLed1)
-							}
-						}
-						else {
-							//We didn't get this, so we need to do a status
-							didRefresh = true
-							refresh()
-						}
-					}
-					if (turnOnLed2=="true") {
-						if (json."POWER${PowerChannelLed2}"!=null) {
-							led2On = json."POWER${PowerChannelLed2}" == "ON"
-							if (led2On) {
-								//Do Nothing
-							}
-							else
-							{
-								setPowerLed("on", PowerChannelLed2)
-							}
-						}
-						else {
-							//We didn't get this, so we need to do a status
-							if (didRefresh==false) {
+							else {
+								//We didn't get this, so we need to do a status
 								didRefresh = true
 								refresh()
 							}
 						}
-					}
-					if (turnOnLed3=="true") {
-						if (json."POWER${PowerChannelLed3}"!=null) {
-							led3On = json."POWER${PowerChannelLed3}" == "ON"
-							if (led3On) {
-								//Do Nothing
+						if (turnOnLed2=="true") {
+							if (json."POWER${PowerChannelLed2}"!=null) {
+								led2On = json."POWER${PowerChannelLed2}" == "ON"
+								if (led2On) {
+									//Do Nothing
+								}
+								else
+								{
+									setPowerLed("on", PowerChannelLed2)
+								}
 							}
-							else
-							{
-								setPowerLed("on", PowerChannelLed3)
+							else {
+								//We didn't get this, so we need to do a status
+								if (didRefresh==false) {
+									didRefresh = true
+									refresh()
+								}
 							}
 						}
-						else {
-							//We didn't get this, so we need to do a status
-							if (didRefresh==false) {
+						if (turnOnLed3=="true") {
+							if (json."POWER${PowerChannelLed3}"!=null) {
+								led3On = json."POWER${PowerChannelLed3}" == "ON"
+								if (led3On) {
+									//Do Nothing
+								}
+								else
+								{
+									setPowerLed("on", PowerChannelLed3)
+								}
+							}
+							else {
+								//We didn't get this, so we need to do a status
+								if (didRefresh==false) {
+									didRefresh = true
+									refresh()
+								}
+							}
+						}
+					}
+					else {
+						//off
+						def led1On = false
+						def led2On = false
+						def led3On = false
+						def didRefresh = false
+						if (turnOnLed1=="true") {
+							if (json."POWER${PowerChannelLed1}"!=null) {
+								led1On = json."POWER${PowerChannelLed1}" == "ON"
+								if (led1On) {
+									setPowerLed("off", PowerChannelLed1)
+								}
+								else
+								{
+									//Do Nothing
+								}
+							}
+							else {
+								//We didn't get this, so we need to do a status
 								didRefresh = true
 								refresh()
 							}
 						}
-					}
-				}
-				else {
-					//off
-					def led1On = false
-					def led2On = false
-					def led3On = false
-					def didRefresh = false
-					if (turnOnLed1=="true") {
-						if (json."POWER${PowerChannelLed1}"!=null) {
-							led1On = json."POWER${PowerChannelLed1}" == "ON"
-							if (led1On) {
-								setPowerLed("off", PowerChannelLed1)
+						if (turnOnLed2=="true") {
+							if (json."POWER${PowerChannelLed2}"!=null) {
+								led2On = json."POWER${PowerChannelLed2}" == "ON"
+								if (led2On) {
+									setPowerLed("off", PowerChannelLed2)
+								}
+								else
+								{
+									//Do Nothing
+								}
 							}
-							else
-							{
-								//Do Nothing
-							}
-						}
-						else {
-							//We didn't get this, so we need to do a status
-							didRefresh = true
-							refresh()
-						}
-					}
-					if (turnOnLed2=="true") {
-						if (json."POWER${PowerChannelLed2}"!=null) {
-							led2On = json."POWER${PowerChannelLed2}" == "ON"
-							if (led2On) {
-								setPowerLed("off", PowerChannelLed2)
-							}
-							else
-							{
-								//Do Nothing
+							else {
+								//We didn't get this, so we need to do a status
+								if (didRefresh==false) {
+									didRefresh = true
+									refresh()
+								}
 							}
 						}
-						else {
-							//We didn't get this, so we need to do a status
-							if (didRefresh==false) {
-								didRefresh = true
-								refresh()
+						if (turnOnLed3=="true") {
+							if (json."POWER${PowerChannelLed3}"!=null) {
+								led3On = json."POWER${PowerChannelLed3}" == "ON"
+								if (led3On) {
+									setPowerLed("off", PowerChannelLed3)
+								}
+								else
+								{
+									//Do Nothing
+								}
 							}
-						}
-					}
-					if (turnOnLed3=="true") {
-						if (json."POWER${PowerChannelLed3}"!=null) {
-							led3On = json."POWER${PowerChannelLed3}" == "ON"
-							if (led3On) {
-								setPowerLed("off", PowerChannelLed3)
-							}
-							else
-							{
-								//Do Nothing
-							}
-						}
-						else {
-							//We didn't get this, so we need to do a status
-							if (didRefresh==false) {
-								didRefresh = true
-								refresh()
+							else {
+								//We didn't get this, so we need to do a status
+								if (didRefresh==false) {
+									didRefresh = true
+									refresh()
+								}
 							}
 						}
 					}
@@ -386,9 +391,6 @@ def updateStatus(status){
 			on = on || status.StatusSTS."POWER" == "ON";
 		}
 		setSwitchState(on);
-		doLogging "Scheme [${status.StatusSTS.Scheme}]"
-		on = status.StatusSTS.Scheme == 2;
-		setLoopState(on);
 	}
 }
 
