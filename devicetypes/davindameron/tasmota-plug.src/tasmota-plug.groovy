@@ -34,9 +34,9 @@ metadata {
 	preferences {
 		input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
 		input(name: "PowerChannel", type: "number", title: "Power Channel (1-8)", description: "Power Channel of the Relay", displayDuringSetup: true, required: true)
-		input(name: "PowerChannelLed1", type: "number", title: "Red LED Channel (1-8)", description: "Power Channel of the Red LED", displayDuringSetup: true, required: true)
-		input(name: "PowerChannelLed2", type: "number", title: "Blue LED Channel (1-8)", description: "Power Channel of the Blue LED", displayDuringSetup: true, required: true)
-		input(name: "PowerChannelLed3", type: "number", title: "Blue LED Channel (1-8)", description: "Power Channel of the Blue LED", displayDuringSetup: true, required: true)
+		input(name: "PowerChannelLed1", type: "number", title: "LED 1 Channel (1-8)", description: "Power Channel of LED 1", displayDuringSetup: true, required: true)
+		input(name: "PowerChannelLed2", type: "number", title: "LED 2 Channel (1-8)", description: "Power Channel of LED 2", displayDuringSetup: true, required: true)
+		input(name: "PowerChannelLed3", type: "number", title: "LED 3 Channel (1-8)", description: "Power Channel of LED 3", displayDuringSetup: true, required: true)
 		input(name: "turnOnLed1", type: "boolean", title: "Turn on LED 1 Light with Switch?", displayDuringSetup: true, required: false)
 		input(name: "turnOnLed2", type: "boolean", title: "Turn on LED 2 Light with Switch?", displayDuringSetup: true, required: false)
 		input(name: "turnOnLed3", type: "boolean", title: "Turn on LED 3 Light with Switch?", displayDuringSetup: true, required: false)
@@ -82,7 +82,6 @@ def execute(String command){
 					def led1On = false
 					def led2On = false
 					def led3On = false
-					
 					if (turnOnLed1=="true") {
 						if (json."POWER${PowerChannelLed1}"!=null) {
 							led1On = json."POWER${PowerChannelLed1}" == "ON"
@@ -122,6 +121,9 @@ def execute(String command){
 				}
 				else {
 					//off
+					def led1On = false
+					def led2On = false
+					def led3On = false
 					if (turnOnLed1=="true") {
 						if (json."POWER${PowerChannelLed1}"!=null) {
 							led1On = json."POWER${PowerChannelLed1}" == "ON"
