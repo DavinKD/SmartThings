@@ -144,6 +144,7 @@ def execute(String command){
 					def led1On = false
 					def led2On = false
 					def led3On = false
+					def didRefresh = false
 					if (turnOnLed1=="true") {
 						if (json."POWER${PowerChannelLed1}"!=null) {
 							led1On = json."POWER${PowerChannelLed1}" == "ON"
