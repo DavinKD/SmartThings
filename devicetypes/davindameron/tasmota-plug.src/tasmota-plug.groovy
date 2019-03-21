@@ -355,7 +355,7 @@ def setPower(power){
 		backlogValue += "%20Power${PowerChannelLed3}%20${power}"
 	}
 	def commandName = ""
-	dev payload = ""
+	def payload = ""
 	if (doBacklog) {
 		commandName = backlogValue;
 	}
