@@ -82,6 +82,7 @@ def execute(String command){
 					def led1On = false
 					def led2On = false
 					def led3On = false
+					def didRefresh = false
 					if (turnOnLed1=="true") {
 						if (json."POWER${PowerChannelLed1}"!=null) {
 							led1On = json."POWER${PowerChannelLed1}" == "ON"
@@ -92,6 +93,11 @@ def execute(String command){
 							{
 								setPowerLed("on", PowerChannelLed1)
 							}
+						}
+						else {
+							//We didn't get this, so we need to do a status
+							didRefresh = true
+							refresh()
 						}
 					}
 					if (turnOnLed2=="true") {
@@ -105,6 +111,13 @@ def execute(String command){
 								setPowerLed("on", PowerChannelLed2)
 							}
 						}
+						else {
+							//We didn't get this, so we need to do a status
+							if (didRefresh==false) {
+								didRefresh = true
+								refresh()
+							}
+						}
 					}
 					if (turnOnLed3=="true") {
 						if (json."POWER${PowerChannelLed3}"!=null) {
@@ -115,6 +128,13 @@ def execute(String command){
 							else
 							{
 								setPowerLed("on", PowerChannelLed3)
+							}
+						}
+						else {
+							//We didn't get this, so we need to do a status
+							if (didRefresh==false) {
+								didRefresh = true
+								refresh()
 							}
 						}
 					}
@@ -135,6 +155,11 @@ def execute(String command){
 								//Do Nothing
 							}
 						}
+						else {
+							//We didn't get this, so we need to do a status
+							didRefresh = true
+							refresh()
+						}
 					}
 					if (turnOnLed2=="true") {
 						if (json."POWER${PowerChannelLed2}"!=null) {
@@ -147,6 +172,13 @@ def execute(String command){
 								//Do Nothing
 							}
 						}
+						else {
+							//We didn't get this, so we need to do a status
+							if (didRefresh==false) {
+								didRefresh = true
+								refresh()
+							}
+						}
 					}
 					if (turnOnLed3=="true") {
 						if (json."POWER${PowerChannelLed3}"!=null) {
@@ -157,6 +189,13 @@ def execute(String command){
 							else
 							{
 								//Do Nothing
+							}
+						}
+						else {
+							//We didn't get this, so we need to do a status
+							if (didRefresh==false) {
+								didRefresh = true
+								refresh()
 							}
 						}
 					}
