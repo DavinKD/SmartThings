@@ -344,9 +344,10 @@ def off(){
 
 
 def setPower(power){
-	doLogging "Setting power to: $power"
+	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+	doLogging "Setting power${PowerChannel} to: $power"
 
-	def commandName = "Power1";
+	def commandName = "Power${PowerChannel}";
 	def payload = power;
 
 	doLogging "COMMAND: $commandName ($payload)"
