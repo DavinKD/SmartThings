@@ -344,15 +344,15 @@ def setPower(power){
 	def backlogValue = "Backlog%20Power${PowerChannel}%20${power}"
 	if (turnOnLed1=="true") {
 		doBacklog = true
-		backlogValue += "%20Power${PowerChannelLed1}%20${power}"
+		backlogValue += "%3BPower${PowerChannelLed1}%20${power}"
 	}
 	if (turnOnLed2=="true") {
 		doBacklog = true
-		backlogValue += "%20Power${PowerChannelLed2}%20${power}"
+		backlogValue += "%3BPower${PowerChannelLed2}%20${power}"
 	}
 	if (turnOnLed3=="true") {
 		doBacklog = true
-		backlogValue += "%20Power${PowerChannelLed3}%20${power}"
+		backlogValue += "%3BPower${PowerChannelLed3}%20${power}"
 	}
 	def commandName = ""
 	def payload = ""
