@@ -368,6 +368,17 @@ def off(){
     setPower("off")
 }
 
+def pause(millis) {
+   def passed = 0
+   def now = new Date().time
+   doLogging("pausing... at Now: $now");
+   /* This loop is an impolite busywait. We need to be given a true sleep() method, please. */
+   while ( passed < millis ) {
+       passed = new Date().time - now
+   }
+   doLogging("... DONE pausing.");
+}
+
 def setPower(power){
 	doLogging("Setting power to: $power");
 
@@ -430,6 +441,8 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 			}
 			setSwitchState(on);
 		}
+		pause(2000);
+		refresh();
 		
 	}
 }
