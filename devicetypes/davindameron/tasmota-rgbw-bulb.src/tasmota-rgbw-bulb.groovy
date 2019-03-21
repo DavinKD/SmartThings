@@ -89,6 +89,7 @@ metadata {
 	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
         input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
+        input(name: "PowerChannel", type: "integer", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
         input(
              "loopRate",
              "number",
@@ -117,14 +118,14 @@ def execute(String command){
 				if (json."StatusSTS"){
 					json = json."StatusSTS"
 				}
-				def powerChannel = 1;
-				if (json."POWER${powerChannel}"!=null) {
+				def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
-					def on = json."POWER${powerChannel}" == "ON";
+					def on = json."POWER${PowerChannel}" == "ON";
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 				}
-				if(powerChannel==1) {
+				if(PowerChannel==1) {
 					if (json."POWER"!=null) {
 						doLogging("execute: got power channel")
 						def on = json."POWER" == "ON";
@@ -315,17 +316,19 @@ def setColorTemperature(kelvin) {
 }
 
 def setColorTemperatureCallback(physicalgraph.device.HubResponse response){
+	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 	
-	
-	doLogging "Finished Setting Color Temperature (channel: 1), JSON: ${response.json}"
+	doLogging "Finished Setting Color Temperature (channel: ${PowerChannel}), JSON: ${response.json}"
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
 		def kelvin = Math.round((response.json.CT + 6)*13.84)
 		doLogging "Kelvin is ${kelvin}"
 
 
-		def on = response.json."POWER1" == "ON";
-		on = on || response.json."POWER" == "ON";
+		def on = response.json."POWER${PowerChannel}" == "ON";
+		if(PowerChannel==1){
+			on = on || response.json."POWER" == "ON";
+		}
 		def level = response.json."Dimmer";
 		doLogging "SendEvent level to $level";
 		sendEvent(name:"level", value:level);
@@ -371,11 +374,14 @@ def setLevel(level){
 def setLevelCallback(physicalgraph.device.HubResponse response){
 	
 	
-	doLogging "Finished Setting level (channel: 2), JSON: ${response.json}"
+	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+	doLogging "Finished Setting level (channel: ${PowerChannel}), JSON: ${response.json}"
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
-		def on = response.json."POWER1" == "ON";
-		on = on || response.json."POWER" == "ON";
+		def on = response.json."POWER${PowerChannel}" == "ON";
+		if(PowerChannel==1){
+			on = on || response.json."POWER" == "ON";
+		}
 		def level = response.json."Dimmer";
 		doLogging "SendEvent level to $level";
 		sendEvent(name:"level", value:level);
@@ -384,13 +390,14 @@ def setLevelCallback(physicalgraph.device.HubResponse response){
 }
 
 def setPowerCallback(physicalgraph.device.HubResponse response){
-	
-	
-	doLogging "Finished Setting power (channel: 2), JSON: ${response.json}"
+	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+	doLogging "Finished Setting power (channel: ${PowerChannel}), JSON: ${response.json}"
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
-		def on = response.json."POWER1" == "ON";
-		on = on || response.json."POWER" == "ON";
+		def on = response.json."POWER${PowerChannel}" == "ON";
+		if(PowerChannel==1){
+			on = on || response.json."POWER" == "ON";
+		}
 		setSwitchState(on);
 	}
 }
@@ -481,34 +488,31 @@ def setColor(Map colorHSMap) {
 }
 
 def setColorCallback(physicalgraph.device.HubResponse response){
+	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 	
-	
-	doLogging "Finished Setting color (channel: 2), JSON: ${response.json}"
+	doLogging "Finished Setting color (channel: ${PowerChannel}), JSON: ${response.json}"
 
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
-		def on = response.json."POWER1" == "ON";
-		on = on || response.json."POWER" == "ON";
+		def on = response.json."POWER${PowerChannel}" == "ON";
+		if(PowerChannel==1){
+			on = on || response.json."POWER" == "ON";
+		}
 		setSwitchState(on);
 	}
 }
 def updateStatus(status){
-
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
-		def powerMaskRing = 0b0001;
-
-		def powerChannelRing = 1;
-
-		powerMaskRing = powerMaskRing << ("$powerChannelRing".toInteger() - 1); // shift the bits over 
-
-		def on = (powerMaskRing & status.Status.Power);
-
-	    setSwitchState(on);
+		def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+		def on = status.StatusSTS."POWER${PowerChannel}" == "ON";
+		if(PowerChannel==1){
+			on = on || status.StatusSTS."POWER" == "ON";
+		}
+		setSwitchState(on);
 		doLogging "Scheme [${status.StatusSTS.Scheme}]"
-	    on = status.StatusSTS.Scheme == 2;
-
-	    setLoopState(on);
+		on = status.StatusSTS.Scheme == 2;
+		setLoopState(on);
 	}
 }
 
