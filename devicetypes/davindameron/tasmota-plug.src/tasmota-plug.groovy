@@ -339,6 +339,21 @@ def setPower(power){
 	doLogging("Setting power to: $power");
 
 	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+	
+	def doBacklog = false
+	def backlogValue = "Backlog%20Power${PowerChannel}%20${power}"
+	if (turnOnLed1=="true") {
+		doBacklog = true
+		backlogValue += "%20Power${PowerChannelLed1}%20${power}"
+	}
+	if (turnOnLed2=="true") {
+		doBacklog = true
+		backlogValue += "%20Power${PowerChannelLed2}%20${power}"
+	}
+	if (turnOnLed3=="true") {
+		doBacklog = true
+		backlogValue += "%20Power${PowerChannelLed3}%20${power}"
+	}
 	def commandName = "Power${PowerChannel}";
 	def payload = power;
 
@@ -385,12 +400,102 @@ def updateStatus(status){
 
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
+		def on = false
 		def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-		def on = status.StatusSTS."POWER${PowerChannel}" == "ON";
+		def gotPowerState = false
+		on = status.StatusSTS."POWER${PowerChannel}" == "ON";
 		if(PowerChannel==1){
 			on = on || status.StatusSTS."POWER" == "ON";
+			gotPowerState = true
 		}
 		setSwitchState(on);
+		
+		if (gotPowerState) {
+			if (on) {
+				def led1On = false
+				def led2On = false
+				def led3On = false
+				if (turnOnLed1=="true") {
+					if (json."POWER${PowerChannelLed1}"!=null) {
+						led1On = json."POWER${PowerChannelLed1}" == "ON"
+						if (led1On) {
+							//Do Nothing
+						}
+						else
+						{
+							setPowerLed("on", PowerChannelLed1)
+						}
+					}
+				}
+				if (turnOnLed2=="true") {
+					if (json."POWER${PowerChannelLed2}"!=null) {
+						led2On = json."POWER${PowerChannelLed2}" == "ON"
+						if (led2On) {
+							//Do Nothing
+						}
+						else
+						{
+							setPowerLed("on", PowerChannelLed2)
+						}
+					}
+				}
+				if (turnOnLed3=="true") {
+					if (json."POWER${PowerChannelLed3}"!=null) {
+						led3On = json."POWER${PowerChannelLed3}" == "ON"
+						if (led3On) {
+							//Do Nothing
+						}
+						else
+						{
+							setPowerLed("on", PowerChannelLed3)
+						}
+					}
+				}
+			}
+			else {
+				//off
+				def led1On = false
+				def led2On = false
+				def led3On = false
+				if (turnOnLed1=="true") {
+					if (json."POWER${PowerChannelLed1}"!=null) {
+						led1On = json."POWER${PowerChannelLed1}" == "ON"
+						if (led1On) {
+							setPowerLed("off", PowerChannelLed1)
+						}
+						else
+						{
+							//Do Nothing
+						}
+					}
+				}
+				if (turnOnLed2=="true") {
+					if (json."POWER${PowerChannelLed2}"!=null) {
+						led2On = json."POWER${PowerChannelLed2}" == "ON"
+						if (led2On) {
+							setPowerLed("off", PowerChannelLed2)
+						}
+						else
+						{
+							//Do Nothing
+						}
+					}
+				}
+				if (turnOnLed3=="true") {
+					if (json."POWER${PowerChannelLed3}"!=null) {
+						led3On = json."POWER${PowerChannelLed3}" == "ON"
+						if (led3On) {
+							setPowerLed("off", PowerChannelLed3)
+						}
+						else
+						{
+							//Do Nothing
+						}
+					}
+				}
+			}
+		}
+	
 	}
 }
 
