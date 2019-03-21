@@ -375,12 +375,31 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 	doLogging "Finished Setting power (channel: ${PowerChannel}), JSON: ${response.json}"
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
-		def on = response.json."POWER${PowerChannel}" == "ON";
-		if(PowerChannel==1){
-			on = on || response.json."POWER" == "ON";
+		
+		
+		def doBacklog = false
+		if (turnOnLed1=="true") {
+			doBacklog = true
 		}
-		setSwitchState(on);
-	}}
+		if (turnOnLed2=="true") {
+			doBacklog = true
+		}
+		if (turnOnLed3=="true") {
+			doBacklog = true
+		}
+		if (doBacklog) {
+			refresh()
+		}
+		else {
+			def on = response.json."POWER${PowerChannel}" == "ON";
+			if(PowerChannel==1){
+				on = on || response.json."POWER" == "ON";
+			}
+			setSwitchState(on);
+		}
+		
+	}
+}
 
 def setPowerLed(power, ledChannel){
 	doLogging("Setting power${ledChannel} to: $power");
