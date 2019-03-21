@@ -9,9 +9,10 @@ metadata {
 		capability "Switch"
 		capability "Execute"
 
-        command "reload"
-        command "updateStatus"
-        
+		command "reload"
+		command "updateStatus"
+ 		command "reset"
+       
 	}
 
 	// UI tile definitions
