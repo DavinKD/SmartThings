@@ -96,7 +96,7 @@ def execute(String command){
 					}
 					if (turnOnLed2=="true") {
 						if (json."POWER${PowerChannelLed2}"!=null) {
-							led1On = json."POWER${PowerChannelLed2}" == "ON"
+							led2On = json."POWER${PowerChannelLed2}" == "ON"
 							if (led2On) {
 								//Do Nothing
 							}
@@ -108,7 +108,7 @@ def execute(String command){
 					}
 					if (turnOnLed3=="true") {
 						if (json."POWER${PowerChannelLed3}"!=null) {
-							led1On = json."POWER${PowerChannelLed3}" == "ON"
+							led3On = json."POWER${PowerChannelLed3}" == "ON"
 							if (led3On) {
 								//Do Nothing
 							}
@@ -138,7 +138,7 @@ def execute(String command){
 					}
 					if (turnOnLed2=="true") {
 						if (json."POWER${PowerChannelLed2}"!=null) {
-							led1On = json."POWER${PowerChannelLed2}" == "ON"
+							led2On = json."POWER${PowerChannelLed2}" == "ON"
 							if (led2On) {
 								setPowerLed("off", PowerChannelLed2)
 							}
@@ -150,7 +150,7 @@ def execute(String command){
 					}
 					if (turnOnLed3=="true") {
 						if (json."POWER${PowerChannelLed3}"!=null) {
-							led1On = json."POWER${PowerChannelLed3}" == "ON"
+							led3On = json."POWER${PowerChannelLed3}" == "ON"
 							if (led3On) {
 								setPowerLed("off", PowerChannelLed3)
 							}
