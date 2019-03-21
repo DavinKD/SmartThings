@@ -89,7 +89,7 @@ metadata {
 	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
         input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
-        input(name: "PowerChannel", type: "integer", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
+        input(name: "PowerChannel", type: "number", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
         input(
              "loopRate",
              "number",
