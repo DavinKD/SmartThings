@@ -118,7 +118,7 @@ def execute(String command){
 
 				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
-					def on = json."POWER${powerChannel}" == "ON";
+					def on = json."POWER${PowerChannel}" == "ON";
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 				}
