@@ -48,10 +48,10 @@ metadata {
 }
 
 def execute(String command){
-	doLogging "execute($command)";
 	
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT=="true"){
+		doLogging "execute($command)";
 		if (command) {
 			def json = new groovy.json.JsonSlurper().parseText(command);
 			if (json) {
