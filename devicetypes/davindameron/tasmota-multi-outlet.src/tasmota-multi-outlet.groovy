@@ -82,23 +82,18 @@ def doLogging(value){
 
 def installed(){
 	doLogging "installed()"
-    reload();
 }
 
 def updated(){
 	doLogging "updated()"
-    reload();
-	runEvery5Minutes(refresh)
 }
 
 def reload(){
 	doLogging "reload()"
-    refresh();
 }
 
 def poll() {
 	doLogging "POLL"
-	sendCommand("Status", "0", refreshCallback)
 }
 
 def refresh() {
