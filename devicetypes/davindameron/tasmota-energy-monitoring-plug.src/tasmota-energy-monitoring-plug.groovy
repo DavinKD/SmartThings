@@ -247,29 +247,18 @@ def doLogging(value){
 
 def installed(){
 	doLogging "installed()"
-    reload();
 }
 
 def updated(){
 	doLogging "updated()"
-	reload();
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		runEvery5Minutes(refresh)
-	}
 }
 
 def reload(){
 	doLogging "reload()"
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		refresh();
-	}
 }
 
 def poll() {
 	doLogging "POLL"
-	sendCommand("Status", "0", refreshCallback)
 }
 
 def refresh() {
