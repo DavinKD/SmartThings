@@ -263,7 +263,13 @@ def poll() {
 
 def refresh() {
 	doLogging "refresh()"
-	sendCommand("Status", "11", refreshCallback)
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		sendCommand("Status", "0", refreshCallback)
+	}
+	else {
+		sendCommand("Status", "11", refreshCallback)
+	}
 }
 
 
