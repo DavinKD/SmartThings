@@ -1,0 +1,15 @@
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings MQTT Bridge.vbprojResolveAssemblyReference.cache
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings_MQTT_Bridge.Resources.resources
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings MQTT Bridge.vbproj.GenerateResource.Cache
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\MQTTnet.dll
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings_MQTT_Bridge.ProjectInstaller.resources
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\Newtonsoft.Json.dll
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\Newtonsoft.Json.pdb
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\Newtonsoft.Json.xml
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\SmartThingsMQTT.exe.config
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\SmartThingsMQTT.exe
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\SmartThingsMQTT.pdb
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\SmartThingsMQTT.xml
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThingsMQTT.exe
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThingsMQTT.xml
+c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThingsMQTT.pdb
