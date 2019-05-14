@@ -123,6 +123,9 @@ def poll() {
 def refresh() {
 	doLogging "refresh()"
 	sendCommand("Status", "11", refreshCallback)
+	sendCommand("Rule1", "", updateRulesCallback)
+	sendCommand("Rule2", "", updateRulesCallback)
+	sendCommand("Rule3", "", updateRulesCallback)
 }
 
 def refresh2() {
@@ -164,12 +167,16 @@ private String convertPortToHex(port) {
 	return hexport
 }
 
-def createCommand(String command, payload, callback){
+def createCommand(String command, payloadundef, callback){
 
     def ipAddress = ipAddress ?: settings?.ipAddress ?: device.latestValue("ipAddress");
     def username = username ?: settings?.username ?: device.latestValue("username");
     def password = password ?: settings?.password ?: device.latestValue("password");
-
+    String payload = payloadundef.toString();
+	
+    payload = payload.replaceAll("%", "%25");
+    payload = payload.replaceAll(" ", "%20");
+    payload = payload.replaceAll("#", "%23");
     doLogging "createCommandAction(${command}:${payload}) to device at ${ipAddress}:80"
 
 	if (!ipAddress) {
@@ -242,7 +249,7 @@ def updateSchedule() {
 	def doThursday = doThursday ?: settings?.doThursday ?: device.latestValue("doThursday");
 	def doFriday = doFriday ?: settings?.doFriday ?: device.latestValue("doFriday");
 	def doSaturday = doSaturday ?: settings?.doSaturday ?: device.latestValue("doSaturday");
-
+	
 	def timeVal;
 	
 	def timerVal = "{'Arm':";
@@ -348,7 +355,7 @@ def updateSchedule() {
 
     	sendHubCommand(command);
     	
-    	updateDurations();
+	updateRules();
 }
 
 def updateScheduleCallback(physicalgraph.device.HubResponse response) {
@@ -356,53 +363,152 @@ def updateScheduleCallback(physicalgraph.device.HubResponse response) {
 
 }
 
-def updateDurations(){
-	updateDuration(1);
-	updateDuration(2);
-	updateDuration(3);
-	updateDuration(4);
-	updateDuration(5);
-}
 
-def updateDuration(Zone){
 
-	def commandName = "Mem$Zone";
-	def payload;
+def updateRules(){
+	def currentZone = 0;
+	def zoneVal = "";
+	def Rule1 = "";
+	def Rule2 = "";
+	def Rule3 = "";
+	def RuleChunk1 = "";
+	def RuleChunk2 = "";
+	def RuleChunk3 = "";
+	def RuleChunk4 = "";
+	def RuleChunk5 = "";
 	
+	def commandName = "";
+	def payload;
+	def i;
 	def runtime;
 	
-	switch(Zone){
-		case 1:
-			runtime = zone1RunTime * 60;
-			break
-		case 2:
-			runtime = zone2RunTime * 60;
-			break
-		case 3:
-			runtime = zone3RunTime * 60;
-			break
-		case 4:
-			runtime = zone4RunTime * 60;
-			break
-		case 5:
-			runtime = zone5RunTime * 60;
-			break
-		default:
-			runtime = 5*60;
-	}
-	if(runtime ==0){
-		runtime==30;
-	}
-	payload = runtime;
+	for (i = 1; i <6; i++) {
+		switch(i){
+			case 1:
+				runtime = zone1RunTime * 60;
+				zoneVal = "1";
+				break;
+			case 2:
+				runtime = zone2RunTime * 60;
+				zoneVal = "2";
+				break;
+			case 3:
+				runtime = zone3RunTime * 60;
+				zoneVal = "3";
+				break;
+			case 4:
+				runtime = zone4RunTime * 60;
+				zoneVal = "4";
+				break;
+			case 5:
+				runtime = zone5RunTime * 60;
+				zoneVal = "5";
+				break;
 			
+		}
+		
+		if(runtime > 0)
+		{
+			currentZone++
+			switch(currentZone){
+				case 1:
+					RuleChunk1 = "on Event#B1 do backlog Pulsetime${zoneVal} ${runtime+100};Power${zoneVal} 1;RuleTimer1 ${runtime} endon ";
+					RuleChunk1 += "on Rules#Timer=1 do backlog Power${zoneVal} 0;Event B2 endon ";
+					break;
+				case 2:
+					RuleChunk2 = "on Event#B2 do backlog Pulsetime${zoneVal} ${runtime+100};Power${zoneVal} 1;RuleTimer2 ${runtime} endon ";
+					RuleChunk2 += "on Rules#Timer=2 do backlog Power${zoneVal} 0;Event B3 endon ";
+					break;
+				case 3:
+					RuleChunk3 = "on Event#B3 do backlog Pulsetime${zoneVal} ${runtime+100};Power${zoneVal} 1;RuleTimer3 ${runtime} endon ";
+					RuleChunk3 += "on Rules#Timer=3 do backlog Power${zoneVal} 0;Event B4 endon ";
+					break;
+				case 4:
+					RuleChunk4 = "on Event#B4 do backlog Pulsetime${zoneVal} ${runtime+100};Power${zoneVal} 1;RuleTimer4 ${runtime} endon ";
+					RuleChunk4 += "on Rules#Timer=4 do backlog Power${zoneVal} 0;Event B5 endon ";
+					break;
+				case 5:
+					RuleChunk5 = "on Event#B5 do backlog Pulsetime${zoneVal} ${runtime+100};Power${zoneVal} 1;RuleTimer5 ${runtime}  endon ";
+					RuleChunk5 += "on Rules#Timer=5 do Power${zoneVal} 0 endon ";
+					break;
+
+			}
+		}
+	}
+	
+	
+	Rule2 = "";
+	Rule1 = "";
+	if(RuleChunk1 != ""){
+		Rule1 += RuleChunk1;
+	}
+	
+	if(RuleChunk2 != ""){
+		Rule1 += RuleChunk2;
+	}
+	
+	if(RuleChunk3 != ""){
+		Rule1 += RuleChunk3;
+	}
+	
+	if(RuleChunk4 != ""){
+		Rule1 += RuleChunk4;
+	}
+	
+	if(RuleChunk5 != ""){
+		if(Rule1.length() < 390){
+			Rule1 += RuleChunk5;
+		} else {
+			Rule2 = RuleChunk5;
+		}
+	}
+	if(Rule1==""){
+		Rule1="{}";
+	}
+	
+	if(Rule2==""){
+		Rule2="{}";
+	}
+	
+	
+	Rule3 = "on Clock#Timer=1 do event B1 endon";
+	
+	doLogging "Setting Rule1 [${Rule1}]";
+	doLogging "Setting Rule2 [${Rule2}]";
+	doLogging "Setting Rule3 [${Rule3}]";
+
+	commandName = "Rule1";
+	payload = Rule1;
+	
 	doLogging "COMMAND: $commandName ($payload)"
 
-	def command = createCommand(commandName, payload, "updateScheduleCallback");;
+	def command = createCommand(commandName, payload, "updateRulesCallback");;
 
     	sendHubCommand(command);
+
+	commandName = "Rule2";
+	payload = Rule2;
+	
+	doLogging "COMMAND: $commandName ($payload)"
+
+	command = createCommand(commandName, payload, "updateRulesCallback");;
+
+    	sendHubCommand(command);
+
+	commandName = "Rule3";
+	payload = Rule3;
+	
+	doLogging "COMMAND: $commandName ($payload)"
+
+	command = createCommand(commandName, payload, "updateRulesCallback");;
+
+    	sendHubCommand(command);
+
+
 }
-def updateDurationCallBack(physicalgraph.device.HubResponse response){
-	doLogging "Finished Setting Duration, JSON: ${response.json}"
+
+def updateRulesCallback(physicalgraph.device.HubResponse response){
+	doLogging "Finished Setting Rule, JSON: ${response.json}"
 }
 
 def turnon1(){
