@@ -3,6 +3,8 @@ metadata {
 
 	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
 		capability "Polling"
+		capability "Contact Sensor"
+		capability "Sensor"
 		capability "Temperature Measurement"
 		capability "Execute"
 
