@@ -338,6 +338,9 @@ private getScaledSaturation(value) {
 }
 
 private Integer boundInt(Double value, IntRange theRange) {
+	if (value==null) {
+		value = 100;
+	}
     value = Math.max(theRange.getFrom(), value)
     value = Math.min(theRange.getTo(), value)
     return value.toInteger()
