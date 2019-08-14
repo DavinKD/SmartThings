@@ -42,7 +42,6 @@ metadata {
         attribute "allSteps", "number"
         attribute "allDelay", "number"
         attribute "switchMode", "enum", ["modeDimmer", "modeSwitch"]
-        attribute "switchMode", "enum", ["modeDimmer", "modeSwitch"]
         
         command "doubleUp"
         command "doubleDown"
@@ -519,7 +518,7 @@ def refresh() {
 	delayBetween(cmds,600)
 }
 
-def on() {
+//def on() {
 	/*
 	def cmds = []
     def cmds2 = []
@@ -529,21 +528,36 @@ def on() {
     zwave.switchMultilevelV2.switchMultilevelGet().format()
 	*/
 
-	def cmds = []
-    cmds << zwave.basicV1.basicSet(value: 0xFF).format()
-    cmds << "delay 5000"
-   	cmds << zwave.switchMultilevelV2.switchMultilevelGet().format()
-    cmds
+//	def cmds = []
+//    cmds << zwave.basicV1.basicSet(value: 0xFF).format()
+//    cmds << "delay 5000"
+//   	cmds << zwave.switchMultilevelV2.switchMultilevelGet().format()
+//    cmds
 
+//}
+
+//def off() {
+//	def cmds = []
+//    cmds << zwave.basicV1.basicSet(value: 0x00).format()
+//    cmds << "delay 5000"
+//   	cmds << zwave.switchMultilevelV2.switchMultilevelGet().format()
+//    cmds
+//}
+
+def on() {
+	delayBetween([
+		zwave.basicV1.basicSet(value: 0xFF).format(),
+		zwave.switchBinaryV1.switchBinaryGet().format()
+	], 100)
 }
 
 def off() {
-	def cmds = []
-    cmds << zwave.basicV1.basicSet(value: 0x00).format()
-    cmds << "delay 5000"
-   	cmds << zwave.switchMultilevelV2.switchMultilevelGet().format()
-    cmds
+	delayBetween([
+		zwave.basicV1.basicSet(value: 0x00).format(),
+		zwave.switchBinaryV1.switchBinaryGet().format()
+	], 100)
 }
+
 
 def setLevel(value) {
 	def valueaux = value as Integer
