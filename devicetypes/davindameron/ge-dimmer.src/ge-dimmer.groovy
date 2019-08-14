@@ -42,6 +42,7 @@ metadata {
         attribute "allSteps", "number"
         attribute "allDelay", "number"
         attribute "switchMode", "enum", ["modeDimmer", "modeSwitch"]
+        attribute "switchMode", "enum", ["modeDimmer", "modeSwitch"]
         
         command "doubleUp"
         command "doubleDown"
@@ -56,6 +57,7 @@ metadata {
         command "setAllSteps"
         command "setAllDelay"
         command "modeSwitch"
+        command "modeDimmer"
         
         // These include version because there are older firmwares that don't support double-tap or the extra association groups
         fingerprint mfr:"0063", prod:"4944", model:"3038", ver: "5.29", deviceJoinName: "GE Z-Wave Plus Wall Dimmer"
