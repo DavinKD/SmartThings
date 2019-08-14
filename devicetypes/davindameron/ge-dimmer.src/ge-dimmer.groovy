@@ -41,6 +41,7 @@ metadata {
         attribute "manualDelay", "number"
         attribute "allSteps", "number"
         attribute "allDelay", "number"
+        attribute "switchMode", "enum", ["modeDimmer", "modeSwitch"]
         
         command "doubleUp"
         command "doubleDown"
@@ -54,6 +55,7 @@ metadata {
         command "setManualDelay"
         command "setAllSteps"
         command "setAllDelay"
+        command "modeSwitch"
         
         // These include version because there are older firmwares that don't support double-tap or the extra association groups
         fingerprint mfr:"0063", prod:"4944", model:"3038", ver: "5.29", deviceJoinName: "GE Z-Wave Plus Wall Dimmer"
@@ -144,6 +146,10 @@ metadata {
 			state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleDown", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOffIcon.png"
 		} 
 
+        standardTile("switchMode", "device.switchMode", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
+            state "modeDimmer", label: "Mode: Full Range Dimmer", action:"modeSwitch", backgroundColor: "#ffffff"
+            state "modeSwitch", label: "Mode: Simple Switch", action:"modeDimmer", backgroundColor: "#ffffff"
+        }
 		standardTile("indicator", "device.indicatorStatus", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
 			state "when off", action:"indicator.indicatorWhenOn", icon:"st.indicators.lit-when-off"
 			state "when on", action:"indicator.indicatorNever", icon:"st.indicators.lit-when-on"
@@ -202,7 +208,7 @@ metadata {
 		}
 
 		main "switch"
-        details(["switch", "levelSliderControl", "doubleUp", "doubleDown",
+        details(["switch", "levelSliderControl", "doubleUp", "doubleDown", "switchMode",
         		 "indicator", "inverted", "refresh",
                  "zwaveStepsLabel", "zwaveSteps", "zwaveDelayLabel", "zwaveDelay",
                  "manualStepsLabel", "manualSteps", "manualDelayLabel", "manualDelay",
@@ -401,6 +407,16 @@ def updated() {
 	sendHubCommand(cmds.collect{ new physicalgraph.device.HubAction(it.format()) }, 500)
 }
 
+def modeDimmer() {
+    sendEvent(name: "switchMode", value: "modeDimmer", display: false)
+    zwave.configurationV2.configurationSet(configurationValue: [0], parameterNumber: 16, size: 1).format()
+}
+ 
+def modeSwitch() {
+    sendEvent(name: "switchMode", value: "modeSwitch", display: false)
+    zwave.configurationV2.configurationSet(configurationValue: [1], parameterNumber: 16, size: 1).format()
+}
+ 
 def indicatorWhenOn() {
 	sendEvent(name: "indicatorStatus", value: "when on", display: false)
 	zwave.configurationV2.configurationSet(configurationValue: [1], parameterNumber: 3, size: 1).format()
