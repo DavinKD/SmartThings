@@ -38,18 +38,8 @@ metadata {
         
         command "doubleUp"
         command "doubleDown"
-        command "inverted"
-        command "notInverted"
         command "levelUp"
         command "levelDown"
-        command "setZwaveSteps"
-        command "setZwaveDelay"
-        command "setManualSteps"
-        command "setManualDelay"
-        command "setAllSteps"
-        command "setAllDelay"
-        command "modeSwitch"
-        command "modeDimmer"
         
         // These include version because there are older firmwares that don't support double-tap or the extra association groups
         fingerprint mfr:"0063", prod:"4944", model:"3038", ver: "5.29", deviceJoinName: "GE Z-Wave Plus Wall Dimmer"
