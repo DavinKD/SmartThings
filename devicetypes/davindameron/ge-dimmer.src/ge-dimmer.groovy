@@ -112,12 +112,12 @@ metadata {
 	input("switchMode", "enum", options: [
 	                "dimmer": "Dimmer",
                 	"switch": "Switch"], title: "Switch Mode", defaultVale:"dimmer",required:true)
-	input(name: "zwaveSteps", type: "number", range: "1..99", defaultValue:1, title: "zWave Dim Steps", displayDuringSetup:true, required:true)
-	input(name: "zwaveDelay", type: "number", range: "1..255", defaultValue:1, title: "zWave Delay", displayDuringSetup:true, required:true)
-	input(name: "manualSteps", type: "number", range: "1..99", defaultValue:1, title: "Manual Dim Steps", displayDuringSetup:true, required:true)
-	input(name: "manualDelay", type: "number", range: "1..255", defaultValue:1, title: "Manual Delay", displayDuringSetup:true, required:true)
-	input(name: "allSteps", type: "number", range: "1..99", defaultValue:1, title: "All Dim Steps", displayDuringSetup:true, required:true)
-	input(name: "allDelay", type: "number", range: "1..255", defaultValue:1, title: "All Delay", displayDuringSetup:true, required:true)
+	input(name: "zwaveSteps", type: "number", range: "1..99", title: "zWave Dim Steps (1-99)", displayDuringSetup:true, required:true)
+	input(name: "zwaveDelay", type: "number", range: "1..255", title: "zWave Delay (1-255)", displayDuringSetup:true, required:true)
+	input(name: "manualSteps", type: "number", range: "1..99", title: "Manual Dim Steps (1-99)", displayDuringSetup:true, required:true)
+	input(name: "manualDelay", type: "number", range: "1..255", title: "Manual Delay (1-255)", displayDuringSetup:true, required:true)
+	input(name: "allSteps", type: "number", range: "1..99", title: "All Dim Steps (1-99)", displayDuringSetup:true, required:true)
+	input(name: "allDelay", type: "number", range: "1..255", title: "All Delay (1-255)", displayDuringSetup:true, required:true)
         
     }
 
