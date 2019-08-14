@@ -81,6 +81,12 @@ metadata {
             required: false
         )
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
+	input(name: "inverted", type: "boolean", title: "Switch Inverted", displayDuringSetup:true, required: false)
+	input("indicator", "enum", options: [
+	                "whenOff": "When Off",
+	                "whenOn": "When On",
+	                "always": "Always On",
+                	"never": "Never On"], title: "Indicator", defaultVale:"whenOff",required:true)
 
     }
 
