@@ -35,12 +35,9 @@ metadata {
 		capability "Sensor"
 		capability "Switch"
 
-		attribute "inverted", "enum", ["inverted", "not inverted"]
         
         command "doubleUp"
         command "doubleDown"
-        command "inverted"
-        command "notInverted"
         
         // These include version because there are older firmwares that don't support double-tap or the extra association groups
 		fingerprint mfr:"0063", prod:"4952", model: "3036", ver: "5.22", deviceJoinName: "GE Z-Wave Plus Wall Switch"
@@ -97,6 +94,9 @@ metadata {
 			}
 		}
         
+		standardTile("refresh", "device.switch", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
+			state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
+		}
         standardTile("doubleUp", "device.button", width: 3, height: 2, decoration: "flat") {
 			state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleUp", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOnIcon.png"
 		}     
@@ -105,23 +105,9 @@ metadata {
 			state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleDown", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOffIcon.png"
 		} 
 
-		standardTile("indicator", "device.indicatorStatus", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
-			state "when off", action:"indicator.indicatorWhenOn", icon:"st.indicators.lit-when-off"
-			state "when on", action:"indicator.indicatorNever", icon:"st.indicators.lit-when-on"
-			state "never", action:"indicator.indicatorWhenOff", icon:"st.indicators.never-lit"
-		}
-        
-		standardTile("inverted", "device.inverted", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
-			state "not inverted", label: "Not Inverted", action:"inverted", icon:"https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchNotInverted.png", backgroundColor: "#ffffff"
-			state "inverted", label: "Inverted", action:"notInverted", icon:"https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchInverted.png", backgroundColor: "#ffffff"
-		}
-
-		standardTile("refresh", "device.switch", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
-			state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
-		}
 
 		main(["switch"])
-        details(["switch", "doubleUp", "doubleDown", "indicator", "inverted", "refresh"])
+        details(["switch", "refresh", "doubleUp", "doubleDown"])
 	}
 }
 
@@ -193,17 +179,18 @@ def zwaveEvent(physicalgraph.zwave.commands.configurationv2.ConfigurationReport 
     def reportValue = cmd.configurationValue[0]
     switch (cmd.parameterNumber) {
         case 3:
-            name = "indicatorStatus"
-            value = reportValue == 1 ? "when on" : reportValue == 2 ? "never" : "when off"
+            value = reportValue == 1 ? "whenOn" : reportValue == 2 ? "never" : reportValue == 3 ? "always" : "whenOff"
+            settings.indicator = value
+            doLogging "indicator [${value}]"
             break
         case 4:
-            name = "inverted"
             value = reportValue == 1 ? "true" : "false"
+            settings.inverted = value
+            doLogging "inverted [${value}]"
             break
         default:
             break
     }
-	createEvent([name: name, value: value, displayed: false])
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cmd) {
@@ -270,34 +257,30 @@ def updated() {
         cmds << zwave.associationV2.associationGet(groupingIdentifier: 3)
         state.currentGroup3 = settings.requestedGroup3
     }
+	switch(settings.indicator){
+        case "whenOn":
+        	cmds << zwave.configurationV2.configurationSet(configurationValue: [1], parameterNumber: 3, size: 1)
+            	break
+        case "whenOff":
+        	cmds << zwave.configurationV2.configurationSet(configurationValue: [0], parameterNumber: 3, size: 1)
+            	break
+        case "never":
+        	cmds << zwave.configurationV2.configurationSet(configurationValue: [2], parameterNumber: 3, size: 1)
+            	break
+        case "always":
+        	cmds << zwave.configurationV2.configurationSet(configurationValue: [3], parameterNumber: 3, size: 1)
+            	break
+        }
+        if(settings.inverted=="true"){
+        	cmds << zwave.configurationV2.configurationSet(configurationValue: [1], parameterNumber: 4, size: 1)
+        }
+        else{
+        	cmds << zwave.configurationV2.configurationSet(configurationValue: [0], parameterNumber: 4, size: 1)
+        }
 
 	sendHubCommand(cmds.collect{ new physicalgraph.device.HubAction(it.format()) }, 500)
 }
 
-def indicatorWhenOn() {
-	sendEvent(name: "indicatorStatus", value: "when on", display: false)
-	sendHubCommand(new physicalgraph.device.HubAction(zwave.configurationV2.configurationSet(configurationValue: [1], parameterNumber: 3, size: 1).format()))
-}
-
-def indicatorWhenOff() {
-	sendEvent(name: "indicatorStatus", value: "when off", display: false)
-	sendHubCommand(new physicalgraph.device.HubAction(zwave.configurationV2.configurationSet(configurationValue: [0], parameterNumber: 3, size: 1).format()))
-}
-
-def indicatorNever() {
-	sendEvent(name: "indicatorStatus", value: "never", display: false)
-	sendHubCommand(new physicalgraph.device.HubAction(zwave.configurationV2.configurationSet(configurationValue: [2], parameterNumber: 3, size: 1).format()))
-}
-
-def inverted() {
-	sendEvent(name: "inverted", value: "inverted", display: false)
-	sendHubCommand(new physicalgraph.device.HubAction(zwave.configurationV2.configurationSet(configurationValue: [1], parameterNumber: 4, size: 1).format()))
-}
-
-def notInverted() {
-	sendEvent(name: "inverted", value: "not inverted", display: false)
-	sendHubCommand(new physicalgraph.device.HubAction(zwave.configurationV2.configurationSet(configurationValue: [0], parameterNumber: 4, size: 1).format()))
-}
 
 def doubleUp() {
 	sendEvent(name: "button", value: "pushed", data: [buttonNumber: 1], descriptionText: "Double-tap up (button 1) on $device.displayName", isStateChange: true, type: "digital")
