@@ -108,7 +108,8 @@ metadata {
 	input("indicator", "enum", options: [
 	                "whenOff": "When Off",
 	                "whenOn": "When On",
-                	"never": "Never"], title: "Indicator", defaultVale:"whenOff",required:true)
+	                "always": "Always On",
+                	"never": "Never On"], title: "Indicator", defaultVale:"whenOff",required:true)
 	input("switchMode", "enum", options: [
 	                "dimmer": "Dimmer",
                 	"switch": "Switch"], title: "Switch Mode", defaultVale:"dimmer",required:true)
@@ -237,7 +238,7 @@ def zwaveEvent(physicalgraph.zwave.commands.configurationv2.ConfigurationReport 
     def reportValue = cmd.scaledConfigurationValue
     switch (cmd.parameterNumber) {
         case 3:
-            value = reportValue == 1 ? "whenOn" : reportValue == 2 ? "never" : "whenOff"
+            value = reportValue == 1 ? "whenOn" : reportValue == 2 ? "never" : reportValue == 3 ? "always" : "whenOff"
             settings.indicator = value
             doLogging "indicator [${value}]"
             break
@@ -371,6 +372,9 @@ def updated() {
             	break
         case "never":
         	cmds << zwave.configurationV2.configurationSet(configurationValue: [2], parameterNumber: 3, size: 1)
+            	break
+        case "always":
+        	cmds << zwave.configurationV2.configurationSet(configurationValue: [3], parameterNumber: 3, size: 1)
             	break
         }
         if(settings.inverted=="true"){
