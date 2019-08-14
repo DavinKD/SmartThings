@@ -548,14 +548,14 @@ def on() {
 	delayBetween([
 		zwave.basicV1.basicSet(value: 0xFF).format(),
 		zwave.switchBinaryV1.switchBinaryGet().format()
-	], 100)
+	], 3000)
 }
 
 def off() {
 	delayBetween([
 		zwave.basicV1.basicSet(value: 0x00).format(),
 		zwave.switchBinaryV1.switchBinaryGet().format()
-	], 100)
+	], 3000)
 }
 
 
