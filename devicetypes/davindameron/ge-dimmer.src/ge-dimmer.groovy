@@ -546,18 +546,17 @@ def refresh() {
 
 def on() {
 	delayBetween([
-		zwave.basicV1.basicSet(value: 0xFF).format(),
-		zwave.switchBinaryV1.switchBinaryGet().format()
-	], 3000)
+			zwave.basicV1.basicSet(value: 0xFF).format(),
+			zwave.switchMultilevelV1.switchMultilevelGet().format()
+	],5000)
 }
 
 def off() {
 	delayBetween([
-		zwave.basicV1.basicSet(value: 0x00).format(),
-		zwave.switchBinaryV1.switchBinaryGet().format()
-	], 3000)
+			zwave.basicV1.basicSet(value: 0x00).format(),
+			zwave.switchMultilevelV1.switchMultilevelGet().format()
+	],5000)
 }
-
 
 def setLevel(value) {
 	def valueaux = value as Integer
