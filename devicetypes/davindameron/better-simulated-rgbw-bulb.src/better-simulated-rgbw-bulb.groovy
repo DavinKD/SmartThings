@@ -63,17 +63,17 @@ metadata {
 	    state "color", action: "color control.setColor", label:'Ring Color'
 	}
 
-    controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range: "(2200..7000)") {
-        state "colorTemperature", action: "setColorTemperature", label:"Color Temp"
-    }
 	controlTile("levelSliderControl", "device.level", "slider",
             height: 3, width: 2) {
     	state "level", action:"switch level.setLevel", label:'Ring Level'
 	}
 
+    controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range: "(2200..7000)") {
+        state "colorTemperature", action: "setColorTemperature", label:"Color Temp"
+    }
     
 	main "switch"
-		details(["switch", "refresh", "ringswitch", "rgbSelector", "colorTempSliderControl", "levelSliderControl"])
+		details(["switch", "refresh", "ringswitch", "rgbSelector", "levelSliderControl", "colorTempSliderControl"])
 	}
 
     
