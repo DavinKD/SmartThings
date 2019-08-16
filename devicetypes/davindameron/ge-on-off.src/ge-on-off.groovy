@@ -117,7 +117,7 @@ def doLogging(value){
 	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
 	if (debugLogging=="true")
 	{
-		doLogging value;
+		log.debug value;
 	}
 }
 
