@@ -314,6 +314,7 @@ def refresh() {
 }
 
 def on() {
+	doLogging "Turning On"
 	delayBetween([
 		zwave.basicV1.basicSet(value: 0xFF).format(),
 		zwave.switchBinaryV1.switchBinaryGet().format()
@@ -321,6 +322,7 @@ def on() {
 }
 
 def off() {
+	doLogging "Turning Off"
 	delayBetween([
 		zwave.basicV1.basicSet(value: 0x00).format(),
 		zwave.switchBinaryV1.switchBinaryGet().format()
