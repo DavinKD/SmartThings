@@ -89,6 +89,7 @@ metadata {
 	input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
 	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
         input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
+        input(name: "simCT", type: "boolean", title: "Simulate Color Temp?", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
         input(name: "PowerChannel", type: "number", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
         input(
@@ -287,22 +288,29 @@ def createCommand(String command, payload, callback){
 }
 
 def setColorTemperature(kelvin) {
-    doLogging "executing 'setColorTemperature' ${kelvin}K"
-    def bulbValue = Math.round(kelvin/13.84) - 6
-    doLogging "bulb value ${bulbValue}"
+	doLogging "executing 'setColorTemperature' ${kelvin}K"
+	def simCT = simCT ?: settings?.simCT ?: device.latestValue("simCT");
+	if (simCT!="true"){	
+		def bulbValue = Math.round(kelvin/13.84) - 6
+		doLogging "bulb value ${bulbValue}"
 
-	def commandName = "CT";
-	def payload = bulbValue;
+		def commandName = "CT";
+		def payload = bulbValue;
 
-	doLogging "COMMAND: $commandName ($payload)"
+		doLogging "COMMAND: $commandName ($payload)"
 
-	def command = createCommand(commandName, payload, "setColorTemperatureCallback");;
+		def command = createCommand(commandName, payload, "setColorTemperatureCallback");;
 
-   	sendHubCommand(command);
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
+		sendHubCommand(command);
+		def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+		if (useMQTT!="true"){
 
-		sendEvent(name: "colorTemperature", value: kelvin)
+			sendEvent(name: "colorTemperature", value: kelvin)
+		}
+	}
+	else {
+			setColor("FFFFFF")
+			sendEvent(name: "colorTemperature", value: kelvin)
 	}
 }
 
