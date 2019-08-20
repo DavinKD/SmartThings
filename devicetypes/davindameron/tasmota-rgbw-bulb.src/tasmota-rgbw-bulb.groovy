@@ -90,6 +90,7 @@ metadata {
 	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
         input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
         input(name: "simCT", type: "boolean", title: "Simulate Color Temp?", displayDuringSetup: true, required: false)
+        input(name: "setVarForPower", type: "boolean", title: "Use Var1 for Power On?", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
         input(name: "PowerChannel", type: "number", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
         input(
@@ -336,7 +337,14 @@ def setColorTemperatureCallback(physicalgraph.device.HubResponse response){
 }
 
 def on(){
-    setPower("on")
+	
+	def setVarForPower = setVarForPower ?: settings?.setVarForPower ?: device.latestValue("setVarForPower");
+	if (setVarForPower!="true"){
+    		setPower("on")
+	}
+	else {
+		setVar1("1.000")
+	}
 }
 
 def off(){
@@ -356,6 +364,35 @@ def setPower(power){
 	def command = createCommand(commandName, payload, "setPowerCallback");;
 
     	sendHubCommand(command);
+}
+def setPowerCallback(physicalgraph.device.HubResponse response){
+	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
+	doLogging "Finished Setting power (channel: ${PowerChannel}), JSON: ${response.json}"
+	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
+	if (useMQTT!="true"){
+		def on = response.json."POWER${PowerChannel}" == "ON";
+		if(PowerChannel==1){
+			on = on || response.json."POWER" == "ON";
+		}
+		setSwitchState(on);
+	}
+}
+
+def setVar1(value){
+	doLogging "Setting Var1 to: $value"
+
+	def commandName = "Var1";
+	def payload = value;
+
+	doLogging "COMMAND: $commandName ($payload)"
+
+	def command = createCommand(commandName, payload, "setVar1Callback");;
+
+    	sendHubCommand(command);
+}
+def setVar1Callback(physicalgraph.device.HubResponse response){
+	doLogging "Finished Setting Var1, JSON: ${response.json}"
+	//Has to use MQTT
 }
 
 def setLevel(level){
@@ -385,19 +422,6 @@ def setLevelCallback(physicalgraph.device.HubResponse response){
 		def level = response.json."Dimmer";
 		doLogging "SendEvent level to $level";
 		sendEvent(name:"level", value:level);
-		setSwitchState(on);
-	}
-}
-
-def setPowerCallback(physicalgraph.device.HubResponse response){
-	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-	doLogging "Finished Setting power (channel: ${PowerChannel}), JSON: ${response.json}"
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		def on = response.json."POWER${PowerChannel}" == "ON";
-		if(PowerChannel==1){
-			on = on || response.json."POWER" == "ON";
-		}
 		setSwitchState(on);
 	}
 }
