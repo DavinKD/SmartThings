@@ -90,7 +90,7 @@ metadata {
         input(name: "greenLevel", type: "number", title: "Green Level (0-255)", range: "0..255", description: "Level of green LEDs", displayDuringSetup: true, required: true)
         input(name: "blueLevel", type: "number", title: "Blue Level (0-255)", range: "0..255", description: "Level of blue LEDs", displayDuringSetup: true, required: true)
         input(name: "warmLevel", type: "number", title: "Warm White Level (0-255)", range: "0..255", description: "Level of warm white LEDs", displayDuringSetup: true, required: true)
-        input(name: "coleLevel", type: "number", title: "Cold White Level (0-255)", range: "0..255", description: "Level of cold white LEDs", displayDuringSetup: true, required: true)
+        input(name: "coldLevel", type: "number", title: "Cold White Level (0-255)", range: "0..255", description: "Level of cold white LEDs", displayDuringSetup: true, required: true)
 	    
 	    input(
              "loopRate",
