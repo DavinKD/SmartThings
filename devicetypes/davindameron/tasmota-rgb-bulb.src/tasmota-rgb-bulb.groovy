@@ -86,7 +86,13 @@ metadata {
         input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
         input(name: "PowerChannel", type: "number", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
-        input(
+        input(name: "redLevel", type: "number", title: "Red Level (0-255)", range: "0..255", description: "Level of red LEDs", displayDuringSetup: true, required: true)
+        input(name: "greenLevel", type: "number", title: "Green Level (0-255)", range: "0..255", description: "Level of green LEDs", displayDuringSetup: true, required: true)
+        input(name: "blueLevel", type: "number", title: "Blue Level (0-255)", range: "0..255", description: "Level of blue LEDs", displayDuringSetup: true, required: true)
+        input(name: "warmLevel", type: "number", title: "Warm White Level (0-255)", range: "0..255", description: "Level of warm white LEDs", displayDuringSetup: true, required: true)
+        input(name: "coleLevel", type: "number", title: "Cold White Level (0-255)", range: "0..255", description: "Level of cold white LEDs", displayDuringSetup: true, required: true)
+	    
+	    input(
              "loopRate",
              "number",
              title: "Color loop rate (1-20 Fast-Slow)",
@@ -199,6 +205,8 @@ def installed(){
 
 def updated(){
 	doLogging "updated()"
+	def rgbwwvalue = "${settings.redLevel},${settings.greenLevel},${settings.blueLevel},${settings.warmLevel},${settings.coldLevel}"
+	setRgbww(rgbwwvalue)
 }
 
 def reload(){
@@ -559,6 +567,25 @@ def setLoopCallback(physicalgraph.device.HubResponse response){
 		def on = response.json.Scheme == 2;
 		setLoopState(on);
 	}
+}
+
+
+
+def setRgbww(value){
+	doLogging "Setting rgbwwtable to: $value"
+
+	def commandName = "rgbwwtable";
+	def payload = value;
+
+	doLogging "COMMAND: $commandName ($payload)"
+
+	def command = createCommand(commandName, payload, "setRgbwwCallback");;
+
+    	sendHubCommand(command);
+}
+
+def setRgbwwCallback(physicalgraph.device.HubResponse response){
+	doLogging "Finished Setting rgbwwtable , JSON: ${response.json}"
 }
 
 def setLoopState(on){
