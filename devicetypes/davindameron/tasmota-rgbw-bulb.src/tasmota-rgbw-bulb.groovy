@@ -343,7 +343,7 @@ def on(){
     		setPower("on")
 	}
 	else {
-		setVar1("1.000")
+		setVar1("Var1 1.000; RuleTimer1 2")
 	}
 }
 
@@ -381,7 +381,7 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 def setVar1(value){
 	doLogging "Setting Var1 to: $value"
 
-	def commandName = "Var1";
+	def commandName = "Backlog";
 	def payload = value;
 
 	doLogging "COMMAND: $commandName ($payload)"
