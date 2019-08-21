@@ -343,7 +343,7 @@ def on(){
     		setPower("on")
 	}
 	else {
-		setVar1("Var1 1.000; RuleTimer1 2")
+		setVar1("Var1%201.000;RuleTimer1%202")
 	}
 }
 
