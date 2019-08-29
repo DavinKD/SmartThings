@@ -278,7 +278,7 @@ def sendCommand(String command, payload, callback) {
 def createCommand(String command, payload, callback){
 	if(settings.useMQTTCommands=="true"){
 		def dni = null;
-		def path="?topic=cmnd/${settings.MQTTTopic}/${command}&payload=${payload}"
+		def path="/?topic=cmnd/${settings.MQTTTopic}/${command}&payload=${payload}"
 		doLogging(path);
 
 		def params = [
