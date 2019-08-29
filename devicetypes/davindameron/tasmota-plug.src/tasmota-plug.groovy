@@ -290,6 +290,7 @@ def createCommand(String command, payload, callback){
 		]
 
 		def options = [
+		callback : callback
 		];
 
 		def hubAction = new physicalgraph.device.HubAction(params, dni, options);
