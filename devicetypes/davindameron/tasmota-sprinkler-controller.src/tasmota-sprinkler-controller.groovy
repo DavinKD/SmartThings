@@ -71,7 +71,10 @@ metadata {
 		input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
 		input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
 		input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: true)
+		input(name: "useMQTTCommands", type: "boolean", title: "Use MQTT for Commands?", displayDuringSetup: true, required: false)
 		input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
+		input(name: "MQTTProxy", type: "string", title: "MQTT Proxy Web Server", description: "MQTT Proxy Web Server", displayDuringSetup: true, required: false)
+		input(name: "MQTTTopic", type: "string", title: "MQTT Topic", description: "MQTT Topic", displayDuringSetup: true, required: false)
 		input(name: "zone1RunTime", type: "number", title: "Zone 1 Run Time", displayDuringSetup:true, required:true)
 		input(name: "zone2RunTime", type: "number", title: "Zone 2 Run Time", displayDuringSetup:true, required:true)
 		input(name: "zone3RunTime", type: "number", title: "Zone 3 Run Time", displayDuringSetup:true, required:true)
@@ -167,56 +170,73 @@ private String convertPortToHex(port) {
 	return hexport
 }
 
-def createCommand(String command, payloadundef, callback){
+def createCommand(String command, payload, callback){
+	if(settings.useMQTTCommands=="true"){
+		def dni = null;
+		def path="/?topic=cmnd/${settings.MQTTTopic}/${command}&payload=${payload}"
+		doLogging(path);
 
-    def ipAddress = ipAddress ?: settings?.ipAddress ?: device.latestValue("ipAddress");
-    def username = username ?: settings?.username ?: device.latestValue("username");
-    def password = password ?: settings?.password ?: device.latestValue("password");
-    String payload = payloadundef.toString();
-	
-    payload = payload.replaceAll("%", "%25");
-    payload = payload.replaceAll(" ", "%20");
-    payload = payload.replaceAll("#", "%23");
-    doLogging "createCommandAction(${command}:${payload}) to device at ${ipAddress}:80"
+		def params = [
+		method: "GET",
+		path: path,
+		headers: [
+		    HOST: "${settings.MQTTProxy}:80"
+		]
+		]
+		doLogging(params);
 
-	if (!ipAddress) {
-		doLogging "aborting. ip address of device not set"
-		return null;
-	}
+		def options = [
+		callback : callback
+		];
 
-	def path = "/cm"
-	if (payload){
-		path += "?cmnd=${command}%20${payload}"
+		def hubAction = new physicalgraph.device.HubAction(params, dni, options);
 	}
 	else{
-		path += "?cmnd=${command}"
-	}
 
-	if (username){
-		path += "&user=${username}"
-		if (password){
-			path += "&password=${password}"
+		def ipAddress = ipAddress ?: settings?.ipAddress ?: device.latestValue("ipAddress");
+		def username = username ?: settings?.username ?: device.latestValue("username");
+		def password = password ?: settings?.password ?: device.latestValue("password");
+
+		doLogging("createCommandAction(${command}:${payload}) to device at ${ipAddress}:80");
+
+		if (!ipAddress) {
+			doLogging("aborting. ip address of device not set");
+			return null;
 		}
+
+		def path = "/cm"
+		if (payload){
+			path += "?cmnd=${command}%20${payload}"
+		}
+		else{
+			path += "?cmnd=${command}"
+		}
+
+		if (username){
+			path += "&user=${username}"
+			if (password){
+				path += "&password=${password}"
+			}
+		}
+
+		def dni = null;
+		doLogging(path);
+
+		def params = [
+		method: "GET",
+		path: path,
+		headers: [
+		    HOST: "${ipAddress}:80"
+		]
+		]
+
+		def options = [
+		callback : callback
+		];
+
+		def hubAction = new physicalgraph.device.HubAction(params, dni, options);
 	}
-
-    def dni = null;
-    doLogging path;
-
-    def params = [
-        method: "GET",
-        path: path,
-        headers: [
-            HOST: "${ipAddress}:80"
-        ]
-    ]
-
-    def options = [
-        callback : callback
-    ];
-
-	def hubAction = new physicalgraph.device.HubAction(params, dni, options);
 }
-
 def on(){
 	setSwitchState("", true)
 	updateSchedule();
