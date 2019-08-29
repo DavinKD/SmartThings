@@ -288,6 +288,7 @@ def createCommand(String command, payload, callback){
 		    HOST: "${settings.MQTTProxy}:80"
 		]
 		]
+		doLogging(params);
 
 		def options = [
 		callback : callback
