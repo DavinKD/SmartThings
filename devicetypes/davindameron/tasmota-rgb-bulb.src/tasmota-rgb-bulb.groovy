@@ -83,7 +83,10 @@ metadata {
         input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
 	input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
 	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
-        input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
+	input(name: "useMQTTCommands", type: "boolean", title: "Use MQTT for Commands?", displayDuringSetup: true, required: false)
+	input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
+	input(name: "MQTTProxy", type: "string", title: "MQTT Proxy Web Server", description: "MQTT Proxy Web Server", displayDuringSetup: true, required: false)
+	input(name: "MQTTTopic", type: "string", title: "MQTT Topic", description: "MQTT Topic", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
         input(name: "PowerChannel", type: "number", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
         input(name: "redLevel", type: "number", title: "Red Level (0-255)", range: "0..255", description: "Level of red LEDs", displayDuringSetup: true, required: true)
@@ -245,51 +248,72 @@ def sendCommand(String command, payload, callback) {
 }
 
 def createCommand(String command, payload, callback){
+	if(settings.useMQTTCommands=="true"){
+		def dni = null;
+		def path="/?topic=cmnd/${settings.MQTTTopic}/${command}&payload=${payload}"
+		doLogging(path);
 
-    def ipAddress = ipAddress ?: settings?.ipAddress ?: device.latestValue("ipAddress");
-    def username = username ?: settings?.username ?: device.latestValue("username");
-    def password = password ?: settings?.password ?: device.latestValue("password");
+		def params = [
+		method: "GET",
+		path: path,
+		headers: [
+		    HOST: "${settings.MQTTProxy}:80"
+		]
+		]
+		doLogging(params);
 
-    doLogging "createCommandAction(${command}:${payload}) to device at ${ipAddress}:80"
+		def options = [
+		callback : callback
+		];
 
-	if (!ipAddress) {
-		doLogging "aborting. ip address of device not set"
-		return null;
-	}
-
-	def path = "/cm"
-	if (payload){
-		path += "?cmnd=${command}%20${payload}"
+		def hubAction = new physicalgraph.device.HubAction(params, dni, options);
 	}
 	else{
-		path += "?cmnd=${command}"
-	}
 
-	if (username){
-		path += "&user=${username}"
-		if (password){
-			path += "&password=${password}"
+		def ipAddress = ipAddress ?: settings?.ipAddress ?: device.latestValue("ipAddress");
+		def username = username ?: settings?.username ?: device.latestValue("username");
+		def password = password ?: settings?.password ?: device.latestValue("password");
+
+		doLogging("createCommandAction(${command}:${payload}) to device at ${ipAddress}:80");
+
+		if (!ipAddress) {
+			doLogging("aborting. ip address of device not set");
+			return null;
 		}
+
+		def path = "/cm"
+		if (payload){
+			path += "?cmnd=${command}%20${payload}"
+		}
+		else{
+			path += "?cmnd=${command}"
+		}
+
+		if (username){
+			path += "&user=${username}"
+			if (password){
+				path += "&password=${password}"
+			}
+		}
+
+		def dni = null;
+		doLogging(path);
+
+		def params = [
+		method: "GET",
+		path: path,
+		headers: [
+		    HOST: "${ipAddress}:80"
+		]
+		]
+
+		def options = [
+		callback : callback
+		];
+
+		def hubAction = new physicalgraph.device.HubAction(params, dni, options);
 	}
-
-    def dni = null;
-    doLogging path;
-
-    def params = [
-        method: "GET",
-        path: path,
-        headers: [
-            HOST: "${ipAddress}:80"
-        ]
-    ]
-
-    def options = [
-        callback : callback
-    ];
-
-	def hubAction = new physicalgraph.device.HubAction(params, dni, options);
 }
-
 def setColorTemperature(kelvin) {
     doLogging "executing 'setColorTemperature' ${kelvin}K"
     def bulbValue = Math.round(kelvin/13.84) - 6
