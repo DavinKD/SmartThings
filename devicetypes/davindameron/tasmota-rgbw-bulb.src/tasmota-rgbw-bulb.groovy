@@ -132,14 +132,14 @@ def execute(String command){
 				def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
-					def on = json."POWER${PowerChannel}" == "ON";
+					def on = json."POWER${PowerChannel}".toString().contains("ON");
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 				}
 				if(PowerChannel==1) {
 					if (json."POWER"!=null) {
 						doLogging("execute: got power channel")
-						def on = json."POWER" == "ON";
+						def on = json."POWER".toString().contains("ON");
 						doLogging("execute: setting switch state")
 						setSwitchState(on);
 					}
@@ -402,9 +402,9 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 	doLogging "Finished Setting power (channel: ${PowerChannel}), JSON: ${response.json}"
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
-		def on = response.json."POWER${PowerChannel}" == "ON";
+		def on = response.json."POWER${PowerChannel}".toString().contains("ON");
 		if(PowerChannel==1){
-			on = on || response.json."POWER" == "ON";
+			on = on || response.json."POWER".toString().contains("ON");
 		}
 		setSwitchState(on);
 	}
@@ -561,9 +561,9 @@ def updateStatus(status){
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
 		def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-		def on = status.StatusSTS."POWER${PowerChannel}" == "ON";
+		def on = status.StatusSTS."POWER${PowerChannel}".toString().contains("ON");
 		if(PowerChannel==1){
-			on = on || status.StatusSTS."POWER" == "ON";
+			on = on || status.StatusSTS."POWER".toString().contains("ON");
 		}
 		setSwitchState(on);
 		doLogging "Scheme [${status.StatusSTS.Scheme}]"
