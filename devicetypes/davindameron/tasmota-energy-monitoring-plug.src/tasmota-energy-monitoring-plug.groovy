@@ -87,7 +87,7 @@ def execute(String command){
 
 				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
-					myOn = json."POWER${PowerChannel}";
+					def myOn = json."POWER${PowerChannel}";
 					doLogging("got ${myOn}");
 					on = json."POWER${PowerChannel}" == "ON";
 					on = on || json."POWER${PowerChannel}" == "[STATE:ON]";
