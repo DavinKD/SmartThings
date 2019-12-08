@@ -95,8 +95,7 @@ def execute(String command){
 				if(PowerChannel==1) {
 					if (json."POWER"!=null) {
 						doLogging("execute: got power channel")
-						on = json."POWER" == "ON";
-						on = on || json."POWER" == "[STATE:ON]";
+						on = json."POWER".toString().contains("ON");
 						doLogging("execute: setting switch state")
 						setSwitchState(on);
 						gotPowerState = true
@@ -111,8 +110,7 @@ def execute(String command){
 						def didRefresh = false
 						if (turnOnLed1=="true") {
 							if (json."POWER${PowerChannelLed1}"!=null) {
-								led1On = json."POWER${PowerChannelLed1}" == "ON"
-								led1On = led1On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
+								led1On = json."POWER${PowerChannelLed1}".toString().contains("ON");
 								if (led1On) {
 									//Do Nothing
 								}
@@ -129,8 +127,7 @@ def execute(String command){
 						}
 						if (turnOnLed2=="true") {
 							if (json."POWER${PowerChannelLed2}"!=null) {
-								led2On = json."POWER${PowerChannelLed2}" == "ON"
-								led2On = led2On || json."POWER${PowerChannelLed2}" == "[STATE:ON]"
+								led2On = json."POWER${PowerChannelLed2}".toString().contains("ON");
 								if (led2On) {
 									//Do Nothing
 								}
@@ -149,8 +146,7 @@ def execute(String command){
 						}
 						if (turnOnLed3=="true") {
 							if (json."POWER${PowerChannelLed3}"!=null) {
-								led3On = json."POWER${PowerChannelLed3}" == "ON"
-								led3On = led3On || json."POWER${PowerChannelLed3}" == "[STATE:ON]"
+								led3On = json."POWER${PowerChannelLed3}".toString().contains("ON");
 								if (led3On) {
 									//Do Nothing
 								}
@@ -176,8 +172,7 @@ def execute(String command){
 						def didRefresh = false
 						if (turnOnLed1=="true") {
 							if (json."POWER${PowerChannelLed1}"!=null) {
-								led1On = json."POWER${PowerChannelLed1}" == "ON"
-								led1On = ledOn || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
+								led1On = json."POWER${PowerChannelLed1}".toString().contains("ON");
 								if (led1On) {
 									setPowerLed("off", PowerChannelLed1)
 								}
@@ -194,8 +189,7 @@ def execute(String command){
 						}
 						if (turnOnLed2=="true") {
 							if (json."POWER${PowerChannelLed2}"!=null) {
-								led2On = json."POWER${PowerChannelLed2}" == "ON"
-								led2On = led2On || json."POWER${PowerChannelLed2}" == "[STATE:ON]"
+								led2On = json."POWER${PowerChannelLed2}".toString().contains("ON");
 								if (led2On) {
 									setPowerLed("off", PowerChannelLed2)
 								}
@@ -214,8 +208,7 @@ def execute(String command){
 						}
 						if (turnOnLed3=="true") {
 							if (json."POWER${PowerChannelLed3}"!=null) {
-								led3On = json."POWER${PowerChannelLed3}" == "ON"
-								led3On = led3On || json."POWER${PowerChannelLed3}" == "[STATE:ON]"
+								led3On = json."POWER${PowerChannelLed3}".toString().contains("ON");
 								if (led3On) {
 									setPowerLed("off", PowerChannelLed3)
 								}
@@ -461,11 +454,9 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 			refresh()
 		}
 		else {
-			def on = response.json."POWER${PowerChannel}" == "ON";
-			on = on || response.json."POWER${PowerChannel}" == "[STATE:ON]";
+			def on = response.json."POWER${PowerChannel}".toString().contains("ON");
 			if(PowerChannel==1){
-				on = on || response.json."POWER" == "ON";
-				on = on || response.json."POWER" == "[STATE:ON]";
+				on = on || response.json."POWER".toString().contains("ON");
 			}
 			setSwitchState(on);
 		}
@@ -492,8 +483,7 @@ def setPowerLedCallback(physicalgraph.device.HubResponse response){
 	doLogging("Finished Setting power (channel: 2), JSON: ${response.json}");
 
 	def PowerChannel = PowerChannelRed ?: settings?.PowerChannelRed ?: device.latestValue("PowerChannelRed");
-   	def on = response.json."POWER${PowerChannel}" == "ON";
-	on = on || response.json."POWER${PowerChannel}" == "[STATE:ON]";
+   	def on = response.json."POWER${PowerChannel}".toString().contains("ON");
 }
 
 def updateStatus(status){
@@ -522,8 +512,7 @@ def updateStatus(status){
 				def led3On = false
 				if (turnOnLed1=="true") {
 					if (json."POWER${PowerChannelLed1}"!=null) {
-						led1On = json."POWER${PowerChannelLed1}" == "ON"
-						led1On = led1On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
+						led1On = json."POWER${PowerChannelLed1}".toString().contains("ON");
 						if (led1On) {
 							//Do Nothing
 						}
@@ -535,8 +524,7 @@ def updateStatus(status){
 				}
 				if (turnOnLed2=="true") {
 					if (json."POWER${PowerChannelLed2}"!=null) {
-						led2On = json."POWER${PowerChannelLed2}" == "ON"
-						led2On = led2On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
+						led2On = json."POWER${PowerChannelLed2}".toString().contains("ON");
 						if (led2On) {
 							//Do Nothing
 						}
@@ -548,8 +536,7 @@ def updateStatus(status){
 				}
 				if (turnOnLed3=="true") {
 					if (json."POWER${PowerChannelLed3}"!=null) {
-						led3On = json."POWER${PowerChannelLed3}" == "ON"
-						led3On = led3On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
+						led3On = json."POWER${PowerChannelLed3}".toString().contains("ON");
 						if (led3On) {
 							//Do Nothing
 						}
@@ -567,8 +554,7 @@ def updateStatus(status){
 				def led3On = false
 				if (turnOnLed1=="true") {
 					if (json."POWER${PowerChannelLed1}"!=null) {
-						led1On = json."POWER${PowerChannelLed1}" == "ON"
-						led1On = led1On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
+						led1On = json."POWER${PowerChannelLed1}".toString().contains("ON");
 						if (led1On) {
 							setPowerLed("off", PowerChannelLed1)
 						}
@@ -580,8 +566,7 @@ def updateStatus(status){
 				}
 				if (turnOnLed2=="true") {
 					if (json."POWER${PowerChannelLed2}"!=null) {
-						led2On = json."POWER${PowerChannelLed2}" == "ON"
-						led2On = led2On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
+						led2On = json."POWER${PowerChannelLed2}".toString().contains("ON");
 						if (led2On) {
 							setPowerLed("off", PowerChannelLed2)
 						}
@@ -593,8 +578,7 @@ def updateStatus(status){
 				}
 				if (turnOnLed3=="true") {
 					if (json."POWER${PowerChannelLed3}"!=null) {
-						led3On = json."POWER${PowerChannelLed3}" == "ON"
-						led3On = led3On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
+						led3On = json."POWER${PowerChannelLed3}".toString().contains("ON");
 						if (led3On) {
 							setPowerLed("off", PowerChannelLed3)
 						}
