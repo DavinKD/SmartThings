@@ -87,19 +87,8 @@ def execute(String command){
 
 				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
-					def myState
-					myState = json."POWER${PowerChannel}.STATE"
-					doLogging("execute: checking state [${myState}]")
-					if (json."POWER${PowerChannel}.STATE"!=null) {
-						doLogging("execute: got power state")
-						on = json."POWER${PowerChannel}.STATE" == "ON";
-					}
-					else{						
-						def myOn
-						myOn = json."POWER${PowerChannel}"
-						doLogging("execue: power value [${myOn}]")
-						on = json."POWER${PowerChannel}" == "ON";
-					}
+					on = json."POWER${PowerChannel}" == "ON";
+					on = json."POWER${PowerChannel}" == "[STATE:ON]";
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 					gotPowerState = true
@@ -107,13 +96,8 @@ def execute(String command){
 				if(PowerChannel==1) {
 					if (json."POWER"!=null) {
 						doLogging("execute: got power channel")
-						if (json."POWER.STATE"!=null) {
-							doLogging("execute: got power state")
-							on = json."POWER.STATE" == "ON";
-						}
-						else{						
-							on = json."POWER" == "ON";
-						}
+						on = json."POWER" == "ON";
+						on = on || json."POWER" == "[STATE:ON]";
 						doLogging("execute: setting switch state")
 						setSwitchState(on);
 						gotPowerState = true
@@ -129,6 +113,7 @@ def execute(String command){
 						if (turnOnLed1=="true") {
 							if (json."POWER${PowerChannelLed1}"!=null) {
 								led1On = json."POWER${PowerChannelLed1}" == "ON"
+								led1On = led1On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
 								if (led1On) {
 									//Do Nothing
 								}
@@ -146,6 +131,7 @@ def execute(String command){
 						if (turnOnLed2=="true") {
 							if (json."POWER${PowerChannelLed2}"!=null) {
 								led2On = json."POWER${PowerChannelLed2}" == "ON"
+								led2On = led2On || json."POWER${PowerChannelLed2}" == "[STATE:ON]"
 								if (led2On) {
 									//Do Nothing
 								}
@@ -165,6 +151,7 @@ def execute(String command){
 						if (turnOnLed3=="true") {
 							if (json."POWER${PowerChannelLed3}"!=null) {
 								led3On = json."POWER${PowerChannelLed3}" == "ON"
+								led3On = led3On || json."POWER${PowerChannelLed3}" == "[STATE:ON]"
 								if (led3On) {
 									//Do Nothing
 								}
@@ -191,6 +178,7 @@ def execute(String command){
 						if (turnOnLed1=="true") {
 							if (json."POWER${PowerChannelLed1}"!=null) {
 								led1On = json."POWER${PowerChannelLed1}" == "ON"
+								led1On = ledOn || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
 								if (led1On) {
 									setPowerLed("off", PowerChannelLed1)
 								}
@@ -208,6 +196,7 @@ def execute(String command){
 						if (turnOnLed2=="true") {
 							if (json."POWER${PowerChannelLed2}"!=null) {
 								led2On = json."POWER${PowerChannelLed2}" == "ON"
+								led2On = led2On || json."POWER${PowerChannelLed2}" == "[STATE:ON]"
 								if (led2On) {
 									setPowerLed("off", PowerChannelLed2)
 								}
@@ -227,6 +216,7 @@ def execute(String command){
 						if (turnOnLed3=="true") {
 							if (json."POWER${PowerChannelLed3}"!=null) {
 								led3On = json."POWER${PowerChannelLed3}" == "ON"
+								led3On = led3On || json."POWER${PowerChannelLed3}" == "[STATE:ON]"
 								if (led3On) {
 									setPowerLed("off", PowerChannelLed3)
 								}
@@ -473,8 +463,10 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 		}
 		else {
 			def on = response.json."POWER${PowerChannel}" == "ON";
+			on = on || response.json."POWER${PowerChannel}" == "[STATE:ON]";
 			if(PowerChannel==1){
 				on = on || response.json."POWER" == "ON";
+				on = on || response.json."POWER" == "[STATE:ON]";
 			}
 			setSwitchState(on);
 		}
@@ -502,6 +494,7 @@ def setPowerLedCallback(physicalgraph.device.HubResponse response){
 
 	def PowerChannel = PowerChannelRed ?: settings?.PowerChannelRed ?: device.latestValue("PowerChannelRed");
    	def on = response.json."POWER${PowerChannel}" == "ON";
+	on = on || response.json."POWER${PowerChannel}" == "[STATE:ON]";
 }
 
 def updateStatus(status){
@@ -515,8 +508,10 @@ def updateStatus(status){
 		def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 		def gotPowerState = false
 		on = status.StatusSTS."POWER${PowerChannel}" == "ON";
+		on = on || status.StatusSTS."POWER${PowerChannel}" == "[STATE:ON]";
 		if(PowerChannel==1){
 			on = on || status.StatusSTS."POWER" == "ON";
+			on = on || status.StatusSTS."POWER" == "[STATE:ON]";
 			gotPowerState = true
 		}
 		setSwitchState(on);
@@ -529,6 +524,7 @@ def updateStatus(status){
 				if (turnOnLed1=="true") {
 					if (json."POWER${PowerChannelLed1}"!=null) {
 						led1On = json."POWER${PowerChannelLed1}" == "ON"
+						led1On = led1On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
 						if (led1On) {
 							//Do Nothing
 						}
@@ -541,6 +537,7 @@ def updateStatus(status){
 				if (turnOnLed2=="true") {
 					if (json."POWER${PowerChannelLed2}"!=null) {
 						led2On = json."POWER${PowerChannelLed2}" == "ON"
+						led2On = led2On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
 						if (led2On) {
 							//Do Nothing
 						}
@@ -553,6 +550,7 @@ def updateStatus(status){
 				if (turnOnLed3=="true") {
 					if (json."POWER${PowerChannelLed3}"!=null) {
 						led3On = json."POWER${PowerChannelLed3}" == "ON"
+						led3On = led3On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
 						if (led3On) {
 							//Do Nothing
 						}
@@ -571,6 +569,7 @@ def updateStatus(status){
 				if (turnOnLed1=="true") {
 					if (json."POWER${PowerChannelLed1}"!=null) {
 						led1On = json."POWER${PowerChannelLed1}" == "ON"
+						led1On = led1On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
 						if (led1On) {
 							setPowerLed("off", PowerChannelLed1)
 						}
@@ -583,6 +582,7 @@ def updateStatus(status){
 				if (turnOnLed2=="true") {
 					if (json."POWER${PowerChannelLed2}"!=null) {
 						led2On = json."POWER${PowerChannelLed2}" == "ON"
+						led2On = led2On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
 						if (led2On) {
 							setPowerLed("off", PowerChannelLed2)
 						}
@@ -595,6 +595,7 @@ def updateStatus(status){
 				if (turnOnLed3=="true") {
 					if (json."POWER${PowerChannelLed3}"!=null) {
 						led3On = json."POWER${PowerChannelLed3}" == "ON"
+						led3On = led3On || json."POWER${PowerChannelLed1}" == "[STATE:ON]"
 						if (led3On) {
 							setPowerLed("off", PowerChannelLed3)
 						}
