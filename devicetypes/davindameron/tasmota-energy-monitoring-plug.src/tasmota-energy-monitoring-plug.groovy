@@ -87,7 +87,9 @@ def execute(String command){
 
 				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
-					doLogging("execute: checking state [${json."POWER${PowerChannel}.STATE}]")
+					def myState
+					myState = json."POWER${PowerChannel}.STATE
+					doLogging("execute: checking state [${myState}]")
 					if (json."POWER${PowerChannel}.STATE"!=null) {
 						doLogging("execute: got power state")
 						on = json."POWER${PowerChannel}.STATE" == "ON";
