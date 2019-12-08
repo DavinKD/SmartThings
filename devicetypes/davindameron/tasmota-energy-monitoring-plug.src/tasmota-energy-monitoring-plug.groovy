@@ -97,7 +97,7 @@ def execute(String command){
 					else{						
 						def myOn
 						myOn = json."POWER${PowerChannel}"
-						doLoggin("execue: power value [${myOn}]")
+						doLogging("execue: power value [${myOn}]")
 						on = json."POWER${PowerChannel}" == "ON";
 					}
 					doLogging("execute: setting switch state")
