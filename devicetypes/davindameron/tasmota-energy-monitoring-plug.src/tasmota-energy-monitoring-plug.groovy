@@ -91,6 +91,12 @@ def execute(String command){
 					doLogging("got ${myOn}");
 					on = json."POWER${PowerChannel}" == "ON";
 					on = on || json."POWER${PowerChannel}".toString() == "[STATE:ON]";
+					if(json."POWER${PowerChannel}".toString() == "[STATE:ON]"){
+						doLogging("They Match!");
+					}
+					else{
+						doLogging("They Don't Match!");
+					}
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 					gotPowerState = true
