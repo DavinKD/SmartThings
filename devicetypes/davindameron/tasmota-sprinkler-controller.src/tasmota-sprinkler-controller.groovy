@@ -649,19 +649,19 @@ def updateStatus(status){
 	// This is binary-encoded where each bit represents the on/off state of a particular channel
 	// EG: 7 in binary is 0111.  In this case channels 1, 2, and 3 are ON and channel 4 is OFF
 
-	def on = status.StatusSTS."POWER1" == "ON";
+	def on = status.StatusSTS."POWER1".toString().contains("ON");
 	setSwitchState("1", on)
 	
-	on = status.StatusSTS."POWER2" == "ON";
+	on = status.StatusSTS."POWER2".toString().contains("ON");
 	setSwitchState("2", on)
 
-	on = status.StatusSTS."POWER3" == "ON";
+	on = status.StatusSTS."POWER3".toString().contains("ON");
 	setSwitchState("3", on)
 
-	on = status.StatusSTS."POWER4" == "ON";
+	on = status.StatusSTS."POWER4".toString().contains("ON");
 	setSwitchState("4", on)
 
-	on = status.StatusSTS."POWER5" == "ON";
+	on = status.StatusSTS."POWER5".toString().contains("ON");
 	setSwitchState("5", on)
 	
 }
@@ -691,23 +691,23 @@ def execute(String command){
 				}
 				def on;
 				if (json."POWER1"!=null) {
-					on = json."POWER1" == "ON";
+					on = json."POWER1".toString().contains("ON");
 					setSwitchState("1", on);
 				}
 				if (json."POWER2"!=null) {
-					on = json."POWER2" == "ON";
+					on = json."POWER2".toString().contains("ON");
 					setSwitchState("2", on);
 				}
 				if (json."POWER3"!=null) {
-					on = json."POWER3" == "ON";
+					on = json."POWER3".toString().contains("ON");
 					setSwitchState("3", on);
 				}
 				if (json."POWER4"!=null) {
-					on = json."POWER4" == "ON";
+					on = json."POWER4".toString().contains("ON");
 					setSwitchState("4", on);
 				}
 				if (json."POWER5"!=null) {
-					on = json."POWER5" == "ON";
+					on = json."POWER5".toString().contains("ON");
 					setSwitchState("5", on);
 				}
 			}
