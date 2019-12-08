@@ -90,8 +90,8 @@ def execute(String command){
 					def myOn = json."POWER${PowerChannel}";
 					doLogging("got ${myOn}");
 					on = json."POWER${PowerChannel}" == "ON";
-					on = on || json."POWER${PowerChannel}".toString() == "[STATE:ON]";
-					if(json."POWER${PowerChannel}".toString() == "[STATE:ON]"){
+					on = on || json."POWER${PowerChannel}" == "[STATE:ON]";
+					if(json."POWER${PowerChannel}" == "[STATE:ON]"){
 						doLogging("They Match!");
 					}
 					else{
