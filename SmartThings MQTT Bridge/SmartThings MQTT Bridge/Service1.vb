@@ -292,6 +292,7 @@ Public Class SmartThingsMQTTService1
 
             Return res
         Catch ex As Exception
+            WriteToErrorLog("SendRequest():  Error sending [" & url & "]")
             WriteToErrorLog("SendRequest(): " & Err.Description)
             Return ""
         End Try
