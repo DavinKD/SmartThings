@@ -141,7 +141,9 @@ Public Class SmartThingsMQTTService1
 
     Private Sub readConfig()
         Try
-            Dim path1 As String = "C:\SmartThingsMQTT\SmartThingsMQTT.cfg"
+            Dim dir As String
+            dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+            Dim path1 As String = dir & "\SmartThingsMQTT.cfg"
             Dim fileIn As New StreamReader(path1)
             Dim lineInfo(2) As String
             Dim strData As String
@@ -166,7 +168,9 @@ Public Class SmartThingsMQTTService1
     End Sub
     Private Sub readDeviceList()
         Try
-            Dim path1 As String = "C:\SmartThingsMQTT\deviceList.cfg"
+            Dim dir As String
+            dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+            Dim path1 As String = dir & "\deviceList.cfg"
 
             Dim fileIn As New StreamReader(path1)
             Dim lineInfo(2) As String
@@ -240,7 +244,10 @@ Public Class SmartThingsMQTTService1
 
     Private Sub WriteToErrorLog(ByVal msg As String)
         Try
-            gLogDir = "c:\SmartThingsMQTT\logs"
+            Dim dir As String
+            dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+            gLogDir = dir & "\logs"
+            'gLogDir = "c:\SmartThingsMQTT\logs"
 
             Dim fs As System.IO.FileStream = New System.IO.FileStream(gLogDir & "\" & Format(Today(), "yyyyMMdd") & ".log", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite)
             Dim s As System.IO.StreamWriter = New System.IO.StreamWriter(fs)
