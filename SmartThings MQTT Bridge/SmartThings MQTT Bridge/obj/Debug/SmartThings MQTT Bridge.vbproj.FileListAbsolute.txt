@@ -1,4 +1,3 @@
-c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings MQTT Bridge.vbprojResolveAssemblyReference.cache
 c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings_MQTT_Bridge.Resources.resources
 c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings MQTT Bridge.vbproj.GenerateResource.Cache
 c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\MQTTnet.dll
@@ -13,3 +12,6 @@ c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\bin\Debug\SmartThingsMQTT
 c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThingsMQTT.exe
 c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThingsMQTT.xml
 c:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThingsMQTT.pdb
+C:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings MQTT Bridge.vbprojAssemblyReference.cache
+C:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings MQTT Bridge.vbproj.CoreCompileInputs.cache
+C:\dev\SmartThings MQTT Bridge\SmartThings MQTT Bridge\obj\Debug\SmartThings MQTT Bridge.vbproj.CopyComplete

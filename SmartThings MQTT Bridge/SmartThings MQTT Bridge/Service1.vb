@@ -14,6 +14,7 @@ Public Class SmartThingsMQTTService1
     Dim token As String = ""
     Dim oDevices As New List(Of clsDevice)
     Dim gLogDir As String = ""
+    Dim bLogAllMessages As Boolean = False
 
     Private Class clsDevice
         Public sDeviceId As String
@@ -28,6 +29,7 @@ Public Class SmartThingsMQTTService1
             gLogDir = gAppDir
             WriteToErrorLog("onStart():  In")
             myServer = myMQTT.CreateMqttServer()
+            objServerOptions.EnablePersistentSessions = True
             myServer.StartAsync(objServerOptions)
             readConfig()
             readDeviceList()
@@ -80,9 +82,18 @@ Public Class SmartThingsMQTTService1
             Dim sPayload = UnicodeBytesToString(eventArgs.ApplicationMessage.Payload)
             Dim sValue = eventArgs.ApplicationMessage.ToString
             Dim sTopicDevice As String = ""
+            readConfig()
+            readDeviceList()
 
             sTopicDevice = getTopicDeviceByTopic(sTopic)
-            WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]")
+            If sPayload = "Offline" Then
+                WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]")
+            Else
+                If bLogAllMessages Then
+                    WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]")
+                End If
+            End If
+
             For Each device In getDeviceIdByTopic(sTopic)
                 Dim evaluator As New Thread(Sub() Me.sendData(device.sDeviceId, sPayload))
                 With evaluator
@@ -106,6 +117,28 @@ Public Class SmartThingsMQTTService1
         End Try
     End Function
 
+
+    Private Function strToBoolean(sStr As String) As Boolean
+        strToBoolean = False
+        Select Case sStr
+            Case "True"
+                strToBoolean = True
+            Case "True"
+                strToBoolean = True
+            Case "Y"
+                strToBoolean = True
+            Case "y"
+                strToBoolean = True
+            Case "Yes"
+                strToBoolean = True
+            Case "yes"
+                strToBoolean = True
+            Case "YES"
+                strToBoolean = True
+        End Select
+
+    End Function
+
     Private Sub readConfig()
         Try
             Dim path1 As String = "C:\SmartThingsMQTT\SmartThingsMQTT.cfg"
@@ -121,9 +154,12 @@ Public Class SmartThingsMQTTService1
                     Select Case lineInfo(0).ToLower
                         Case "smartthingstoken"
                             token = lineInfo(1)
+                        Case "logallmessages"
+                            bLogAllMessages = strToBoolean(lineInfo(1))
                     End Select
                 End If
             End While
+            fileIn.Close()
         Catch ex As Exception
             WriteToErrorLog("ReadConfig(): " & Err.Description)
         End Try
@@ -136,6 +172,7 @@ Public Class SmartThingsMQTTService1
             Dim lineInfo(2) As String
             Dim strData As String
             Dim sDevice As New clsDevice
+            Dim bExists As Boolean
 
             While Not (fileIn.EndOfStream)
                 sDevice = New clsDevice
@@ -144,9 +181,20 @@ Public Class SmartThingsMQTTService1
                     lineInfo = Split(strData, "=")
                     sDevice.sTopic = lineInfo(0)
                     sDevice.sDeviceId = lineInfo(1)
-                    oDevices.Add(sDevice)
+                    bExists = False
+                    For Each cDevice In oDevices
+                        If cDevice.sDeviceId = sDevice.sDeviceId And cDevice.sTopic = sDevice.sTopic Then
+                            bExists = True
+                        End If
+                    Next
+                    If Not bExists Then
+                        WriteToErrorLog("readDeviceList(): Added Device " & sDevice.sDeviceId & " - " & sDevice.sTopic)
+                        oDevices.Add(sDevice)
+                    End If
+
                 End If
             End While
+            fileIn.Close()
         Catch ex As Exception
             WriteToErrorLog("readDeviceList(): " & Err.Description)
         End Try
