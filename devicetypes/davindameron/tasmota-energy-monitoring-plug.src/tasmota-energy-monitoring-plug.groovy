@@ -272,6 +272,7 @@ def refresh() {
 	}
 	else {
 		sendCommand("Status", "11", refreshCallback)
+		sendCommand("Status", "8", refreshCallback)
 	}
 }
 
@@ -385,6 +386,9 @@ def on(){
 
 def off(){
     setPower("off")
+    //Refresh to get power, for some reason Tasmota doesn't always send when turning off.
+    refresh()
+
 }
 
 def pause(millis) {
