@@ -408,7 +408,7 @@ def setPower(power){
 	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 	
 	def doBacklog = false
-	def backlogValue = "Backlog%20Power${PowerChannel}%20${power}"
+	def backlogValue = "Power${PowerChannel}%20${power}"
 	if (turnOnLed1=="true") {
 		doBacklog = true
 		backlogValue += "%3BPower${PowerChannelLed1}%20${power}"
@@ -424,7 +424,8 @@ def setPower(power){
 	def commandName = ""
 	def payload = ""
 	if (doBacklog) {
-		commandName = backlogValue;
+		commandName = "backlog"
+		payload = backlogValue;
 	}
 	else {
 		commandName = "Power${PowerChannel}";
