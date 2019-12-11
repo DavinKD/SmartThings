@@ -302,8 +302,8 @@ def pause(millis) {
 def setPower(power){
 	doLogging("Setting power to: $power");
 
-	commandName = "Power${PowerChannel}";
-	payload = power;
+	def commandName = "Power${PowerChannel}";
+	def payload = power;
 	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setPowerCallback");;
