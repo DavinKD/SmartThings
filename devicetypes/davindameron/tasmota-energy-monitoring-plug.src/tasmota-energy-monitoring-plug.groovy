@@ -148,13 +148,6 @@ def updated(){
 	
 }
 
-def updatedCallback(physicalgraph.device.HubResponse response){
-	doLogging "updatedCallback()"
-	def jsobj = response?.json;
-
-	doLogging "JSON: ${jsobj}";
-}
-
 def ruleState1(value){
 	sendCommand("Rule1", value, ruleState1Callback);
 }
