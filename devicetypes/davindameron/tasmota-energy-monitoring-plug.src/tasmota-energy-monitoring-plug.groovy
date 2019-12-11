@@ -128,15 +128,15 @@ def updated(){
 	def sPre = "";
 	if (turnOnLed1=="true"){
 		sRuleText += "${sPre}on%20power${PowerChannel}#state%20do%20power${PowerChannelLed1}%20%25value%25%20endon";
-		sPre = " ";
+		sPre = "%20";
 	}
 	if (turnOnLed2=="true"){
 		sRuleText += "${sPre}on%20power${PowerChannel}#state%20do%20power${PowerChannelLed2}%20%25value%25%20endon";
-		sPre = " ";
+		sPre = "%20";
 	}
 	if (turnOnLed3=="true"){
 		sRuleText += "${sPre}on%20power${PowerChannel}#state%20do%20power${PowerChannelLed3}%20%25value%25%20endon";
-		sPre = " ";
+		sPre = "%20";
 	}
 	if(sRuleText==""){
 		ruleState1(0);
