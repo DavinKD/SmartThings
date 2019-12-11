@@ -139,17 +139,28 @@ def updated(){
 		sPre = " ";
 	}
 	if(sRuleText==""){
-		sendCommand("Rule1", "0", updatedCallback);
+		ruleState1(0);
 	}
 	else{
 		sendCommand("Rule1", sRuleText, updatedCallback);
-		sendCommand("Rule1", "1", updatedCallback);
+		ruleState1(1);
 	}
 	
 }
 
 def updatedCallback(physicalgraph.device.HubResponse response){
-	doLogging "updatedCallback(${response})"
+	doLogging "updatedCallback()"
+	def jsobj = response?.json;
+
+	doLogging "JSON: ${jsobj}";
+}
+
+def ruleState1(value){
+	sendCommand("Rule1", value, ruleState1Callback);
+}
+
+def ruleState1Callback(physicalgraph.device.HubResponse response){
+	doLogging "ruleState1Callback(${response})"
 	def jsobj = response?.json;
 
 	doLogging "JSON: ${jsobj}";
