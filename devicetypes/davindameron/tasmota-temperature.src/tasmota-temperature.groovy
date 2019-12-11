@@ -8,8 +8,6 @@ metadata {
 		capability "Temperature Measurement"
 		capability "Execute"
 
-        command "reload"
-        command "updateStatus"
         
 	}
 
@@ -35,50 +33,41 @@ metadata {
 
     
 	preferences {
-		input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
 		input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
 	}
 }
 
 def execute(String command){
 	
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT=="true"){
-		doLogging "execute($command)";
-		if (command) {
-			def json = new groovy.json.JsonSlurper().parseText(command);
-			if (json) {
-				doLogging("execute: Values received: ${json}")
-				if (json."StatusSTS"){
-					json = json."StatusSTS"
-				}
-				def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-				
-				def on = false
-				def gotPowerState = false
-
-				if (json."DS18B20"){
-					sendEvent(name: "temperature", value: json."DS18B20"."Temperature");
-				}						
-				if (json."StatusSNS"){
-					sendEvent(name: "temperature", value: json."StatusSNS"."DS18B20"."Temperature");
-				}
-
+	doLogging "execute($command)";
+	if (command) {
+		def json = new groovy.json.JsonSlurper().parseText(command);
+		if (json) {
+			doLogging("execute: Values received: ${json}")
+			if (json."StatusSTS"){
+				json = json."StatusSTS"
 			}
-			else {
-				doLogging("execute: No json received: ${command}")
+
+			if (json."DS18B20"){
+				sendEvent(name: "temperature", value: json."DS18B20"."Temperature");
+			}						
+			if (json."StatusSNS"){
+				sendEvent(name: "temperature", value: json."StatusSNS"."DS18B20"."Temperature");
 			}
+
 		}
 		else {
-			doLogging("execute: No command received")
+			doLogging("execute: No json received: ${command}")
 		}
+	}
+	else {
+		doLogging("execute: No command received")
 	}
 	
 }
 
 
 def doLogging(value){
-	def debugLogging = debugLogging ?: settings?.debugLogging ?: device.latestValue("debugLogging");
 	if (debugLogging=="true")
 	{
 		log.debug value;
@@ -87,59 +76,16 @@ def doLogging(value){
 
 def installed(){
 	doLogging "installed()"
-    reload();
 }
 
 def updated(){
 	doLogging "updated()"
-	reload();
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		runEvery5Minutes(refresh)
-	}
-}
-
-def reload(){
-	doLogging "reload()"
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		refresh();
-	}
 }
 
 def poll() {
 	doLogging "POLL"
-	sendCommand("Status", "0", refreshCallback)
-}
-
-def refresh() {
-	doLogging "refresh()"
-}
-
-
-def refreshCallback(physicalgraph.device.HubResponse response){
-	doLogging "refreshCallback()"
-	def jsobj = response?.json;
-
-	doLogging "JSON: ${jsobj}";
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		updateStatus(jsobj);
-	}
-
-}
-
-
-
-def updateStatus(status){
-
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		sendEvent(name: "temperature", value: status.StatusSNS.DS18B20.Temperature);
-	}
 }
 
 def ping() {
 	doLogging("ping()")
-	return refresh()
 }
