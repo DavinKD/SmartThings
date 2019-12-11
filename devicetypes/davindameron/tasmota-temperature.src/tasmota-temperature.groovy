@@ -1,6 +1,4 @@
 metadata {
-	//Based on work by Brett Sheleski for Tasomota-Power
-
 	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
 		capability "Polling"
 		capability "Contact Sensor"
