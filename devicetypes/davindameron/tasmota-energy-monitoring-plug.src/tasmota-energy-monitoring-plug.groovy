@@ -127,11 +127,13 @@ def updated(){
 	def sRuleText = "";
 	def sPre = "";
 	if (turnOnLed1=="true"){
-		sRuleText += "${sPre}on power${PowerChannel}#state do power${PowerChannelLed1} %25value%25 endon";
+		//sRuleText += "${sPre}on power${PowerChannel}#state do power${PowerChannelLed1} %25value%25 endon";
+		sRuleText += "${sPre}on power${PowerChannel}#state do power${PowerChannelLed1} on endon";
 		sPre = " ";
 	}
 	if (turnOnLed2=="true"){
-		sRuleText += "${sPre}on power${PowerChannel}#state do power${PowerChannelLed2} %25value%25 endon";
+		//sRuleText += "${sPre}on power${PowerChannel}#state do power${PowerChannelLed2} %25value%25 endon";
+		sRuleText += "${sPre}on power${PowerChannel}#state do power${PowerChannelLed2} on endon";
 		sPre = " ";
 	}
 	if (turnOnLed3=="true"){
