@@ -61,7 +61,6 @@ metadata {
 
 def execute(String command){
 	
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT=="true"){
 		doLogging "execute($command)";
 		if (command) {
@@ -71,10 +70,8 @@ def execute(String command){
 				if (json."StatusSTS"){
 					json = json."StatusSTS"
 				}
-				def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 				
 				def on = false
-				def gotPowerState = false
 
 				if (json."ENERGY"){
 					sendEvent(name: "power", value: json."ENERGY"."Power");
@@ -90,7 +87,6 @@ def execute(String command){
 					on = json."POWER${PowerChannel}".toString().contains("ON");
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
-					gotPowerState = true
 				}
 				if(PowerChannel==1) {
 					if (json."POWER"!=null) {
@@ -98,135 +94,9 @@ def execute(String command){
 						on = json."POWER".toString().contains("ON");
 						doLogging("execute: setting switch state")
 						setSwitchState(on);
-						gotPowerState = true
 					}
 				}
 				
-				if (gotPowerState) {
-					if (on) {
-						def led1On = false
-						def led2On = false
-						def led3On = false
-						def didRefresh = false
-						if (turnOnLed1=="true") {
-							if (json."POWER${PowerChannelLed1}"!=null) {
-								led1On = json."POWER${PowerChannelLed1}".toString().contains("ON");
-								if (led1On) {
-									//Do Nothing
-								}
-								else
-								{
-									setPowerLed("on", PowerChannelLed1)
-								}
-							}
-							else {
-								//We didn't get this, so we need to do a status
-								didRefresh = true
-								refresh()
-							}
-						}
-						if (turnOnLed2=="true") {
-							if (json."POWER${PowerChannelLed2}"!=null) {
-								led2On = json."POWER${PowerChannelLed2}".toString().contains("ON");
-								if (led2On) {
-									//Do Nothing
-								}
-								else
-								{
-									setPowerLed("on", PowerChannelLed2)
-								}
-							}
-							else {
-								//We didn't get this, so we need to do a status
-								if (didRefresh==false) {
-									didRefresh = true
-									refresh()
-								}
-							}
-						}
-						if (turnOnLed3=="true") {
-							if (json."POWER${PowerChannelLed3}"!=null) {
-								led3On = json."POWER${PowerChannelLed3}".toString().contains("ON");
-								if (led3On) {
-									//Do Nothing
-								}
-								else
-								{
-									setPowerLed("on", PowerChannelLed3)
-								}
-							}
-							else {
-								//We didn't get this, so we need to do a status
-								if (didRefresh==false) {
-									didRefresh = true
-									refresh()
-								}
-							}
-						}
-					}
-					else {
-						//off
-						def led1On = false
-						def led2On = false
-						def led3On = false
-						def didRefresh = false
-						if (turnOnLed1=="true") {
-							if (json."POWER${PowerChannelLed1}"!=null) {
-								led1On = json."POWER${PowerChannelLed1}".toString().contains("ON");
-								if (led1On) {
-									setPowerLed("off", PowerChannelLed1)
-								}
-								else
-								{
-									//Do Nothing
-								}
-							}
-							else {
-								//We didn't get this, so we need to do a status
-								didRefresh = true
-								refresh()
-							}
-						}
-						if (turnOnLed2=="true") {
-							if (json."POWER${PowerChannelLed2}"!=null) {
-								led2On = json."POWER${PowerChannelLed2}".toString().contains("ON");
-								if (led2On) {
-									setPowerLed("off", PowerChannelLed2)
-								}
-								else
-								{
-									//Do Nothing
-								}
-							}
-							else {
-								//We didn't get this, so we need to do a status
-								if (didRefresh==false) {
-									didRefresh = true
-									refresh()
-								}
-							}
-						}
-						if (turnOnLed3=="true") {
-							if (json."POWER${PowerChannelLed3}"!=null) {
-								led3On = json."POWER${PowerChannelLed3}".toString().contains("ON");
-								if (led3On) {
-									setPowerLed("off", PowerChannelLed3)
-								}
-								else
-								{
-									//Do Nothing
-								}
-							}
-							else {
-								//We didn't get this, so we need to do a status
-								if (didRefresh==false) {
-									didRefresh = true
-									refresh()
-								}
-							}
-						}
-					}
-				}
 			}
 			else {
 				doLogging("execute: No json received: ${command}")
@@ -253,7 +123,36 @@ def installed(){
 }
 
 def updated(){
-	doLogging "updated()"
+	doLogging "updated()";
+	def sRuleText = "";
+	def sPre = "";
+	if (turnOnLed1=="true"){
+		sRuleText = "${sPre}on power${PowerChannel}#State do power${PowerChannelLed1} %value% endon";
+		sPre = " ";
+	}
+	if (turnOnLed2=="true"){
+		sRuleText = "${sPre}on power${PowerChannel}#State do power${PowerChannelLed2} %value% endon";
+		sPre = " ";
+	}
+	if (turnOnLed3=="true"){
+		sRuleText = "${sPre}on power${PowerChannel}#State do power${PowerChannelLed3} %value% endon";
+		sPre = " ";
+	}
+	if(sRuleText==""){
+		sendCommand("Rule1", "0", updatedCallback);
+	}
+	else{
+		sendCommand("Rule1", sRuleText, updatedCallback);
+		sendCommand("Rule1", "1", updatedCallback);
+	}
+	
+}
+
+def updatedCallback(physicalgraph.device.HubResponse response){
+	doLogging "updatedCallback()"
+	def jsobj = response?.json;
+
+	doLogging "JSON: ${jsobj}";
 }
 
 def reload(){
@@ -282,7 +181,6 @@ def refreshCallback(physicalgraph.device.HubResponse response){
 	def jsobj = response?.json;
 
 	doLogging "JSON: ${jsobj}";
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
 		updateStatus(jsobj);
 	}
@@ -298,7 +196,6 @@ def reset() {
 
 def resetCallBack(physicalgraph.device.HubResponse response) {
 	doLogging("refreshCallback($response)");
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
 		sendEvent(name: "energy", value: response.json.EnergyReset.Total);
 	}
@@ -386,7 +283,7 @@ def on(){
 
 def off(){
     setPower("off")
-    //Refresh to get power, for some reason Tasmota doesn't always send when turning off.
+    //Refresh to get energy readings, for some reason Tasmota doesn't always send when turning off.
     refresh()
 
 }
@@ -405,32 +302,8 @@ def pause(millis) {
 def setPower(power){
 	doLogging("Setting power to: $power");
 
-	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-	
-	def doBacklog = false
-	def backlogValue = "Power${PowerChannel}%20${power}"
-	if (turnOnLed1=="true") {
-		doBacklog = true
-		backlogValue += "%3BPower${PowerChannelLed1}%20${power}"
-	}
-	if (turnOnLed2=="true") {
-		doBacklog = true
-		backlogValue += "%3BPower${PowerChannelLed2}%20${power}"
-	}
-	if (turnOnLed3=="true") {
-		doBacklog = true
-		backlogValue += "%3BPower${PowerChannelLed3}%20${power}"
-	}
-	def commandName = ""
-	def payload = ""
-	if (doBacklog) {
-		commandName = "backlog"
-		payload = backlogValue;
-	}
-	else {
-		commandName = "Power${PowerChannel}";
-		payload = power;
-	}
+	commandName = "Power${PowerChannel}";
+	payload = power;
 	doLogging("COMMAND: $commandName ($payload)");
 
 	def command = createCommand(commandName, payload, "setPowerCallback");;
@@ -439,163 +312,28 @@ def setPower(power){
 }
 
 def setPowerCallback(physicalgraph.device.HubResponse response){
-	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
 	doLogging "Finished Setting power (channel: ${PowerChannel}), JSON: ${response.json}"
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
-		
-		
-		def doBacklog = false
-		if (turnOnLed1=="true") {
-			doBacklog = true
+		def on = response.json."POWER${PowerChannel}".toString().contains("ON");
+		if(PowerChannel==1){
+			on = on || response.json."POWER".toString().contains("ON");
 		}
-		if (turnOnLed2=="true") {
-			doBacklog = true
-		}
-		if (turnOnLed3=="true") {
-			doBacklog = true
-		}
-		if (doBacklog) {
-			refresh()
-		}
-		else {
-			def on = response.json."POWER${PowerChannel}".toString().contains("ON");
-			if(PowerChannel==1){
-				on = on || response.json."POWER".toString().contains("ON");
-			}
-			setSwitchState(on);
-		}
-		pause(2000);
-		refresh();
-		
+		setSwitchState(on);
 	}
-}
-
-def setPowerLed(power, ledChannel){
-	doLogging("Setting power${ledChannel} to: $power");
-
-	def commandName = "Power${ledChannel}";
-	def payload = power;
-
-	doLogging("COMMAND: $commandName ($payload)");
-
-	def command = createCommand(commandName, payload, "setPowerLedCallback");;
-
-    	sendHubCommand(command);
-}
-
-def setPowerLedCallback(physicalgraph.device.HubResponse response){
-	doLogging("Finished Setting power (channel: 2), JSON: ${response.json}");
-
-	def PowerChannel = PowerChannelRed ?: settings?.PowerChannelRed ?: device.latestValue("PowerChannelRed");
-   	def on = response.json."POWER${PowerChannel}".toString().contains("ON");
 }
 
 def updateStatus(status){
 
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
 		sendEvent(name: "power", value: status.StatusSNS.ENERGY.Power);
 		sendEvent(name: "energy", value: status.StatusSNS.ENERGY.Total);
 
 		def on = false
-		def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-		def gotPowerState = false
-		on = status.StatusSTS."POWER${PowerChannel}" == "ON";
-		on = on || status.StatusSTS."POWER${PowerChannel}" == "[STATE:ON]";
+		on = status.StatusSTS."POWER${PowerChannel}".toString().contains("ON");
 		if(PowerChannel==1){
-			on = on || status.StatusSTS."POWER" == "ON";
-			on = on || status.StatusSTS."POWER" == "[STATE:ON]";
-			gotPowerState = true
+			on = on || status.StatusSTS."POWER".toString().contains("ON");
 		}
 		setSwitchState(on);
-		def json = status.StatusSTS
-		if (gotPowerState) {
-			if (on) {
-				def led1On = false
-				def led2On = false
-				def led3On = false
-				if (turnOnLed1=="true") {
-					if (json."POWER${PowerChannelLed1}"!=null) {
-						led1On = json."POWER${PowerChannelLed1}".toString().contains("ON");
-						if (led1On) {
-							//Do Nothing
-						}
-						else
-						{
-							setPowerLed("on", PowerChannelLed1)
-						}
-					}
-				}
-				if (turnOnLed2=="true") {
-					if (json."POWER${PowerChannelLed2}"!=null) {
-						led2On = json."POWER${PowerChannelLed2}".toString().contains("ON");
-						if (led2On) {
-							//Do Nothing
-						}
-						else
-						{
-							setPowerLed("on", PowerChannelLed2)
-						}
-					}
-				}
-				if (turnOnLed3=="true") {
-					if (json."POWER${PowerChannelLed3}"!=null) {
-						led3On = json."POWER${PowerChannelLed3}".toString().contains("ON");
-						if (led3On) {
-							//Do Nothing
-						}
-						else
-						{
-							setPowerLed("on", PowerChannelLed3)
-						}
-					}
-				}
-			}
-			else {
-				//off
-				def led1On = false
-				def led2On = false
-				def led3On = false
-				if (turnOnLed1=="true") {
-					if (json."POWER${PowerChannelLed1}"!=null) {
-						led1On = json."POWER${PowerChannelLed1}".toString().contains("ON");
-						if (led1On) {
-							setPowerLed("off", PowerChannelLed1)
-						}
-						else
-						{
-							//Do Nothing
-						}
-					}
-				}
-				if (turnOnLed2=="true") {
-					if (json."POWER${PowerChannelLed2}"!=null) {
-						led2On = json."POWER${PowerChannelLed2}".toString().contains("ON");
-						if (led2On) {
-							setPowerLed("off", PowerChannelLed2)
-						}
-						else
-						{
-							//Do Nothing
-						}
-					}
-				}
-				if (turnOnLed3=="true") {
-					if (json."POWER${PowerChannelLed3}"!=null) {
-						led3On = json."POWER${PowerChannelLed3}".toString().contains("ON");
-						if (led3On) {
-							setPowerLed("off", PowerChannelLed3)
-						}
-						else
-						{
-							//Do Nothing
-						}
-					}
-				}
-			}
-		}
-	
 	}
 }
 
