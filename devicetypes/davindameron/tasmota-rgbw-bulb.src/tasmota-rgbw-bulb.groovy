@@ -324,7 +324,7 @@ def setColorTemperature(kelvin) {
 	doLogging "executing 'setColorTemperature' ${kelvin}K"
 	def simCT = simCT ?: settings?.simCT ?: device.latestValue("simCT");
 	if (simCT!="true"){	
-		def bulbValue = Math.round(kelvin/13.84) - 6
+		def bulbValue = Math.round((((kelvin/13.84)-6)*-1)+653) 
 		doLogging "bulb value ${bulbValue}"
 
 		def commandName = "CT";
@@ -353,7 +353,7 @@ def setColorTemperatureCallback(physicalgraph.device.HubResponse response){
 	doLogging "Finished Setting Color Temperature (channel: ${PowerChannel}), JSON: ${response.json}"
 	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
 	if (useMQTT!="true"){
-		def kelvin = Math.round((response.json.CT + 6)*13.84)
+		def kelvin = Math.round((((response.json.CT + 6)*-1)+653)*13.84)
 		doLogging "Kelvin is ${kelvin}"
 
 
