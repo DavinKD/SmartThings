@@ -615,7 +615,7 @@ def setRgbwwCallback(physicalgraph.device.HubResponse response){
 def setLoopState(on){
 	doLogging "Setting Loop to ${on ? 'ON' : 'OFF'}";
 
-	sendEvent(name: "colorLoop", value: on ? "on" : "off", displayed: true, isStateChange: true);
+	sendEvent(name: "colorLoop", value: on ? "on" : "off", displayed: true);
 }
 
 def setSpeed(value){
