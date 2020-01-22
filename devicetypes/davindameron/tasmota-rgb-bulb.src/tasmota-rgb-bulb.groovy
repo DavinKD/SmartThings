@@ -25,24 +25,16 @@ import groovy.transform.Field
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Tasmota RGB Bulb", namespace: "davindameron", author: "Davin Dameron", vid:"generic-rgbw-color-bulb") {
+	definition(name: "Tasmota RGB Bulb", namespace: "davindameron", author: "Davin Dameron", vid:"generic-rgb-color-bulb") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
 		capability "Color Control"
         	capability "Switch Level"
 
-		command "reload"
-		command "updateStatus"
-		command "ringpush"
 		command "loopOn"
 		command "loopOff"
 		command "setLoopRate", ["number"]
-
-		attribute "colorLabel", "string"
-		attribute "tempLabel", "string"
-		attribute "dimmerLabel", "string"
-       
 	}
 
 	// UI tile definitions
@@ -209,10 +201,6 @@ def updated(){
 	doLogging "updated()"
 	def rgbwwvalue = "${settings.redLevel},${settings.greenLevel},${settings.blueLevel},${settings.warmLevel},${settings.coldLevel}"
 	setRgbww(rgbwwvalue)
-}
-
-def reload(){
-	doLogging "reload()"
 }
 
 def poll() {
