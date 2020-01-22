@@ -1,7 +1,7 @@
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Tasmota Multi Outlet", namespace: "DavinDameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
+	definition(name: "Tasmota Multi Outlet", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
