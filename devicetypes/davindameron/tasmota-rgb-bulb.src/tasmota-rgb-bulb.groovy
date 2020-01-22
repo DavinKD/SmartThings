@@ -31,7 +31,6 @@ metadata {
 		capability "Switch"
 		capability "Color Control"
         	capability "Switch Level"
-		capability "Execute"
 
 		command "reload"
 		command "updateStatus"
