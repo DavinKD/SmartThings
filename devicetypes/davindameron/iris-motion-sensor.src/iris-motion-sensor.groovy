@@ -12,6 +12,8 @@
  *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  *  License for the specific language governing permissions and limitations
  *  under the License.
+ *
+ * Adapted by Davin Dameron for personal use
  */
 import physicalgraph.zigbee.clusters.iaszone.ZoneStatus
 import physicalgraph.zigbee.zcl.DataType
@@ -69,7 +71,7 @@ metadata {
 			}
 		}
 		valueTile("temperature", "device.temperature", width: 2, height: 2) {
-			state("temperature", label: '${currentValue}°', unit: "F",
+			state("temperature", label: '${currentValue}Â°', unit: "F",
 					backgroundColors: [
 							[value: 31, color: "#153591"],
 							[value: 44, color: "#1e9cbb"],
@@ -159,7 +161,7 @@ def parse(String description) {
 		if (tempOffset) {
 			//map.value = (int) map.value + (int) tempOffset
 		}
-		map.descriptionText = temperatureScale == 'C' ? '{{ device.displayName }} was {{ value }}°C' : '{{ device.displayName }} was {{ value }}°F'
+		map.descriptionText = temperatureScale == 'C' ? '{{ device.displayName }} was {{ value }}Â°C' : '{{ device.displayName }} was {{ value }}Â°F'
 		map.translatable = true
 	} else if (map.name == "humidity") {
 		if (humidityOffset) {
