@@ -29,7 +29,7 @@
 import physicalgraph.zigbee.zcl.DataType
 
 metadata {
-	definition (name: "Peanut Plug", namespace: "davindameron", author: "Davin Dameron"", ocfDeviceType: "oic.d.switch",
+	definition (name: "Peanut Plug", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.switch",
 		vid: "generic-switch-power-energy") {
 		capability "Energy Meter"
 		capability "Switch"
