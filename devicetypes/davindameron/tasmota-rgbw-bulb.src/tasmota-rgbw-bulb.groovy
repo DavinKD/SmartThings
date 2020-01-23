@@ -59,7 +59,7 @@ metadata {
 		state "default", label: 'Signal Strength ${currentValue}%'
 	}
 	
-	standardTile("refresh", "device.switch", width: 3, height: 2, inactiveLabel: false, decoration: "flat") {
+	standardTile("refresh", "device.switch", width: 2, height: 3, inactiveLabel: false, decoration: "flat") {
 			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
         
