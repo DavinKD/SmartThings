@@ -26,13 +26,8 @@
  */
 metadata {
 	definition (name: "GE On Off", namespace: "davindameron", author: "Davin Dameron") {
-		capability "Actuator"
-		capability "Button"
 		capability "Configuration"
-		capability "Indicator"
-		capability "Polling"
 		capability "Refresh"
-		capability "Sensor"
 		capability "Switch"
 
         
@@ -91,25 +86,23 @@ metadata {
     }
 
 	tiles(scale:2) {
-	standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 2, canChangeIcon: true) {
-	    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
-	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
-	}        
-        
+		standardTile("switch", "device.switch", decoration: "flat", width: 3, height: 2, canChangeIcon: true) {
+		    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
+		    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
+		}        
+
 		standardTile("refresh", "device.switch", width: 3, height: 2, inactiveLabel: false, decoration: "flat") {
 			state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
 		}
-        standardTile("doubleUp", "device.button", width: 3, height: 2, decoration: "flat") {
-			state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleUp", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOnIcon.png"
+		standardTile("doubleUp", "device.switch", width: 3, height: 2, decoration: "flat") {
+				state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleUp", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOnIcon.png"
 		}     
- 
-        standardTile("doubleDown", "device.button", width: 3, height: 2, decoration: "flat") {
-			state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleDown", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOffIcon.png"
+
+		standardTile("doubleDown", "device.switch", width: 3, height: 2, decoration: "flat") {
+				state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleDown", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOffIcon.png"
 		} 
-
-
 		main(["switch"])
-        details(["switch", "refresh", "doubleUp", "doubleDown"])
+		details(["switch", "refresh", "doubleUp", "doubleDown"])
 	}
 }
 
@@ -292,14 +285,6 @@ def doubleDown() {
 	sendEvent(name: "button", value: "pushed", data: [buttonNumber: 2], descriptionText: "Double-tap down (button 2) on $device.displayName", isStateChange: true, type: "digital")
 }
 
-def poll() {
-	def cmds = []
-    cmds << zwave.switchBinaryV1.switchBinaryGet().format()
-	if (getDataValue("MSR") == null) {
-		cmds << zwave.manufacturerSpecificV1.manufacturerSpecificGet().format()
-	}
-	delayBetween(cmds,500)
-}
 
 def refresh() {
 	def cmds = []
