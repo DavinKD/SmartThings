@@ -85,7 +85,7 @@ def execute(String command){
 					doLogging("execute: got WIFI")
 					def ss = json."Wifi"."RSSI";
 					ss = (ss*255)/100;
-					sendEvent(name: "rssi", value: ss);
+					sendEvent(name: "lqi", value: ss);
 				}						
 				if (json."StatusSNS"){
 					sendEvent(name: "power", value: json."StatusSNS"."ENERGY"."Power");
