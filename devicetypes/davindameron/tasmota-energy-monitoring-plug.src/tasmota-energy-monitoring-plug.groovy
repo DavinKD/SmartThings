@@ -82,6 +82,7 @@ def execute(String command){
 					sendEvent(name: "energy", value: json."ENERGY"."Total");
 				}						
 				if (json."WIFI"){
+					doLogging("execute: got WIFI")
 					sendEvent(name: "rssi", value: json."WIFI"."RSSI");
 				}						
 				if (json."StatusSNS"){
