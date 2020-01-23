@@ -59,10 +59,6 @@ metadata {
 		state "default", label: 'Signal Strength ${currentValue}%'
 	}
 	
-	standardTile("refresh", "device.switch", width: 2, height: 3, inactiveLabel: false, decoration: "flat") {
-			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
-		}
-        
 	controlTile("rgbSelector", "device.color", "color", height: 3, width: 2,
 	            inactiveLabel: false) {
 	    state "color", action: "color control.setColor", label:'Ring Color'
@@ -80,10 +76,15 @@ metadata {
 	standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 3) {
         state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
         state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#00a0dc"
+
+	standardTile("refresh", "device.switch", width: 2, height: 3, inactiveLabel: false, decoration: "flat") {
+			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
+		}
+        
     }
     
 	main "switch"
-		details(["switch", "lqi", "refresh", "ringswitch", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop"])
+		details(["switch", "lqi", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop", "refresh"])
 	}
 
     
