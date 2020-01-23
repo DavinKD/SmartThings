@@ -77,11 +77,11 @@ metadata {
         state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
         state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#00a0dc"
 
+    }
 	standardTile("refresh", "device.switch", width: 2, height: 3, inactiveLabel: false, decoration: "flat") {
 			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
         
-    }
     
 	main "switch"
 		details(["switch", "lqi", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop", "refresh"])
