@@ -40,7 +40,7 @@ metadata {
 		}
 
 	main "switch"
-		details(["switch", "power", "energy", "reset", "refresh"])
+		details(["switch", "power", "energy", "RSSI", "reset", "refresh"])
 	}
 
     
