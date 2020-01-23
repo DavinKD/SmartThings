@@ -32,6 +32,7 @@ metadata {
 		capability "Color Control"
         	capability "Switch Level"
 		capability "Execute"
+		capability "Signal Strength"
 
 		command "loopOn"
 		command "loopOff"
@@ -46,9 +47,10 @@ metadata {
 	    state "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor:"#00a0dc"
 	}        
 	
-	standardTile("refresh", "device.switch", width: 3, height: 3, inactiveLabel: false, decoration: "flat") {
-			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
-		}
+	valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
+		state "default", label: 'Signal Strength ${currentValue}%'
+	}
+
         
 	controlTile("rgbSelector", "device.color", "color", height: 3, width: 2,
 	            inactiveLabel: false) {
@@ -63,10 +65,13 @@ metadata {
 	standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 3) {
         state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
         state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#00a0dc"
-    }
+	}
+	standardTile("refresh", "device.switch", width: 2, height: 3, inactiveLabel: false, decoration: "flat") {
+		state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
+	}
     
 	main "switch"
-		details(["switch", "refresh", "rgbSelector", "levelSliderControl", "colorLoop"])
+		details(["switch", "lqi", "rgbSelector", "levelSliderControl", "colorLoop", "refresh"])
 	}
 
     
@@ -131,6 +136,12 @@ def execute(String command){
 						setSwitchState(on);
 					}
 				}
+				if (json."Wifi"){
+					doLogging("execute: got WIFI")
+					def ss = json."Wifi"."RSSI";
+					//ss = (ss*255)/100;
+					sendEvent(name: "lqi", value: ss);
+				}						
 				//Color Temp
 				if (json."CT"!=null) {
 					def kelvin = Math.round((json.CT + 6)*13.84)
