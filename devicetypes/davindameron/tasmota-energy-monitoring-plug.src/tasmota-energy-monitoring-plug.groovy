@@ -29,8 +29,8 @@ metadata {
 	valueTile("energy", "device.energy", decoration: "flat", width: 3, height: 3) {
 		state "default", label: '${currentValue} kWh'
 	}
-	valueTile("RSSI", "device.rssi", decoration: "flat", width: 3, height: 3) {
-		state "default", label: '${currentValue} dBm'
+	valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
+		state "default", label: '${currentValue} %'
 	}
 	standardTile("reset", "device.switch", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
 		state "default", label: 'reset kWh', action: "reset"
@@ -83,7 +83,9 @@ def execute(String command){
 				}						
 				if (json."Wifi"){
 					doLogging("execute: got WIFI")
-					sendEvent(name: "rssi", value: json."Wifi"."RSSI");
+					def ss = json."Wifi"."RSSI";
+					ss = (ss*255)/100;
+					sendEvent(name: "rssi", value: ss);
 				}						
 				if (json."StatusSNS"){
 					sendEvent(name: "power", value: json."StatusSNS"."ENERGY"."Power");
