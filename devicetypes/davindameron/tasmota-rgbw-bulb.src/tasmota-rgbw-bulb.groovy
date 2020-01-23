@@ -33,6 +33,7 @@ metadata {
 		capability "Color Temperature"
         	capability "Switch Level"
 		capability "Execute"
+		capability "Signal Strength"
 
 		command "reload"
 		command "updateStatus"
@@ -54,8 +55,11 @@ metadata {
 	    state "off", label:'${name}', action: "switch.on", icon: "st.Lighting.light11", backgroundColor:"#ffffff"
 	    state "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor:"#00a0dc"
 	}        
+	valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
+		state "default", label: 'Signal Strength ${currentValue}%'
+	}
 	
-	standardTile("refresh", "device.switch", width: 3, height: 3, inactiveLabel: false, decoration: "flat") {
+	standardTile("refresh", "device.switch", width: 3, height: 2, inactiveLabel: false, decoration: "flat") {
 			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
         
@@ -79,7 +83,7 @@ metadata {
     }
     
 	main "switch"
-		details(["switch", "refresh", "ringswitch", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop"])
+		details(["switch", "lqi", "refresh", "ringswitch", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop"])
 	}
 
     
@@ -144,6 +148,12 @@ def execute(String command){
 						setSwitchState(on);
 					}
 				}
+				if (json."Wifi"){
+					doLogging("execute: got WIFI")
+					def ss = json."Wifi"."RSSI";
+					//ss = (ss*255)/100;
+					sendEvent(name: "lqi", value: ss);
+				}						
 				//Color Temp
 				if (json."CT"!=null) {
 					def kelvin = Math.round((json.CT + 6)*13.84)
