@@ -30,7 +30,7 @@ metadata {
 		state "default", label: '${currentValue} kWh'
 	}
 	valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
-		state "default", label: '${currentValue} %'
+		state "default", label: 'Signal Strength ${currentValue/255*100} %'
 	}
 	standardTile("reset", "device.switch", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
 		state "default", label: 'reset kWh', action: "reset"
