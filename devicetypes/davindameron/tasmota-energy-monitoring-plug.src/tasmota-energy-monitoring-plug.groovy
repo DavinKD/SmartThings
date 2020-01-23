@@ -30,7 +30,7 @@ metadata {
 		state "default", label: '${currentValue} kWh'
 	}
 	valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
-		state "default", label: 'Signal Strength ${currentValue}/255*100 %'
+		state "default", label: 'Signal Strength ${currentValue}%'
 	}
 	standardTile("reset", "device.switch", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
 		state "default", label: 'reset kWh', action: "reset"
@@ -84,7 +84,7 @@ def execute(String command){
 				if (json."Wifi"){
 					doLogging("execute: got WIFI")
 					def ss = json."Wifi"."RSSI";
-					ss = (ss*255)/100;
+					//ss = (ss*255)/100;
 					sendEvent(name: "lqi", value: ss);
 				}						
 				if (json."StatusSNS"){
