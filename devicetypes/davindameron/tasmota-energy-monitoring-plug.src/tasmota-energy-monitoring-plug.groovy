@@ -8,6 +8,7 @@ metadata {
 		capability "Energy Meter"
 		capability "Switch"
 		capability "Execute"
+		capability "Signal Strength"
 
 		command "reload"
 		command "updateStatus"
@@ -27,6 +28,9 @@ metadata {
 	}
 	valueTile("energy", "device.energy", decoration: "flat", width: 3, height: 3) {
 		state "default", label: '${currentValue} kWh'
+	}
+	valueTile("RSSI", "device.rssi", decoration: "flat", width: 3, height: 3) {
+		state "default", label: '${currentValue} dBm'
 	}
 	standardTile("reset", "device.switch", inactiveLabel: false, decoration: "flat", width: 3, height: 3) {
 		state "default", label: 'reset kWh', action: "reset"
@@ -76,6 +80,9 @@ def execute(String command){
 				if (json."ENERGY"){
 					sendEvent(name: "power", value: json."ENERGY"."Power");
 					sendEvent(name: "energy", value: json."ENERGY"."Total");
+				}						
+				if (json."WIFI"){
+					sendEvent(name: "rssi", value: json."WIFI"."RSSI");
 				}						
 				if (json."StatusSNS"){
 					sendEvent(name: "power", value: json."StatusSNS"."ENERGY"."Power");
