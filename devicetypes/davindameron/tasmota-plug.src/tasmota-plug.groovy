@@ -6,6 +6,7 @@ metadata {
 		capability "Refresh"
 		capability "Switch"
 		capability "Execute"
+		capability "Signal Strength"
 
         command "reload"
         command "updateStatus"
@@ -21,13 +22,16 @@ metadata {
 	    state "off", label:'${name}', action: "switch.on", icon: "st.switches.switch.on", backgroundColor:"#ffffff"
 	    state "on", label:'${name}', action: "switch.off", icon: "st.switches.switch.off", backgroundColor:"#00a0dc"
 	}        
+	valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
+		state "default", label: 'Signal Strength ${currentValue}%'
+	}
 	
 	standardTile("refresh", "device.switch", width: 3, height: 3, inactiveLabel: false, decoration: "flat") {
 			state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
 
 	main "switch"
-		details(["switch", "refresh"])
+		details(["switch", "lqi", "refresh"])
 	}
 
     
@@ -63,6 +67,12 @@ def execute(String command){
 				}
 				def on = false
 
+				if (json."Wifi"){
+					doLogging("execute: got WIFI")
+					def ss = json."Wifi"."RSSI";
+					//ss = (ss*255)/100;
+					sendEvent(name: "lqi", value: ss);
+				}						
 				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
 					on = json."POWER${PowerChannel}".toString().contains("ON");
