@@ -26,10 +26,10 @@
  */
 metadata {
 	definition (name: "GE On Off", namespace: "davindameron", author: "Davin Dameron") {
+		capability "Switch"
 		capability "Button"
 		capability "Configuration"
 		capability "Refresh"
-		capability "Switch"
 
         
         command "doubleUp"
