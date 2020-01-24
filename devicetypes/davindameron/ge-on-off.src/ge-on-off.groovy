@@ -95,11 +95,11 @@ metadata {
 		standardTile("refresh", "device.switch", width: 3, height: 2, inactiveLabel: false, decoration: "flat") {
 			state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
 		}
-		standardTile("doubleUp", "device.switch", width: 3, height: 2, decoration: "flat") {
+		standardTile("doubleUp", "device.button", width: 3, height: 2, decoration: "flat") {
 				state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleUp", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOnIcon.png"
 		}     
 
-		standardTile("doubleDown", "device.switch", width: 3, height: 2, decoration: "flat") {
+		standardTile("doubleDown", "device.button", width: 3, height: 2, decoration: "flat") {
 				state "default", label: "Tap ??", backgroundColor: "#ffffff", action: "doubleDown", icon: "https://raw.githubusercontent.com/nuttytree/Nutty-SmartThings/master/devicetypes/nuttytree/SwitchOffIcon.png"
 		} 
 		main(["switch"])
