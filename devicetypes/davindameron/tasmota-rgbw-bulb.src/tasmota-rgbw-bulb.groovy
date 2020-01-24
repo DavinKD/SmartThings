@@ -122,6 +122,8 @@ metadata {
 	}
 }
 
+private getATTRIBUTE_COLOR_TEMPERATURE() { 7 }
+
 def execute(String command){
 	doLogging "execute($command)";
 	
