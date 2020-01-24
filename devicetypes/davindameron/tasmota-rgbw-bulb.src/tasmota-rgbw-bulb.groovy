@@ -122,7 +122,9 @@ metadata {
 	}
 }
 
-private getATTRIBUTE_COLOR_TEMPERATURE() { 7 }
+private getCOLOR_TEMP_MAX() { 6500 }
+private getCOLOR_TEMP_MIN() { 2700 }
+private getCOLOR_TEMP_DIFF() { COLOR_TEMP_MAX - COLOR_TEMP_MIN }
 
 def execute(String command){
 	doLogging "execute($command)";
