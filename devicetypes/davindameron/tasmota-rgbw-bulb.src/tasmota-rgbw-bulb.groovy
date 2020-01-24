@@ -161,7 +161,7 @@ def execute(String command){
 				}						
 				//Color Temp
 				if (json."CT"!=null) {
-					def kelvin = Math.round((json.CT + 6)*13.84)
+					def kelvin = Math.round((((json.CT + 6)*-1)+653)*13.84)
 					doLogging "Kelvin is ${kelvin}"
 					sendEvent(name: "colorTemperature", value: kelvin)
 				}
