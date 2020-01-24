@@ -492,9 +492,9 @@ private List buildColorTempList(IntRange kRange, Integer kStep, List kExtras) {
     colorTempList += (kFirstNorm..kRange.getTo()).step(kStep) // now build the periodic list
     colorTempList << kRange.getTo() // include range upper bound
     colorTempList += kExtras // add in extra values
-    doLogging "color temp ranges"
-    dologging kRange.getFrom()
-    dologging kRange.getTo()
+    doLogging "color temp ranges";
+	dologging ${kRange.getFrom()};
+	dologging ${kRange.getTo()};
     return colorTempList.sort().unique() // sort and de-dupe
 	
 }
