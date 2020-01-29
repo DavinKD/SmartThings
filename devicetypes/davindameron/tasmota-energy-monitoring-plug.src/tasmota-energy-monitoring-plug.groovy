@@ -9,6 +9,7 @@ metadata {
 		capability "Switch"
 		capability "Execute"
 		capability "Signal Strength"
+		capability "Health Check"
 
 		command "reload"
 		command "updateStatus"
@@ -130,6 +131,7 @@ def doLogging(value){
 
 def installed(){
 	doLogging "installed()"
+	sendEvent(name: "checkInterval", value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [])
 }
 
 def updated(){
@@ -155,7 +157,7 @@ def updated(){
 		ruleDefine1(sRuleText);
 		ruleState1(1);
 	}
-	
+	sendEvent(name: "checkInterval", value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [])
 }
 
 def ruleState1(value){
