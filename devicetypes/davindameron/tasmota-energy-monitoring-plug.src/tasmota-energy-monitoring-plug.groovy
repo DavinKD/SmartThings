@@ -9,7 +9,7 @@ metadata {
 		capability "Switch"
 		capability "Execute"
 		capability "Signal Strength"
-		capability "Health Check"
+		//capability "Health Check"
 
 		command "reload"
 		command "updateStatus"
