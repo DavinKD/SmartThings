@@ -1,10 +1,11 @@
 metadata {
-	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThings", vid: "generic-thermostat", ocfDeviceType: "oic.r.thermostat") {
+	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThings", vid: "generic-temperature-measurement", ocfDeviceType: "oic.d.thermostat") {
 		capability "Temperature Measurement"
 		capability "Execute"
 		capability "Signal Strength"
 		capability "Sensor"
-        
+        	capability "Health Check"
+		capability "Contact Sensor"
 	}
 
 	// UI tile definitions
@@ -48,10 +49,10 @@ def execute(String command){
 			}
 
 			if (json."DS18B20"){
-				sendEvent(name: "temperature", value: json."DS18B20"."Temperature");
+				setTemperature(json."DS18B20"."Temperature");
 			}						
 			if (json."StatusSNS"){
-				sendEvent(name: "temperature", value: json."StatusSNS"."DS18B20"."Temperature");
+				setTemperature(json."StatusSNS"."DS18B20"."Temperature");
 			}
 			if (json."Wifi"){
 				doLogging("execute: got WIFI")
@@ -83,4 +84,20 @@ def installed(){
 
 def updated(){
 	doLogging "updated()"
+}
+
+def ping() {
+	doLogging("ping()")
+	return "true"
+}
+
+def setTemperature(value) {
+    def map = [:]
+    map.name = "temperature"
+    map.value = value
+    map.unit = "F"
+    doLogging "Temperature Report: $map.value"
+    doLogging "Temperature Scale: $map.unit"
+
+    sendEvent(map)
 }
