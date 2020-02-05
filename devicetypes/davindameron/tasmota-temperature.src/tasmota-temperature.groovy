@@ -5,7 +5,7 @@ metadata {
 		capability "Sensor"
 		capability "Temperature Measurement"
 		capability "Execute"
-
+		capability "Signal Strength"
         
 	}
 
@@ -25,8 +25,11 @@ metadata {
                 ]
             )
         }
+	valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
+		state "default", label: 'Signal Strength ${currentValue}%'
+	}
 	main "temperature"
-		details(["temperature"])
+		details(["temperature", "lqi"])
 	}
 
     
@@ -52,7 +55,11 @@ def execute(String command){
 			if (json."StatusSNS"){
 				sendEvent(name: "temperature", value: json."StatusSNS"."DS18B20"."Temperature");
 			}
-
+			if (json."Wifi"){
+				doLogging("execute: got WIFI")
+				def ss = json."Wifi"."RSSI";
+				sendEvent(name: "lqi", value: ss);
+			}						
 		}
 		else {
 			doLogging("execute: No json received: ${command}")
