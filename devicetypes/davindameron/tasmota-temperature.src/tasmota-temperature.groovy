@@ -25,7 +25,7 @@ metadata {
                 ]
             )
         }
-	valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
+	valueTile("lqi", "device.lqi", decoration: "flat", width: 2, height: 2) {
 		state "default", label: 'Signal Strength ${currentValue}%'
 	}
 	main "temperature"
