@@ -84,4 +84,3 @@ def installed(){
 def updated(){
 	doLogging "updated()"
 }
-
