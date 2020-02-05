@@ -1,5 +1,5 @@
 metadata {
-	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", vid: "generic-radiator-thermostat-2", ocfDeviceType: "oic.d.thermostat") {
+	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThings", vid: "generic-thermostat", ocfDeviceType: "oic.r.thermostat") {
 		capability "Temperature Measurement"
 		capability "Execute"
 		capability "Signal Strength"
