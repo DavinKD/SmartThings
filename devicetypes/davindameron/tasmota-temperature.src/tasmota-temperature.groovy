@@ -1,5 +1,5 @@
 metadata {
-	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug") {
+	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.thermostat") {
 		capability "Polling"
 		capability "Contact Sensor"
 		capability "Sensor"
