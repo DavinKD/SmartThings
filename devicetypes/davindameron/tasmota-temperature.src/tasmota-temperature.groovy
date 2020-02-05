@@ -1,11 +1,9 @@
 metadata {
 	definition(name: "Tasmota Temperature", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.thermostat") {
-		capability "Polling"
-		capability "Contact Sensor"
-		capability "Sensor"
 		capability "Temperature Measurement"
 		capability "Execute"
 		capability "Signal Strength"
+		capability "Sensor"
         
 	}
 
@@ -87,10 +85,3 @@ def updated(){
 	doLogging "updated()"
 }
 
-def poll() {
-	doLogging "POLL"
-}
-
-def ping() {
-	doLogging("ping()")
-}
