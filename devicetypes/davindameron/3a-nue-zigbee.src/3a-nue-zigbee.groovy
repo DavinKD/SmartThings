@@ -169,7 +169,7 @@ def doLogging(value){
 
 // Parse incoming device messages to generate events
 def parse(String description) {
-	doLogging "description is $description [$zigbee.dni]"
+	doLogging "description is $description"
 
     def cmds = []
 	def finalResult = zigbee.getEvent(description)
