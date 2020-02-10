@@ -57,7 +57,7 @@ metadata {
 		    state "on", label:'${name}', action: "turnoff5", icon: "st.Outdoor.outdoor12", backgroundColor:"#00a0dc"
 		}        
 
-		valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
+		valueTile("lqi", "device.lqi", decoration: "flat", width: 2, height: 2) {
 			state "default", label: 'Signal Strength ${currentValue}%'
 		}
 		standardTile("refresh", "refresh", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
