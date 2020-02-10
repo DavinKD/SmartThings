@@ -6,7 +6,8 @@ metadata {
 		capability "Refresh"
 		capability "Switch"
 		capability "Execute"
-
+		capability "Signal Strength"
+		
         	command "reload"
         	command "updateStatus"
         	command "turnon1"
@@ -56,13 +57,16 @@ metadata {
 		    state "on", label:'${name}', action: "turnoff5", icon: "st.Outdoor.outdoor12", backgroundColor:"#00a0dc"
 		}        
 
+		valueTile("lqi", "device.lqi", decoration: "flat", width: 3, height: 3) {
+			state "default", label: 'Signal Strength ${currentValue}%'
+		}
 		standardTile("refresh", "refresh", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
 				state "default", label:'Refresh', action:"refresh", icon:"st.secondary.refresh"
 		}
 
 
 		main("switch")
-			details(["switch", "switch1", "switch2", "switch3", "switch4", "switch5", "refresh"])
+			details(["switch", "switch1", "switch2", "switch3", "switch4", "switch5", "lqi", "refresh"])
 	}
 
 	preferences {
@@ -710,6 +714,12 @@ def execute(String command){
 					on = json."POWER5".toString().contains("ON");
 					setSwitchState("5", on);
 				}
+				if (json."Wifi"){
+					doLogging("execute: got WIFI")
+					def ss = json."Wifi"."RSSI";
+					//ss = (ss*255)/100;
+					sendEvent(name: "lqi", value: ss);
+				}						
 			}
 			else {
 				doLogging("execute: No json received: ${command}")
