@@ -140,8 +140,9 @@ def updated(){
 		ruleState1(1);
 	}
 	if (doUpgrade=="true"){
-		device.updateSetting(doUpgrade, false)
-		settings[doUpgrade]=false
+		doLogging "doUpgrade is true"
+		device.updateSetting(doUpgrade, "false")
+		settings[doUpgrade]="false"
 	}
 	
 }
