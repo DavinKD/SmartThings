@@ -139,11 +139,6 @@ def updated(){
 		ruleDefine1(sRuleText);
 		ruleState1(1);
 	}
-	if (doUpgrade=="true"){
-		doLogging "doUpgrade is true"
-		device.updateSetting(doUpgrade, "false")
-		settings[doUpgrade]="false"
-	}
 	
 }
 
@@ -167,6 +162,13 @@ def ruleDefine1Callback(physicalgraph.device.HubResponse response){
 	def jsobj = response?.json;
 
 	doLogging "JSON: ${jsobj}";
+	
+	if (doUpgrade=="true"){
+		doLogging "doUpgrade is true"
+		device.updateSetting(doUpgrade, "false")
+		settings[doUpgrade]="false"
+	}
+
 }
 
 def reload(){
