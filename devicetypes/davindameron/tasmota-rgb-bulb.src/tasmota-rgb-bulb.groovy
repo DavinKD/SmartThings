@@ -91,6 +91,8 @@ metadata {
         input(name: "blueLevel", type: "number", title: "Blue Level (0-255)", range: "0..255", description: "Level of blue LEDs", displayDuringSetup: true, required: true)
         input(name: "warmLevel", type: "number", title: "Warm White Level (0-255)", range: "0..255", description: "Level of warm white LEDs", displayDuringSetup: true, required: true)
         input(name: "coldLevel", type: "number", title: "Cold White Level (0-255)", range: "0..255", description: "Level of cold white LEDs", displayDuringSetup: true, required: true)
+	input(name: "useDev", type: "boolean", title: "Use Dev Versions for Upgrade?", displayDuringSetup: true, required: false)
+	input(name: "doUpgrade", type: "boolean", title: "Perform Upgrade?", displayDuringSetup: true, required: false)
 	    
 	    input(
              "loopRate",
@@ -216,6 +218,33 @@ def updated(){
 	doLogging "updated()"
 	def rgbwwvalue = "${settings.redLevel},${settings.greenLevel},${settings.blueLevel},${settings.warmLevel},${settings.coldLevel}"
 	setRgbww(rgbwwvalue)
+	if (doUpgrade=="true"){
+		doLogging "doUpgrade is true"
+		setOTAURL()
+		doUpgrade()
+		device.updateSetting("doUpgrade", false)
+		//settings[doUpgrade]="false"
+	}
+}
+def setOTAURL(){
+	if (useDev=="true"){
+		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/tasmota.bin", setOTAURLCallback);
+	}
+	else {
+		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/release/tasmota.bin", setOTAURLCallback);
+	}
+}
+
+def setOTAURLCallback(physicalgraph.device.HubResponse response){
+	doLogging "setOTAURLCallback(${response})"
+}
+
+def doUpgrade(){
+	sendCommand("Upgrade", "1", doUpgradeCallback)
+}
+
+def doUpgradeCallback(physicalgraph.device.HubResponse response){
+	doUpgradeCallback "doUpgradeCallback(${response})"
 }
 
 def poll() {
