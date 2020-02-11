@@ -470,10 +470,14 @@ def setColor(Map colorHSMap) {
     Integer boundedHue = boundInt(colorHSMap?.hue?:0, PERCENT_RANGE)
     Integer boundedSaturation = boundInt(colorHSMap?.saturation?:0, PERCENT_RANGE)
     String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)
+    String rgbHexSend = rgbHex
+    if (rgbHex=="#FFFFFF"){
+	    rgbHexSend="#000000FF"
+    }		
     doLogging "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
 
 	def commandName = "Color";
-	def payload = rgbHex;
+	def payload = rgbHexSend;
 
 	doLogging "COMMAND: $commandName ($payload)"
 
