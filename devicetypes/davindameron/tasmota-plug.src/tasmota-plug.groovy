@@ -140,7 +140,7 @@ def updated(){
 		ruleState1(1);
 	}
 	if (doUpgrade=="true"){
-		doUpgrade="false"
+		device.updateSetting(doUpgrade, "false")
 	}
 	
 }
