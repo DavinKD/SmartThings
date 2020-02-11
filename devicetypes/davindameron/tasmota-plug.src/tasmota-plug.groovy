@@ -51,6 +51,7 @@ metadata {
 		input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
 		input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
 		input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
+		input(name: "doUpgrade", type: "boolean", title: "Perofrm Upgrade?", displayDuringSetup: true, required: false)
 	}
 }
 
@@ -137,6 +138,9 @@ def updated(){
 	else{
 		ruleDefine1(sRuleText);
 		ruleState1(1);
+	}
+	if (doUpgrade=="true"){
+		doUpgrade="false"
 	}
 	
 }
