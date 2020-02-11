@@ -1,7 +1,7 @@
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Tasmota Energy Monitoring Plug", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug", vid:"generic-switch-power-energy") {
+	definition(name: "Tasmota Energy Monitoring Plug", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.switch", vid:"generic-switch-power-energy") {
 		capability "Polling"
 		capability "Refresh"
 	       	capability "Power Meter"
