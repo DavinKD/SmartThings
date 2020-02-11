@@ -141,6 +141,9 @@ def execute(String command){
 					def ss = json."Wifi"."RSSI";
 					//ss = (ss*255)/100;
 					sendEvent(name: "lqi", value: ss);
+
+					def rssi = json."Wifi"."Signal";
+					sendEvent(name: "rssi", value: rssi);
 				}						
 				//Color Temp
 				if (json."CT"!=null) {
