@@ -58,11 +58,6 @@ metadata {
 def execute(String command){
 	
 	if (useMQTT=="true"){
-		if (doUpgrade=="true"){
-			doLogging "doUpgrade is true"
-			device.updateSetting(doUpgrade, false)
-			settings[doUpgrade]="false"
-		}
 		doLogging "execute($command)";
 		if (command) {
 			def json = new groovy.json.JsonSlurper().parseText(command);
@@ -144,7 +139,11 @@ def updated(){
 		ruleDefine1(sRuleText);
 		ruleState1(1);
 	}
-	
+	if (doUpgrade=="true"){
+		doLogging "doUpgrade is true"
+		device.updateSetting("doUpgrade", false)
+		//settings[doUpgrade]="false"
+	}
 }
 
 def ruleState1(value){
