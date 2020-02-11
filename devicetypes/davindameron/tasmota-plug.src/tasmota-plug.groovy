@@ -141,10 +141,29 @@ def updated(){
 	}
 	if (doUpgrade=="true"){
 		doLogging "doUpgrade is true"
+		setOTAURL()
+		doUpgrade()
 		device.updateSetting("doUpgrade", false)
 		//settings[doUpgrade]="false"
 	}
 }
+
+def setOTAURL(){
+	sendCommand("OtaUrl", "http://thehackbox.org/tasmota/release/tasmota.bin", setOTAURLCallback);
+}
+
+def setOTAURLCallback(physicalgraph.device.HubResponse response){
+	doLogging "setOTAURLCallback(${response})"
+}
+
+def doUpgrade(){
+	sendCommand("Upgrade", 1, doUpgradeCallback)
+}
+
+def setOTAURLCallback(physicalgraph.device.HubResponse response){
+	doUpgradeCallback "doUpgradeCallback(${response})"
+}
+
 
 def ruleState1(value){
 	sendCommand("Rule1", value, ruleState1Callback);
