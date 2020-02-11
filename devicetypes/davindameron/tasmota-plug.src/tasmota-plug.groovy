@@ -51,13 +51,18 @@ metadata {
 		input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
 		input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
 		input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
-		input(name: "doUpgrade", type: "boolean", title: "Perofrm Upgrade?", displayDuringSetup: true, required: false)
+		input(name: "doUpgrade", type: "boolean", title: "Perform Upgrade?", displayDuringSetup: true, required: false)
 	}
 }
 
 def execute(String command){
 	
 	if (useMQTT=="true"){
+		if (doUpgrade=="true"){
+			doLogging "doUpgrade is true"
+			device.updateSetting(doUpgrade, false)
+			settings[doUpgrade]="false"
+		}
 		doLogging "execute($command)";
 		if (command) {
 			def json = new groovy.json.JsonSlurper().parseText(command);
@@ -143,11 +148,6 @@ def updated(){
 }
 
 def ruleState1(value){
-	if (doUpgrade=="true"){
-		doLogging "doUpgrade is true"
-		device.updateSetting(doUpgrade, false)
-		settings[doUpgrade]="false"
-	}
 	sendCommand("Rule1", value, ruleState1Callback);
 }
 
