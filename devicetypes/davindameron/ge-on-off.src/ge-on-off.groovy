@@ -25,7 +25,7 @@
  *
  */
 metadata {
-	definition (name: "GE On Off", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.switch") {
+	definition (name: "GE On Off", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.switch", vid:"generic-switch") {
 		capability "Switch"
 		capability "Button"
 		capability "Configuration"
