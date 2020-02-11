@@ -70,8 +70,10 @@ def execute(String command){
 				if (json."Wifi"){
 					doLogging("execute: got WIFI")
 					def ss = json."Wifi"."RSSI";
+					def rssi = json."Wifi"."Signal";
 					//ss = (ss*255)/100;
 					sendEvent(name: "lqi", value: ss);
+					sendEvent(name: "rssi", value: rssi);
 				}						
 				if (json."POWER${PowerChannel}"!=null) {
 					doLogging("execute: got power channel")
