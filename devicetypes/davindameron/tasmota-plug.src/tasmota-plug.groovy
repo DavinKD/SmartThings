@@ -153,7 +153,7 @@ def ruleState1Callback(physicalgraph.device.HubResponse response){
 	doLogging "JSON: ${jsobj}";
 	if (doUpgrade=="true"){
 		doLogging "doUpgrade is true"
-		device.updateSetting(doUpgrade, "false")
+		device.updateSetting(doUpgrade, false)
 		settings[doUpgrade]="false"
 	}
 }
