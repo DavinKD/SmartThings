@@ -61,6 +61,8 @@ metadata {
 		input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
 		input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
 		input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
+		input(name: "useDev", type: "boolean", title: "Use Dev Versions for Upgrade?", displayDuringSetup: true, required: false)
+		input(name: "doUpgrade", type: "boolean", title: "Perform Upgrade?", displayDuringSetup: true, required: false)
 	}
 }
 
@@ -162,6 +164,34 @@ def updated(){
 		ruleState1(1);
 	}
 	sendEvent(name: "checkInterval", value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [])
+	if (doUpgrade=="true"){
+		doLogging "doUpgrade is true"
+		setOTAURL()
+		doUpgrade()
+		device.updateSetting("doUpgrade", false)
+		//settings[doUpgrade]="false"
+	}
+}
+
+def setOTAURL(){
+	if (useDev=="true"){
+		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/tasmota.bin", setOTAURLCallback);
+	}
+	else {
+		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/release/tasmota.bin", setOTAURLCallback);
+	}
+}
+
+def setOTAURLCallback(physicalgraph.device.HubResponse response){
+	doLogging "setOTAURLCallback(${response})"
+}
+
+def doUpgrade(){
+	sendCommand("Upgrade", "1", doUpgradeCallback)
+}
+
+def doUpgradeCallback(physicalgraph.device.HubResponse response){
+	doUpgradeCallback "doUpgradeCallback(${response})"
 }
 
 def ruleState1(value){
