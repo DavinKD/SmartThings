@@ -93,20 +93,7 @@ metadata {
         input(name: "coldLevel", type: "number", title: "Cold White Level (0-255)", range: "0..255", description: "Level of cold white LEDs", displayDuringSetup: true, required: true)
 	input(name: "useDev", type: "boolean", title: "Use Dev Versions for Upgrade?", displayDuringSetup: true, required: false)
 	input(name: "doUpgrade", type: "boolean", title: "Perform Upgrade?", displayDuringSetup: true, required: false)
-	    
-	    input(
-             "loopRate",
-             "number",
-             title: "Color loop rate (1-20 Fast-Slow)",
-             range: "1..20",
-             description: "range 1-20",
-             defaultValue: 5,
-             required: false,
-             displayDuringSetup: true
-            )           
-
-
-
+	input(name: "loopRate", type: "number", title: "Color loop rate (1-20 Fast-Slow)", range: "1..20", description: "range 1-20", defaultValue: 5, required: false, displayDuringSetup: true)           
 	}
 }
 
@@ -587,12 +574,8 @@ def ping() {
 def loopOn() {
     def loopRate = loopRate ?: settings?.loopRate ?: device.latestValue("loopRate");
 	setSpeed(loopRate);
-	setLoop("2");
-    
-    //if (switch.state=="off")
-    //{
+	setLoop("2,0");
     	on();
-    //}
 }
 
 def loopOff() {
