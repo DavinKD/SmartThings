@@ -58,6 +58,9 @@ def execute(String command){
 				doLogging("execute: got WIFI")
 				def ss = json."Wifi"."RSSI";
 				sendEvent(name: "lqi", value: ss);
+
+				def rssi = json."Wifi"."Signal";
+				sendEvent(name: "rssi", value: rssi);
 			}						
 		}
 		else {
