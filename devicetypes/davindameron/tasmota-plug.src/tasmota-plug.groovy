@@ -160,7 +160,7 @@ def doUpgrade(){
 	sendCommand("Upgrade", 1, doUpgradeCallback)
 }
 
-def setOTAURLCallback(physicalgraph.device.HubResponse response){
+def doUpgradeCallback(physicalgraph.device.HubResponse response){
 	doUpgradeCallback "doUpgradeCallback(${response})"
 }
 
