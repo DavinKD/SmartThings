@@ -559,7 +559,7 @@ def ping() {
 def loopOn() {
     def loopRate = loopRate ?: settings?.loopRate ?: device.latestValue("loopRate");
 	setSpeed(loopRate);
-	setLoop("2");
+	setLoop("2,0");
     
     //if (switch.state=="off")
     //{
