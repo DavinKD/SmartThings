@@ -11,12 +11,6 @@ import groovy.transform.Field
 @Field final Integer  HUE_SCALE = 1000
 @Field final Integer  COLOR_OFFSET = HUE_RANGE.getTo() * HUE_SCALE
 
-@Field final IntRange COLOR_TEMP_RANGE = (2200..7000)
-@Field final Integer  COLOR_TEMP_DEFAULT = COLOR_TEMP_RANGE.getFrom() + ((COLOR_TEMP_RANGE.getTo() - COLOR_TEMP_RANGE.getFrom())/2)
-@Field final Integer  COLOR_TEMP_STEP = 50 // Kelvin
-@Field final List     COLOR_TEMP_EXTRAS = []
-@Field final List     COLOR_TEMP_LIST = buildColorTempList(COLOR_TEMP_RANGE, COLOR_TEMP_STEP, COLOR_TEMP_EXTRAS)
-
 @Field final Map MODE = [
     COLOR:	"Color",
     WHITE:	"White",
@@ -30,7 +24,6 @@ metadata {
 		capability "Refresh"
 		capability "Switch"
 		capability "Color Control"
-		capability "Color Temperature"
         	capability "Switch Level"
 		capability "Execute"
 		capability "Signal Strength"
@@ -43,7 +36,6 @@ metadata {
 		command "setLoopRate", ["number"]
 
 		attribute "colorLabel", "string"
-		attribute "tempLabel", "string"
 		attribute "dimmerLabel", "string"
        
 	}
@@ -69,10 +61,6 @@ metadata {
     	state "level", action:"switch level.setLevel", label:'Ring Level'
 	}
 
-		controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 2, height: 3, inactiveLabel: false, range: "(2200..7000)") {
-        state "colorTemperature", action: "setColorTemperature", label:"Color Temp"
-    }
-
 	standardTile("colorLoop", "device.colorLoop", decoration: "flat", width: 2, height: 3) {
         state "off", label:'Color Loop', action: "loopOn", icon: "st.Kids.kids2", backgroundColor:"#ffffff"
         state "on", label:'Color Loop', action: "loopOff", icon: "st.Kids.kids2", backgroundColor:"#00a0dc"
@@ -84,7 +72,7 @@ metadata {
         
     
 	main "switch"
-		details(["switch", "lqi", "rgbSelector", "levelSliderControl", "colorTempSliderControl", "colorLoop", "refresh"])
+		details(["switch", "lqi", "rgbSelector", "levelSliderControl", "colorLoop", "refresh"])
 	}
 
     
@@ -97,7 +85,6 @@ metadata {
 	input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
 	input(name: "MQTTProxy", type: "string", title: "MQTT Proxy Web Server", description: "MQTT Proxy Web Server", displayDuringSetup: true, required: false)
 	input(name: "MQTTTopic", type: "string", title: "MQTT Topic", description: "MQTT Topic", displayDuringSetup: true, required: false)
-        input(name: "simCT", type: "boolean", title: "Simulate Color Temp?", displayDuringSetup: true, required: false)
         input(name: "setVarForPower", type: "boolean", title: "Use Var1 for Power On?", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
         input(name: "PowerChannel", type: "number", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
@@ -122,9 +109,6 @@ metadata {
 	}
 }
 
-private getCOLOR_TEMP_MAX() { 6500 }
-private getCOLOR_TEMP_MIN() { 2700 }
-private getCOLOR_TEMP_DIFF() { COLOR_TEMP_MAX - COLOR_TEMP_MIN }
 
 def execute(String command){
 	doLogging "execute($command)";
@@ -159,12 +143,6 @@ def execute(String command){
 					//ss = (ss*255)/100;
 					sendEvent(name: "lqi", value: ss);
 				}						
-				//Color Temp
-				if (json."CT"!=null) {
-					def kelvin = Math.round((((json.CT + 6)*-1)+653)*13.84)
-					doLogging "Kelvin is ${kelvin}"
-					sendEvent(name: "colorTemperature", value: kelvin)
-				}
 				//level
 				if (json."Dimmer"!=null) {
 					def level = json."Dimmer";
@@ -332,54 +310,6 @@ def createCommand(String command, payload, callback){
 		];
 
 		def hubAction = new physicalgraph.device.HubAction(params, dni, options);
-	}
-}
-
-def setColorTemperature(kelvin) {
-	doLogging "executing 'setColorTemperature' ${kelvin}K"
-	def simCT = simCT ?: settings?.simCT ?: device.latestValue("simCT");
-	if (simCT!="true"){	
-		def bulbValue = Math.round((((kelvin/13.84)-6)*-1)+653) 
-		doLogging "bulb value ${bulbValue}"
-
-		def commandName = "CT";
-		def payload = bulbValue;
-
-		doLogging "COMMAND: $commandName ($payload)"
-
-		def command = createCommand(commandName, payload, "setColorTemperatureCallback");;
-
-		sendHubCommand(command);
-		def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-		if (useMQTT!="true"){
-
-			sendEvent(name: "colorTemperature", value: kelvin)
-		}
-	}
-	else {
-			setColor("FFFFFF")
-			sendEvent(name: "colorTemperature", value: kelvin)
-	}
-}
-
-def setColorTemperatureCallback(physicalgraph.device.HubResponse response){
-	def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-	
-	doLogging "Finished Setting Color Temperature (channel: ${PowerChannel}), JSON: ${response.json}"
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		def kelvin = Math.round((((response.json.CT + 6)*-1)+653)*13.84)
-		doLogging "Kelvin is ${kelvin}"
-
-
-		def on = response.json."POWER${PowerChannel}" == "ON";
-		if(PowerChannel==1){
-			on = on || response.json."POWER" == "ON";
-		}
-		def level = response.json."Dimmer";
-		doLogging "SendEvent level to $level";
-		sendEvent(name:"level", value:level);
-		setSwitchState(on);
 	}
 }
 
