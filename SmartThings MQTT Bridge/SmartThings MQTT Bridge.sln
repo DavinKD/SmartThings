@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.902
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SmartThings MQTT Bridge", "SmartThings MQTT Bridge\SmartThings MQTT Bridge.vbproj", "{B8534A45-BC3F-4532-85D7-4E4A94F6CEF7}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TestApp", "TestApp\TestApp.vbproj", "{21459A29-CE25-4C18-BEEF-A71848FE9569}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{B8534A45-BC3F-4532-85D7-4E4A94F6CEF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8534A45-BC3F-4532-85D7-4E4A94F6CEF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8534A45-BC3F-4532-85D7-4E4A94F6CEF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21459A29-CE25-4C18-BEEF-A71848FE9569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21459A29-CE25-4C18-BEEF-A71848FE9569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21459A29-CE25-4C18-BEEF-A71848FE9569}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21459A29-CE25-4C18-BEEF-A71848FE9569}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5567B6C0-52CE-4DFE-8770-FA8008E56D47}
 	EndGlobalSection
 EndGlobal
