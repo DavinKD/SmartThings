@@ -190,7 +190,7 @@ def doUpgrade(){
 	sendCommand("Upgrade", "1", doUpgradeCallback)
 }
 
-def doUpgradeCallback(physicalgraph.device.HubResponse response){
+def doUpgradeCallback(response){
 	doUpgradeCallback "doUpgradeCallback(${response})"
 }
 
