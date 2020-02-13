@@ -15,10 +15,14 @@ Public Class SmartThingsMQTTService1
     Dim oDevices As New List(Of clsDevice)
     Dim gLogDir As String = ""
     Dim bLogAllMessages As Boolean = False
+    Dim TimerX As New System.Timers.Timer
+
+
 
     Private Class clsDevice
         Public sDeviceId As String
         Public sTopic As String
+        Public bFoundInConfig As Boolean
     End Class
 
 
@@ -33,11 +37,20 @@ Public Class SmartThingsMQTTService1
             myServer.StartAsync(objServerOptions)
             readConfig()
             readDeviceList()
-
+            AddHandler TimerX.Elapsed, AddressOf TimerX_Tick
+            With TimerX
+                .Interval = 60000
+                .enabled = True
+            End With
         Catch ex As Exception
             WriteToErrorLog("OnStart()" & Err.Description)
         End Try
 
+    End Sub
+
+    Private Sub TimerX_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        readConfig()
+        readDeviceList()
     End Sub
 
     Private Function IsValidJson(ByVal strInput As String) As Boolean
@@ -76,14 +89,13 @@ Public Class SmartThingsMQTTService1
         End Try
     End Sub
 
+
     Private Sub OnApplicationMessageReceived(ByVal sender As Object, ByVal eventArgs As MqttApplicationMessageReceivedEventArgs) Handles myServer.ApplicationMessageReceived
         Try
             Dim sTopic = eventArgs.ApplicationMessage.Topic
             Dim sPayload = UnicodeBytesToString(eventArgs.ApplicationMessage.Payload)
             Dim sValue = eventArgs.ApplicationMessage.ToString
             Dim sTopicDevice As String = ""
-            readConfig()
-            readDeviceList()
 
             sTopicDevice = getTopicDeviceByTopic(sTopic)
             If sPayload = "Offline" Then
@@ -95,12 +107,12 @@ Public Class SmartThingsMQTTService1
             End If
 
             For Each device In getDeviceIdByTopic(sTopic)
-                Dim evaluator As New Thread(Sub() Me.sendData(device.sDeviceId, sPayload))
-                With evaluator
-                    .IsBackground = True ' not necessary...
-                    .Start()
-                End With
-
+                'Dim evaluator As New Thread(Sub() Me.sendData(device.sDeviceId, sPayload))
+                'With evaluator
+                '.IsBackground = True ' not necessary...
+                '.Start()
+                'End With
+                sendData(device.sDeviceId, sPayload)
             Next
         Catch ex As Exception
             WriteToErrorLog("OnApplicationMessageReceived():  " & Err.Description)
@@ -120,20 +132,12 @@ Public Class SmartThingsMQTTService1
 
     Private Function strToBoolean(sStr As String) As Boolean
         strToBoolean = False
-        Select Case sStr
-            Case "True"
-                strToBoolean = True
-            Case "True"
-                strToBoolean = True
-            Case "Y"
+        Select Case sStr.ToLower
+            Case "true"
                 strToBoolean = True
             Case "y"
                 strToBoolean = True
-            Case "Yes"
-                strToBoolean = True
             Case "yes"
-                strToBoolean = True
-            Case "YES"
                 strToBoolean = True
         End Select
 
@@ -178,6 +182,10 @@ Public Class SmartThingsMQTTService1
             Dim sDevice As New clsDevice
             Dim bExists As Boolean
 
+            For Each cDevice In oDevices
+                cDevice.bFoundInConfig = False
+            Next
+
             While Not (fileIn.EndOfStream)
                 sDevice = New clsDevice
                 strData = fileIn.ReadLine
@@ -185,20 +193,27 @@ Public Class SmartThingsMQTTService1
                     lineInfo = Split(strData, "=")
                     sDevice.sTopic = lineInfo(0)
                     sDevice.sDeviceId = lineInfo(1)
+                    sDevice.bFoundInConfig = True
                     bExists = False
                     For Each cDevice In oDevices
                         If cDevice.sDeviceId = sDevice.sDeviceId And cDevice.sTopic = sDevice.sTopic Then
                             bExists = True
+                            cDevice.bFoundInConfig = True
                         End If
                     Next
                     If Not bExists Then
                         WriteToErrorLog("readDeviceList(): Added Device " & sDevice.sDeviceId & " - " & sDevice.sTopic)
                         oDevices.Add(sDevice)
                     End If
-
                 End If
             End While
             fileIn.Close()
+            For Each cDevice In oDevices
+                If Not cDevice.bFoundInConfig Then
+                    WriteToErrorLog("readDeviceList(): Removing Device " & cDevice.sDeviceId & " - " & cDevice.sTopic)
+                    oDevices.Remove(cDevice)
+                End If
+            Next
         Catch ex As Exception
             WriteToErrorLog("readDeviceList(): " & Err.Description)
         End Try
@@ -265,7 +280,7 @@ Public Class SmartThingsMQTTService1
         End Try
     End Sub
 
-    Private Function SendRequest(url As String, jsonString As String) As String
+    Private Async Sub SendRequest(url As String, jsonString As String)
         Try
             Dim uri As Uri = New Uri(url)
             Dim req As WebRequest = WebRequest.Create(uri)
@@ -283,41 +298,41 @@ Public Class SmartThingsMQTTService1
             stream.Write(jsonDataBytes, 0, jsonDataBytes.Length)
             stream.Close()
 
-            Dim response = req.GetResponse().GetResponseStream()
+            Using response As WebResponse = Await req.GetResponseAsync()
+                Using responseStream As Stream = response.GetResponseStream()
 
-            Dim reader As New StreamReader(response)
-            Dim res = reader.ReadToEnd()
-            reader.Close()
-            response.Close()
+                End Using
+            End Using
 
-            Return res
+            'Dim response = req.GetResponseAsync()
+            'Dim response = req.GetResponse().GetResponseStream()
+
+            'Dim reader As New StreamReader(response)
+            'Dim res = reader.ReadToEnd()
+            'reader.Close()
+            'response.Close()
+
         Catch ex As Exception
             WriteToErrorLog("SendRequest():  Error sending [" & url & "]")
             WriteToErrorLog("SendRequest(): " & Err.Description)
-            Return ""
         End Try
-    End Function
+    End Sub
 
-    Private Function sendData(inDevice As String, inData As String) As Boolean
+    Private Sub sendData(inDevice As String, inData As String)
         Try
             If inDevice = "" Then
                 'WriteToErrorLog("sendData():  Invalid device")
-                sendData = False
-                Exit Function
+                Exit Sub
             End If
             If IsValidJson(inData) Then
                 Dim jSonString As String = "{'commands':  [{'component' :  'main','capability': 'execute','command': 'execute','arguments': ['" & inData & "']}]}"
                 Dim url As String = "https://api.smartthings.com/v1/devices/" & inDevice & "/commands"
-                Dim result_post = SendRequest(url, jSonString)
-                sendData = True
-            Else
-                sendData = False
+                SendRequest(url, jSonString)
             End If
         Catch ex As Exception
             WriteToErrorLog("SendData: " & Err.Description)
-            sendData = False
         End Try
-    End Function
+    End Sub
 
 
 End Class
