@@ -117,7 +117,32 @@ def installed(){
 def updated(){
 	doLogging "updated()"
 	updateSchedule();
+	setOption56(1)
+	setOption57(1)
 }
+
+def setOption56(value){
+	sendCommand("setOption56", value, setOption56Callback);
+}
+
+def setOption56Callback(physicalgraph.device.HubResponse response){
+	doLogging "setOption56Callback(${response})"
+	def jsobj = response?.json;
+
+	doLogging "JSON: ${jsobj}";
+}
+
+def setOption57(value){
+	sendCommand("setOption57", value, setOption56Callback);
+}
+
+def setOption57Callback(physicalgraph.device.HubResponse response){
+	doLogging "setOption57Callback(${response})"
+	def jsobj = response?.json;
+
+	doLogging "JSON: ${jsobj}";
+}
+
 
 def reload(){
 	doLogging "reload()"
