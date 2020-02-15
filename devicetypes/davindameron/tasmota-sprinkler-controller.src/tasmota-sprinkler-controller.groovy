@@ -117,8 +117,6 @@ def installed(){
 def updated(){
 	doLogging "updated()"
 	updateSchedule();
-	setOption56(1)
-	setOption57(1)
 }
 
 def setOption56(value){
