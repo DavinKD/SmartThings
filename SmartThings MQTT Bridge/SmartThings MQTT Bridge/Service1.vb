@@ -16,6 +16,12 @@ Public Class SmartThingsMQTTService1
     Dim gLogDir As String = ""
     Dim bLogAllMessages As Boolean = False
     Dim TimerX As New System.Timers.Timer
+    Dim TimerQueue As New System.Timers.Timer
+
+    Private Class tMessage
+        Public sDevice As String
+        Public sData As String
+    End Class
 
 
 
@@ -25,6 +31,7 @@ Public Class SmartThingsMQTTService1
         Public bFoundInConfig As Boolean
     End Class
 
+    Dim tQueue As Queue(Of tMessage) = New Queue(Of tMessage)()
 
     Protected Overrides Sub OnStart(ByVal args() As String)
         Try
@@ -40,7 +47,13 @@ Public Class SmartThingsMQTTService1
             AddHandler TimerX.Elapsed, AddressOf TimerX_Tick
             With TimerX
                 .Interval = 60000
-                .enabled = True
+                .Enabled = True
+            End With
+
+            AddHandler TimerQueue.Elapsed, AddressOf TimerQueue_Tick
+            With TimerQueue
+                .Interval = 25
+                .Enabled = True
             End With
         Catch ex As Exception
             WriteToErrorLog("OnStart()" & Err.Description)
@@ -51,6 +64,13 @@ Public Class SmartThingsMQTTService1
     Private Sub TimerX_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs)
         readConfig()
         readDeviceList()
+    End Sub
+
+    Private Sub TimerQueue_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        For Each lMessage As tMessage In tQueue
+            sendData(lMessage.sDevice, lMessage.sData)
+            tQueue.Dequeue()
+        Next
     End Sub
 
     Private Function IsValidJson(ByVal strInput As String) As Boolean
@@ -96,6 +116,7 @@ Public Class SmartThingsMQTTService1
             Dim sPayload = UnicodeBytesToString(eventArgs.ApplicationMessage.Payload)
             Dim sValue = eventArgs.ApplicationMessage.ToString
             Dim sTopicDevice As String = ""
+            Dim lMessage As New tMessage
 
             sTopicDevice = getTopicDeviceByTopic(sTopic)
             If sPayload = "Offline" Then
@@ -112,7 +133,10 @@ Public Class SmartThingsMQTTService1
                 '.IsBackground = True ' not necessary...
                 '.Start()
                 'End With
-                sendData(device.sDeviceId, sPayload)
+                lMessage.sDevice = device.sDeviceId
+                lMessage.sData = sPayload
+                tQueue.Enqueue(lMessage)
+                'sendData(device.sDeviceId, sPayload)
             Next
         Catch ex As Exception
             WriteToErrorLog("OnApplicationMessageReceived():  " & Err.Description)
@@ -300,7 +324,7 @@ Public Class SmartThingsMQTTService1
 
             Using response As WebResponse = Await req.GetResponseAsync()
                 Using responseStream As Stream = response.GetResponseStream()
-
+                    Thread.Sleep(1)
                 End Using
             End Using
 
