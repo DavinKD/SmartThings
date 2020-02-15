@@ -212,7 +212,7 @@ def updated(){
 		device.updateSetting("doUpgrade", false)
 		//settings[doUpgrade]="false"
 	}
-	setOption56(1)
+	setOption56(0)
 	setOption57(1)
 }
 
