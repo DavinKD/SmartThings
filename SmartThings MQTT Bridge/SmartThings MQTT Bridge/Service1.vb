@@ -1,4 +1,4 @@
-﻿Imports System.Threading
+Imports System.Threading
 Imports MQTTnet
 Imports MQTTnet.Server
 Imports System.IO
@@ -15,15 +15,13 @@ Public Class SmartThingsMQTTService1
     Dim oDevices As New List(Of clsDevice)
     Dim gLogDir As String = ""
     Dim bLogAllMessages As Boolean = False
-    Dim TimerX As New System.Timers.Timer
-    Dim TimerQueue As New System.Timers.Timer
+    Dim TimerConfig As New Timers.Timer
+    Dim TimerQueue As New Timers.Timer
 
     Private Class tMessage
         Public sDevice As String
         Public sData As String
     End Class
-
-
 
     Private Class clsDevice
         Public sDeviceId As String
@@ -41,11 +39,12 @@ Public Class SmartThingsMQTTService1
             WriteToErrorLog("onStart():  In")
             myServer = myMQTT.CreateMqttServer()
             objServerOptions.EnablePersistentSessions = True
+            myServer.UseApplicationMessageReceivedHandler(AddressOf OnApplicationMessageReceived)
             myServer.StartAsync(objServerOptions)
             readConfig()
             readDeviceList()
-            AddHandler TimerX.Elapsed, AddressOf TimerX_Tick
-            With TimerX
+            AddHandler TimerConfig.Elapsed, AddressOf TimerX_Tick
+            With TimerConfig
                 .Interval = 60000
                 .Enabled = True
             End With
@@ -66,9 +65,9 @@ Public Class SmartThingsMQTTService1
         readDeviceList()
     End Sub
 
-    Private Sub TimerQueue_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Private Async Sub TimerQueue_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs)
         For Each lMessage As tMessage In tQueue
-            sendData(lMessage.sDevice, lMessage.sData)
+            Await sendData(lMessage.sDevice, lMessage.sData)
             tQueue.Dequeue()
         Next
     End Sub
@@ -110,7 +109,7 @@ Public Class SmartThingsMQTTService1
     End Sub
 
 
-    Private Sub OnApplicationMessageReceived(ByVal sender As Object, ByVal eventArgs As MqttApplicationMessageReceivedEventArgs) Handles myServer.ApplicationMessageReceived
+    Sub OnApplicationMessageReceived(ByVal eventArgs As MqttApplicationMessageReceivedEventArgs)
         Try
             Dim sTopic = eventArgs.ApplicationMessage.Topic
             Dim sPayload = UnicodeBytesToString(eventArgs.ApplicationMessage.Payload)
@@ -128,16 +127,12 @@ Public Class SmartThingsMQTTService1
             End If
 
             For Each device In getDeviceIdByTopic(sTopic)
-                'Dim evaluator As New Thread(Sub() Me.sendData(device.sDeviceId, sPayload))
-                'With evaluator
-                '.IsBackground = True ' not necessary...
-                '.Start()
-                'End With
                 lMessage.sDevice = device.sDeviceId
                 lMessage.sData = sPayload
+
                 tQueue.Enqueue(lMessage)
-                'sendData(device.sDeviceId, sPayload)
             Next
+
         Catch ex As Exception
             WriteToErrorLog("OnApplicationMessageReceived():  " & Err.Description)
         End Try
@@ -304,7 +299,7 @@ Public Class SmartThingsMQTTService1
         End Try
     End Sub
 
-    Private Async Sub SendRequest(url As String, jsonString As String)
+    Private Async Function SendRequest(url As String, jsonString As String) As Task(Of Boolean)
         Try
             Dim uri As Uri = New Uri(url)
             Dim req As WebRequest = WebRequest.Create(uri)
@@ -315,48 +310,40 @@ Public Class SmartThingsMQTTService1
             req.Method = "POST"
             req.ContentLength = jsonDataBytes.Length
 
-
-
-
-            Dim stream = req.GetRequestStream()
-            stream.Write(jsonDataBytes, 0, jsonDataBytes.Length)
-            stream.Close()
-
-            Using response As WebResponse = Await req.GetResponseAsync()
-                Using responseStream As Stream = response.GetResponseStream()
-                    Thread.Sleep(1)
+            Using myStream As Stream = Await req.GetRequestStreamAsync()
+                myStream.Write(jsonDataBytes, 0, jsonDataBytes.Length)
+                myStream.Close()
+                Using response As WebResponse = Await req.GetResponseAsync()
+                    Using responseStream As Stream = response.GetResponseStream()
+                    End Using
                 End Using
             End Using
 
-            'Dim response = req.GetResponseAsync()
-            'Dim response = req.GetResponse().GetResponseStream()
-
-            'Dim reader As New StreamReader(response)
-            'Dim res = reader.ReadToEnd()
-            'reader.Close()
-            'response.Close()
-
+            Return True
         Catch ex As Exception
             WriteToErrorLog("SendRequest():  Error sending [" & url & "]")
             WriteToErrorLog("SendRequest(): " & Err.Description)
+            Return False
         End Try
-    End Sub
+    End Function
 
-    Private Sub sendData(inDevice As String, inData As String)
+    Private Async Function sendData(inDevice As String, inData As String) As Task(Of Boolean)
         Try
             If inDevice = "" Then
-                'WriteToErrorLog("sendData():  Invalid device")
-                Exit Sub
+                Return True
+                Exit Function
             End If
             If IsValidJson(inData) Then
                 Dim jSonString As String = "{'commands':  [{'component' :  'main','capability': 'execute','command': 'execute','arguments': ['" & inData & "']}]}"
                 Dim url As String = "https://api.smartthings.com/v1/devices/" & inDevice & "/commands"
-                SendRequest(url, jSonString)
+                Await SendRequest(url, jSonString)
             End If
+            Return True
         Catch ex As Exception
             WriteToErrorLog("SendData: " & Err.Description)
+            Return False
         End Try
-    End Sub
+    End Function
 
 
 End Class
