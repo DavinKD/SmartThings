@@ -6,6 +6,7 @@ Imports System.Net
 Imports System.Text
 Imports Newtonsoft.Json.Linq
 Imports Newtonsoft.Json
+Imports System.Collections.Concurrent
 
 Public Class SmartThingsMQTTService1
 
@@ -17,6 +18,7 @@ Public Class SmartThingsMQTTService1
     Dim bLogAllMessages As Boolean = False
     Dim TimerConfig As New Timers.Timer
     Dim TimerQueue As New Timers.Timer
+    Dim bStopping As Boolean = False
 
     Private Class tMessage
         Public sDevice As String
@@ -29,10 +31,11 @@ Public Class SmartThingsMQTTService1
         Public bFoundInConfig As Boolean
     End Class
 
-    Dim tQueue As Queue(Of tMessage) = New Queue(Of tMessage)()
+    Dim tQueue As ConcurrentQueue(Of tMessage) = New ConcurrentQueue(Of tMessage)()
 
     Protected Overrides Sub OnStart(ByVal args() As String)
         Try
+            WriteToErrorLog("OnStart(): IN")
             Dim objServerOptions As New MqttServerOptions()
             Dim gAppDir = My.Application.Info.DirectoryPath
             gLogDir = gAppDir
@@ -49,11 +52,14 @@ Public Class SmartThingsMQTTService1
                 .Enabled = True
             End With
 
-            AddHandler TimerQueue.Elapsed, AddressOf TimerQueue_Tick
-            With TimerQueue
-                .Interval = 25
-                .Enabled = True
+
+            Dim evaluator As New Thread(Sub() processQueue())
+            With evaluator
+                .IsBackground = True ' not necessary...
+                .Start()
             End With
+
+            WriteToErrorLog("OnStart(): OUT")
         Catch ex As Exception
             WriteToErrorLog("OnStart()" & Err.Description)
         End Try
@@ -65,11 +71,20 @@ Public Class SmartThingsMQTTService1
         readDeviceList()
     End Sub
 
-    Private Async Sub TimerQueue_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        For Each lMessage As tMessage In tQueue
-            Await sendData(lMessage.sDevice, lMessage.sData)
-            tQueue.Dequeue()
-        Next
+    Async Sub processQueue()
+        While Not bStopping
+            Try
+                Dim lMessage As New tMessage
+                If tQueue.TryDequeue(lMessage) Then
+                    'WriteToErrorLog("Processing " & lMessage.sDevice & "-" & lMessage.sData)
+                    Await sendData(lMessage.sDevice, lMessage.sData)
+                Else
+                End If
+            Catch ex As Exception
+                WriteToErrorLog("processQueue(): " & Err.Description)
+            End Try
+            'WriteToErrorLog("Still Going")
+        End While
     End Sub
 
     Private Function IsValidJson(ByVal strInput As String) As Boolean
@@ -101,7 +116,7 @@ Public Class SmartThingsMQTTService1
 
     Protected Overrides Sub OnStop()
         Try
-
+            bStopping = True
             myServer.StopAsync()
         Catch ex As Exception
             WriteToErrorLog("OnStop(): " & Err.Description)
@@ -127,9 +142,9 @@ Public Class SmartThingsMQTTService1
             End If
 
             For Each device In getDeviceIdByTopic(sTopic)
+                lMessage = New tMessage
                 lMessage.sDevice = device.sDeviceId
                 lMessage.sData = sPayload
-
                 tQueue.Enqueue(lMessage)
             Next
 
