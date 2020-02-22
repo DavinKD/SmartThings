@@ -96,9 +96,8 @@ metadata {
 		input(name: "doThursday", type: "boolean", title: "Water Thursday", displayDuringSetup:true, required: false)
 		input(name: "doFriday", type: "boolean", title: "Water Friday", displayDuringSetup:true, required: false)
 		input(name: "doSaturday", type: "boolean", title: "Water Saturday", displayDuringSetup:true, required: false)
-		
-		
-		
+		input(name: "useDev", type: "boolean", title: "Use Dev Versions for Upgrade?", displayDuringSetup: true, required: false)
+		input(name: "doUpgrade", type: "boolean", title: "Perform Upgrade?", displayDuringSetup: true, required: false)
 	}
 }
 
@@ -117,6 +116,14 @@ def installed(){
 def updated(){
 	doLogging "updated()"
 	updateSchedule();
+	if (doUpgrade=="true"){
+		doLogging "doUpgrade is true"
+		setOTAURL()
+		doUpgrade()
+		device.updateSetting("doUpgrade", false)
+		//settings[doUpgrade]="false"
+	}
+	setOption57(1)
 }
 
 def setOption56(value){
@@ -141,6 +148,26 @@ def setOption57Callback(physicalgraph.device.HubResponse response){
 	doLogging "JSON: ${jsobj}";
 }
 
+def setOTAURL(){
+	if (useDev=="true"){
+		sendCommand("OtaUrl", "http://192.168.0.40/tasmota.bin", setOTAURLCallback);
+	}
+	else {
+		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/release/tasmota.bin", setOTAURLCallback);
+	}
+}
+
+def setOTAURLCallback(physicalgraph.device.HubResponse response){
+	doLogging "setOTAURLCallback(${response})"
+}
+
+def doUpgrade(){
+	sendCommand("Upgrade", "1", doUpgradeCallback)
+}
+
+def doUpgradeCallback(physicalgraph.device.HubResponse response){
+	doUpgradeCallback "doUpgradeCallback(${response})"
+}
 
 def reload(){
 	doLogging "reload()"
