@@ -96,6 +96,7 @@ def updated(){
 		device.updateSetting("doUpgrade", false)
 		//settings[doUpgrade]="false"
 	}
+	setOption57(1)
 }
 
 def setOption56(value){
@@ -123,7 +124,7 @@ def setOption57Callback(physicalgraph.device.HubResponse response){
 
 def setOTAURL(){
 	if (useDev=="true"){
-		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/tasmota.bin", setOTAURLCallback);
+		sendCommand("OtaUrl", "http://192.168.0.40/tasmota.bin", setOTAURLCallback);
 	}
 	else {
 		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/release/tasmota.bin", setOTAURLCallback);
