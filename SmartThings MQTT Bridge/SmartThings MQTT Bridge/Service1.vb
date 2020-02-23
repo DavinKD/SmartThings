@@ -19,6 +19,7 @@ Public Class SmartThingsMQTTService1
     Dim TimerConfig As New Timers.Timer
     Dim TimerQueue As New Timers.Timer
     Dim bStopping As Boolean = False
+    Dim iLogLevel As Integer = 0 '0 = errors, 1 = warning, 2 = info, 3=Debug
 
     Private Class tMessage
         Public sDevice As String
@@ -35,11 +36,10 @@ Public Class SmartThingsMQTTService1
 
     Protected Overrides Sub OnStart(ByVal args() As String)
         Try
-            WriteToErrorLog("OnStart(): IN")
+            WriteToErrorLog("OnStart(): IN", 3)
             Dim objServerOptions As New MqttServerOptions()
             Dim gAppDir = My.Application.Info.DirectoryPath
             gLogDir = gAppDir
-            WriteToErrorLog("onStart():  In")
             myServer = myMQTT.CreateMqttServer()
             objServerOptions.EnablePersistentSessions = True
             myServer.UseApplicationMessageReceivedHandler(AddressOf OnApplicationMessageReceived)
@@ -59,7 +59,7 @@ Public Class SmartThingsMQTTService1
                 .Start()
             End With
 
-            WriteToErrorLog("OnStart(): OUT")
+            WriteToErrorLog("OnStart(): OUT", 3)
         Catch ex As Exception
             WriteToErrorLog("OnStart()" & Err.Description)
         End Try
@@ -134,10 +134,10 @@ Public Class SmartThingsMQTTService1
 
             sTopicDevice = getTopicDeviceByTopic(sTopic)
             If sPayload = "Offline" Then
-                WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]")
+                WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]", 1)
             Else
                 If bLogAllMessages Then
-                    WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]")
+                    WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]", 2)
                 End If
             End If
 
@@ -158,7 +158,7 @@ Public Class SmartThingsMQTTService1
         Try
             Return System.Text.Encoding.ASCII.GetString(bytes)
         Catch ex As Exception
-            WriteToErrorLog("UnicodeBytesToString(): " & Err.Description)
+            WriteToErrorLog("UnicodeBytesToString(): " & Err.Description, 1)
             Return ""
         End Try
     End Function
@@ -175,6 +175,14 @@ Public Class SmartThingsMQTTService1
                 strToBoolean = True
         End Select
 
+    End Function
+
+    Private Function strToInteger(sStr As String) As Integer
+        If IsNumeric(sStr) Then
+            Return CInt(sStr)
+        Else
+            Return 0
+        End If
     End Function
 
     Private Sub readConfig()
@@ -194,8 +202,8 @@ Public Class SmartThingsMQTTService1
                     Select Case lineInfo(0).ToLower
                         Case "smartthingstoken"
                             token = lineInfo(1)
-                        Case "logallmessages"
-                            bLogAllMessages = strToBoolean(lineInfo(1))
+                        Case "loglevel"
+                            iLogLevel = strToInteger(lineInfo(1))
                     End Select
                 End If
             End While
@@ -236,7 +244,7 @@ Public Class SmartThingsMQTTService1
                         End If
                     Next
                     If Not bExists Then
-                        WriteToErrorLog("readDeviceList(): Added Device " & sDevice.sDeviceId & " - " & sDevice.sTopic)
+                        WriteToErrorLog("readDeviceList(): Added Device " & sDevice.sDeviceId & " - " & sDevice.sTopic, 1)
                         oDevices.Add(sDevice)
                     End If
                 End If
@@ -244,7 +252,7 @@ Public Class SmartThingsMQTTService1
             fileIn.Close()
             For Each cDevice In oDevices
                 If Not cDevice.bFoundInConfig Then
-                    WriteToErrorLog("readDeviceList(): Removing Device " & cDevice.sDeviceId & " - " & cDevice.sTopic)
+                    WriteToErrorLog("readDeviceList(): Removing Device " & cDevice.sDeviceId & " - " & cDevice.sTopic, 1)
                     oDevices.Remove(cDevice)
                 End If
             Next
@@ -291,8 +299,11 @@ Public Class SmartThingsMQTTService1
         End Try
     End Function
 
-    Private Sub WriteToErrorLog(ByVal msg As String)
+    Private Sub WriteToErrorLog(ByVal msg As String, Optional ByVal iLevel As Integer = 0)
         Try
+            If iLevel > iLogLevel Then
+                Exit Sub
+            End If
             Dim dir As String
             dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
             gLogDir = dir & "\logs"
