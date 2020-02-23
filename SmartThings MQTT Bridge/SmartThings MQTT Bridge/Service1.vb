@@ -158,7 +158,7 @@ Public Class SmartThingsMQTTService1
         Try
             Return System.Text.Encoding.ASCII.GetString(bytes)
         Catch ex As Exception
-            WriteToErrorLog("UnicodeBytesToString(): " & Err.Description, 1)
+            WriteToErrorLog("UnicodeBytesToString(): " & Err.Description, 2)
             Return ""
         End Try
     End Function
