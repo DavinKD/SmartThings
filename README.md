@@ -40,6 +40,9 @@ tasmota-temperature - For my custom pool temperature probe
 MQTT Bridge
 https://github.com/DavinKD/SmartThings/blob/master/SmartThingsMQTT.zip
 
+**Updated 2/22/2020
+Updated to use latest mqttnet.dll along with changing a bunch of methods to work async.
+
 
 Most people use HomeAssistant with the Mosquitto MQTT broker.  However, since I'm more of a Microsoft .net kind of person, I wrote my own Windows Service MQTT bridge using mqttnet (https://github.com/chkr1011/MQTTnet).  It's a one-way MQTT service which the devices connect to.  When the service received a message from the device, it forwards it to SmartThings via their API.  To control the devices, my SmartThings device handlers just send commands over http.  The device handlers will work without a broker, but status of events happening physically at the device will be delayed as it only polls once every 5 minutes.
 
