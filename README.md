@@ -38,7 +38,6 @@ tasmota-temperature - For my custom pool temperature probe
 
 
 MQTT Bridge
-https://github.com/DavinKD/SmartThings/blob/master/SmartThingsMQTT.zip
 
 **Updated 2/22/2020
 Updated to use latest mqttnet.dll along with changing a bunch of methods to work async.
