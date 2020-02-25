@@ -44,12 +44,12 @@ https://github.com/DavinKD/SmartThings/blob/master/SmartThingsMQTT.zip
 Updated to use latest mqttnet.dll along with changing a bunch of methods to work async.
 
 
-Most people use HomeAssistant with the Mosquitto MQTT broker.  However, since I'm more of a Microsoft .net kind of person, I wrote my own Windows Service MQTT bridge using mqttnet (https://github.com/chkr1011/MQTTnet).  It's a one-way MQTT service which the devices connect to.  When the service received a message from the device, it forwards it to SmartThings via their API.  To control the devices, my SmartThings device handlers just send commands over http.  The device handlers will work without a broker, but status of events happening physically at the device will be delayed as it only polls once every 5 minutes.
+Most people use HomeAssistant with the Mosquitto MQTT broker.  However, since I'm more of a Microsoft .net kind of person, I wrote my own Windows Service MQTT bridge using mqttnet (https://github.com/chkr1011/MQTTnet).  It's a MQTT service which the devices connect to.  When the service received a message from the device, it forwards it to SmartThings via their API.  To control the devices, my SmartThings device handlers can either send commands over http directly to the device (requires static IP addresses) or can send to a web service I created which forwards to the MQTT broker.  The device handlers will work without a broker, but status of events happening physically at the device will be delayed as it only polls once every 5 minutes.
 
 There are 2 config files.
 
 deviceList.cfg - List of devices and their corresponding SmartThings device IDs (guids)
-SmartThingsMQTT.cfg - Holds your API key for the SmartThings API
+SmartThingsMQTT.cfg - Holds your API key for the SmartThings API and log level.
 
 You can have more than one device in SmartThings for each Tasmota device.  When adding the device in the SmartThings IDE, simply edit the preferences to the IP address assigned to the device.
 
