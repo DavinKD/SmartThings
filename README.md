@@ -83,7 +83,7 @@ I.  Installation<br>
 &emsp;&emsp;&emsp;i.  Group - Optional<br>
 &emsp;&emsp;3.  Click Create<br>
 &emsp;&emsp;4. Note the GUID that is assigned to the device.  It will be in the URL at the top of the screen.  For example "device/show/xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" You just need the part after show/<br>
-&emsp;C. Install SmartThings MQTT Broker
+&emsp;C. Install SmartThings MQTT Broker<br>
 &emsp;&emsp;1. On a Windows PC create a folder where you wish to run the broker<br>
 &emsp;&emsp;2. Put the following files in the newly created folder.<br>
 &emsp;&emsp;&emsp;a. SmartThingsMQTT.exe<br>
