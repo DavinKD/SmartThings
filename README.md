@@ -82,6 +82,22 @@ I.  Installation<br>
 &emsp;&emsp;&emsp;h.  Hub - Select your hub<br>
 &emsp;&emsp;&emsp;i.  Group - Optional<br>
 &emsp;&emsp;3.  Click Create<br>
+&emsp;&emsp;4. Note the GUID that is assigned to the device.  It will be in the URL at the top of the screen.  For example "device/show/xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" You just need the part after show/
+&emsp;C. Install SmartThings MQTT Broker
+&emsp;&emsp;1. On a Windows PC create a folder where you wish to run the broker<br>
+&emsp;&emsp;2. Put the following files in the newly created folder.<br>
+&emsp;&emsp;&emsp;a. SmartThingsMQTT.exe<br>
+&emsp;&emsp;&emsp;b. SmartThingsMQTT.cfg<br>
+&emsp;&emsp;&emsp;c. deviceList.cfg<br>
+&emsp;&emsp;&emsp;d. MQTTnet.dll<br>
+&emsp;&emsp;&emsp;e. Newtonsoft.Json.dll<br>
+&emsp;&emsp;3. Go to https://account.smartthings.com/tokens and create a new token<br>
+&emsp;&emsp;4. Edit the SmartThingsMQTT.cfg and enter the token you created.<br>
+&emsp;&emsp;5. Edit the deviceList.cfg and enter the details for your devices(s).  You will need your Tasmota topic and the GUID for the SmartThings device.<br>
+&emsp;&emsp;6. From a command prompt (with admin privileges) run the following.  c:\windows\microsoft.net\framework\v4.0.30319\installutil.exe c:\yourdirectory\smartThingsMQTT.exe<br>
+&emsp;&emsp;7. run services.msc in Windows and verify that the SmartThingsMQTT service is running.  Start it if not.<br>
+&emsp;&emsp;8. Open port 1883 on your Windows Firewall if needed.<br>
+&emsp;&emsp;9. In Tasmota set your MQTT server to the IP address of your Windows PC<br>
 II. Device Settings<br>
 &emsp;A.  After installing the device you can pull them up in the SmartThings mobile app and edit the settings.  Please note that not all devices have the same settings<br>
 &emsp;&emsp;1.  IP Address - The IP address of the device.<br>
