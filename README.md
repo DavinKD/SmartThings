@@ -54,4 +54,49 @@ You can have more than one device in SmartThings for each Tasmota device.  When 
 
 With slight changes, I'm sure this could be used for many other devices flashed the same way.  See the tuya-convert wiki regarding which devices have been successfully flashed.
 
+I.  Installation
+  A.  Device Handlers
+    1.  Log into SmartThings IDE
+    2.  Go to My Device Handlers
+    3.  Click Settings
+    4.  Click Add new repository
+        a.  Owner - DavinKD
+        b.  Name - SmartThings
+        c.  Branch - master
+    5.  Click Save
+    6.  Click Update from Repo
+    7.  Select SmartThings (master)
+    8.  In the New column select all the device handlers you want.
+    9.  Put a checkmark in the Publish field
+    10. Click Execute update
+  B.  Add new devices
+    1.  In the IDE go to My Device
+    2.  Click +New Device
+        a.  Name - Anything you want
+        b.  Label - Anything you want
+        c.  Zigbee Id - Leave blank
+        d.  Device Network Id - Enter something unique for each device
+        e.  Type - Select the appropriate device handle added in I.A. (they will be at the bottom of the list)
+        f.  Version - Published
+        g.  Location - Pick your location
+        h.  Hub - Select your hub
+        i.  Group - Optional
+    3.  Click Create
+II. Device Settings
+    1.  After installing the device you can pull them up in the SmartThings mobile app and edit the settings.  Please note that not all devices have the same settings
+        a.  IP Address - The IP address of the device.
+        b.  Power Channel - This is the power channel in Tasmota, this is usaually 1, but if you have devices with multiple relays, etc, it can be a different number
+        c.  LED 1-3 Channel - If you've assigned a seperate relay to a LED on the device enter it's number.  Enter 0 if you did not assign relays to the LEDs and are instead using the built in Tasmota LED functionality
+        d.  Turn on LED 1-3 with switch - Yes/No to tell the device handler you want to turn LEDs on/off when the main power is turned on/off
+        e.  USE MQTT for Commands - If turned on, any commands will be sent to my custom Web service which forwards the commands to your MQTT broker.  This is optional
+        f.  Use MQTT for Updates - If turned on, the device handler will be expecting my MQTT broker to send "Execute" commands through the SmartThings API whenever the devices send updates to the MQTT broker.  This is required if you want real-time status updates for actions done at the device itself.  Otherwise, this is optional
+        g.  MQTT Proxy Web Server - This is the IP address of the web server that send commands to MQTT (see Use MQTT for Commands)
+        h.  MQTT Topic - MQTT Topic as defined in Tasmota
+        i.  Turn on debug logging - If on, logging will show up in the SmartThings IDE.  If off, all but errors will be supressed.
+        j.  Username - Optional - If your tasmota web interface ie password protected it will be required.
+        k.  Password - Optional - If your tasmota web interface ie password protected it will be required.
+    
+    
+    
+
 
