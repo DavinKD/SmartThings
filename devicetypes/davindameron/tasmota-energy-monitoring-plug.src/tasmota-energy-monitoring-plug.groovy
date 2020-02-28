@@ -15,6 +15,7 @@ metadata {
 		command "updateStatus"
  		command "reset"
        
+       fingerprint mfr:"0000", prod:"0000", model:"0000", ver: "1.0", deviceJoinName: "Dummy Device 1"
 	}
 
 	// UI tile definitions
