@@ -23,3 +23,13 @@ oic.d.robotcleaner
 oic.d.tv 18
 oic.d.thermostat
 oic.d.watervalve
+x.com.st.d.energymeter
+here’s a list i’ve compiled off github of the ocfDeviceType
+x.com.st.d.mobile.presence
+oic.d.door
+oic.d.fan
+oic.d.sensor
+oic.d.printer
+oic.d.multifunctionprinter
+oic.d.receiver
+x.com.st.d.sensor.multifunction
