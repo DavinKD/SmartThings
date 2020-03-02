@@ -52,7 +52,7 @@ import groovy.transform.Field
     OFF: 	"Off"
 ]
 metadata {
-    definition (name: "Osram Garden Spot", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgb-color-bulb") {
+    definition (name: "Osram Garden Spot", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.light", mnmn:"SmartThings", vid:"generic-rgb-color-bulb") {
 
         capability "Color Control"
         capability "Configuration"
