@@ -52,7 +52,7 @@ import groovy.transform.Field
     OFF: 	"Off"
 ]
 metadata {
-    definition (name: "Osram RGBW Bulb", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
+    definition (name: "Osram RGBW Bulb", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.light", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
 
         capability "Color Control"
         capability "Color Temperature"
