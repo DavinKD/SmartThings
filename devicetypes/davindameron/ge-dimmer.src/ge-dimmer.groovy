@@ -23,7 +23,7 @@
  *
  */
 metadata {
-	definition (name: "GE Dimmer", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-dimmer") {
+	definition (name: "GE Dimmer", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.switch", mnmn:"SmartThings", vid:"generic-dimmer") {
 		capability "Actuator"
 		capability "Button"
 		capability "Configuration"
