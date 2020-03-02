@@ -25,7 +25,7 @@ import groovy.transform.Field
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Better Simulated RGBW Bulb", namespace: "davindameron", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
+	definition(name: "Better Simulated RGBW Bulb", namespace: "davindameron", ocfDeviceType: "oic.d.smartplug", author: "Davin Dameron", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
