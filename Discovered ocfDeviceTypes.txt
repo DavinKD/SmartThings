@@ -1,0 +1,25 @@
+x.com.st.d.sensor.moisture
+x.com.st.d.siren
+x.com.st.d.sensor.contact
+oic.d.light
+oic.d.smartplug
+x.com.st.d.sensor.smoke
+oic.d.watervalve
+x.com.st.d.remotecontroller
+oic.d.blind
+oic.d.switch
+x.com.st.d.sensor.motion
+oic.d.smartlock
+oic.d.garagedoor
+oic.d.airpurifier
+oic.d.airconditioner
+oic.d.camera
+oic.d.dishwasher
+oic.d.washer
+oic.d.dryer
+oic.d.oven
+oic.d.refrigerator
+oic.d.robotcleaner
+oic.d.tv 18
+oic.d.thermostat
+oic.d.watervalve
