@@ -19,7 +19,7 @@ import groovy.transform.Field
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Tasmota RGBW Bulb", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
+	definition(name: "Tasmota RGBW Bulb", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.light", mnmn:"SmartThings", vid:"generic-rgbw-color-bulb") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
