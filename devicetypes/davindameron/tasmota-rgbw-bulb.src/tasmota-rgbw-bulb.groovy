@@ -521,8 +521,10 @@ def setColor(Map colorHSMap) {
     }		
     doLogging "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
 
-	def commandName = "Color";
-	def payload = rgbHexSend;
+	def commandName = "HSBColor";
+    
+    Integer tasHue = boundedHue*3.6
+	def payload = "${tasHue},${boundedSaturation},${device.currentValue("level")}";
 
 	doLogging "COMMAND: $commandName ($payload)"
 
