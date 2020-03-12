@@ -587,8 +587,8 @@ def setColor(Map colorHSMap) {
     String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)
     doLogging "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
 
-	def commandName = "Color";
-	def payload = rgbHex;
+	def commandName = "HSBColor";
+	def payload = "${boundedHue},${boundedSaturation},${device.level}";
 
 	doLogging "COMMAND: $commandName ($payload)"
 
