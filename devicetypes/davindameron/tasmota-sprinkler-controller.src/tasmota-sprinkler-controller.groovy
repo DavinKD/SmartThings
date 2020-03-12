@@ -560,12 +560,25 @@ def updateRules(){
 
     	sendHubCommand(command);
 
+	doLogging "Turning on Rule 1"
+	
+	command = createCommand(commandName, "1", "updateRulesCallback");;
+
+    	sendHubCommand(command);
+
+	
 	commandName = "Rule2";
 	payload = Rule2;
 	
 	doLogging "COMMAND: $commandName ($payload)"
 
 	command = createCommand(commandName, payload, "updateRulesCallback");;
+
+    	sendHubCommand(command);
+
+	doLogging "Turning on Rule 1"
+	
+	command = createCommand(commandName, "1", "updateRulesCallback");;
 
     	sendHubCommand(command);
 
@@ -577,8 +590,12 @@ def updateRules(){
 	command = createCommand(commandName, payload, "updateRulesCallback");;
 
     	sendHubCommand(command);
+	
+	doLogging "Turning on Rule 1"
+	
+	command = createCommand(commandName, "1", "updateRulesCallback");;
 
-
+    	sendHubCommand(command);
 }
 
 def updateRulesCallback(physicalgraph.device.HubResponse response){
