@@ -588,7 +588,7 @@ def setColor(Map colorHSMap) {
     doLogging "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
 
 	def commandName = "HSBColor";
-	def payload = "${boundedHue},${boundedSaturation},${device.currentlevel}";
+	def payload = "${boundedHue},${boundedSaturation},${state.currentlevel}";
 
 	doLogging "COMMAND: $commandName ($payload)"
 
