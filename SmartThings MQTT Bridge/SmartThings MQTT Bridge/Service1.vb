@@ -136,9 +136,7 @@ Public Class SmartThingsMQTTService1
             If sPayload = "Offline" Then
                 WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]", 1)
             Else
-                If bLogAllMessages Then
-                    WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]", 2)
-                End If
+                WriteToErrorLog("Payload:  " & sTopicDevice & " - [" & sPayload & "]", 2)
             End If
 
             For Each device In getDeviceIdByTopic(sTopic)
