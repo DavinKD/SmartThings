@@ -325,6 +325,7 @@ Public Class SmartThingsMQTTService1
 
     Private Async Function SendRequest(url As String, jsonString As String) As Task(Of Boolean)
         Try
+            WriteToErrorLog("In:  SendRequest(" & url & ", " & jsonString, 2)
             Dim uri As Uri = New Uri(url)
             Dim req As WebRequest = WebRequest.Create(uri)
             Dim jsonDataBytes = Encoding.UTF8.GetBytes(jsonString)
@@ -342,7 +343,7 @@ Public Class SmartThingsMQTTService1
                     End Using
                 End Using
             End Using
-
+            WriteToErrorLog("Out:  SendRequest(" & url & ", " & jsonString, 2)
             Return True
         Catch ex As Exception
             WriteToErrorLog("SendRequest():  Error sending [" & url & "]")
@@ -353,6 +354,7 @@ Public Class SmartThingsMQTTService1
 
     Private Async Function sendData(inDevice As String, inData As String) As Task(Of Boolean)
         Try
+            WriteToErrorLog("In:  sendData(" & inDevice & ", " & inData, 2)
             If inDevice = "" Then
                 Return True
                 Exit Function
@@ -362,6 +364,7 @@ Public Class SmartThingsMQTTService1
                 Dim url As String = "https://api.smartthings.com/v1/devices/" & inDevice & "/commands"
                 Await SendRequest(url, jSonString)
             End If
+            WriteToErrorLog("Out:  sendData(" & inDevice & ", " & inData, 2)
             Return True
         Catch ex As Exception
             WriteToErrorLog("SendData: " & Err.Description)
