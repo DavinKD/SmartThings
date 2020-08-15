@@ -51,12 +51,12 @@ def execute(String command){
 				json = json."StatusSTS"
 			}
 
-			if (json.${settings.SensorName}){
-				setTemperature(json.${settings.SensorName}."Temperature");
+			if (json."${settings.SensorName}"){
+				setTemperature(json."${settings.SensorName}"."Temperature");
 			}						
 			if (json."StatusSNS"){
-				if (json."StatusSNS".${settings.SensorName}){
-					setTemperature(json."StatusSNS".${settings.SensorName}."Temperature");
+				if (json."StatusSNS"."${settings.SensorName}"){
+					setTemperature(json."StatusSNS"."${settings.SensorName}"."Temperature");
 				}
 			}
 			if (json."Wifi"){
