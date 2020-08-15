@@ -36,6 +36,7 @@ metadata {
 		input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
 		input(name: "useDev", type: "boolean", title: "Use Dev Versions for Upgrade?", displayDuringSetup: true, required: false)
 		input(name: "doUpgrade", type: "boolean", title: "Perform Upgrade?", displayDuringSetup: true, required: false)
+		input(name: "SensorName", type: "string", title: "Sensor Name", description: "Sensor Name", displayDuringSetup: true, required: false)
 	}
 }
 
@@ -50,18 +51,12 @@ def execute(String command){
 				json = json."StatusSTS"
 			}
 
-			if (json."DS18B20"){
-				setTemperature(json."DS18B20"."Temperature");
-			}						
-			if (json."BME280"){
-				setTemperature(json."BME280"."Temperature");
+			if (json.${settings.SensorName}){
+				setTemperature(json.${settings.SensorName}."Temperature");
 			}						
 			if (json."StatusSNS"){
-				if (json."StatusSNS"."DS18B20"){
-					setTemperature(json."StatusSNS"."DS18B20"."Temperature");
-				}
-				if (json."StatusSNS"."BME280"){
-					setTemperature(json."StatusSNS"."BME280"."Temperature");
+				if (json."StatusSNS".${settings.SensorName}){
+					setTemperature(json."StatusSNS".${settings.SensorName}."Temperature");
 				}
 			}
 			if (json."Wifi"){
