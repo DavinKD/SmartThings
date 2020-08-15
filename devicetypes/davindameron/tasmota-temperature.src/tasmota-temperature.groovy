@@ -53,8 +53,16 @@ def execute(String command){
 			if (json."DS18B20"){
 				setTemperature(json."DS18B20"."Temperature");
 			}						
+			if (json."BME280"){
+				setTemperature(json."BME280"."Temperature");
+			}						
 			if (json."StatusSNS"){
-				setTemperature(json."StatusSNS"."DS18B20"."Temperature");
+				if (json."StatusSNS"."DS18B20"){
+					setTemperature(json."StatusSNS"."DS18B20"."Temperature");
+				}
+				if (json."StatusSNS"."BME280"){
+					setTemperature(json."StatusSNS"."BME280"."Temperature");
+				}
 			}
 			if (json."Wifi"){
 				doLogging("execute: got WIFI")
