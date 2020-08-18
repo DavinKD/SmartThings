@@ -199,43 +199,7 @@ def ping() {
 def setDate(){
 	doLogging "setDate"
 	def dt = new Date()
-	switch(dt.month + 1){
-		case 1:
-			doLogging "Jan ${dt.day + 1}"
-			break;
-		case 2:
-			doLogging "Feb ${dt.day + 1}"
-			break;
-		case 3:
-			doLogging "Mar ${dt.day + 1}"
-			break;
-		case 4:
-			doLogging "Apr ${dt.day + 1}"
-			break;
-		case 5:
-			doLogging "May ${dt.day + 1}"
-			break;
-		case 6:
-			doLogging "Jun ${dt.day + 1}"
-			break;
-		case 7:
-			doLogging "Jul ${dt.day + 1}"
-			break;
-		case 8:
-			doLogging "Aug ${dt.day + 1}"
-			break;
-		case 9:
-			doLogging "Sep ${dt.day + 1}"
-			break;
-		case 10:
-			doLogging "Oct ${dt.day + 1}"
-			break;
-		case 11:
-			doLogging "Nov ${dt.day + 1}"
-			break;
-		case 12:
-			doLogging "Dec ${dt.day + 1}"
-			break;
+	doLogging dt.format("MMM d")
 
 	}
 }
