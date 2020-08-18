@@ -128,14 +128,14 @@ def installed(){
 
 def updated(){
 	doLogging "updated()"
-	if (doUpgrade=="true"){
-		doLogging "doUpgrade is true"
-		setOTAURL()
-		doUpgrade()
-		device.updateSetting("doUpgrade", false)
+	//if (doUpgrade=="true"){
+	//	doLogging "doUpgrade is true"
+		//setOTAURL()
+		//doUpgrade()
+		//device.updateSetting("doUpgrade", false)
 		//settings[doUpgrade]="false"
-	}
-	setOption57(1)
+	//}
+	//setOption57(1)
 }
 
 def setVar9(value){
