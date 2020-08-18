@@ -37,8 +37,41 @@ metadata {
 		input(name: "useDev", type: "boolean", title: "Use Dev Versions for Upgrade?", displayDuringSetup: true, required: false)
 		input(name: "doUpgrade", type: "boolean", title: "Perform Upgrade?", displayDuringSetup: true, required: false)
 		input(name: "SensorName", type: "string", title: "Sensor Name", description: "Sensor Name", displayDuringSetup: true, required: false)
+		input(name: "MQTTProxy", type: "string", title: "MQTT Proxy Web Server", description: "MQTT Proxy Web Server", displayDuringSetup: true, required: false)
+		input(name: "MQTTTopic", type: "string", title: "MQTT Topic", description: "MQTT Topic", displayDuringSetup: true, required: false)
 	}
 }
+
+def sendCommand(String command, callback) {
+    return sendCommand(command, null);
+}
+
+def sendCommand(String command, payload, callback) {
+	sendHubCommand(createCommand(command, payload, callback))
+}
+
+def createCommand(String command, payload, callback){
+	def dni = null;
+	def path="/?topic=cmnd/${settings.MQTTTopic}/${command}&payload=${payload}"
+	doLogging(path);
+
+	def params = [
+	method: "GET",
+	path: path,
+	headers: [
+	    HOST: "${settings.MQTTProxy}:80"
+	]
+	]
+	doLogging(params);
+
+	def options = [
+	callback : callback
+	];
+
+	def hubAction = new physicalgraph.device.HubAction(params, dni, options);
+}
+
+
 
 def execute(String command){
 	
@@ -166,7 +199,45 @@ def ping() {
 def setDate(){
 	doLogging "setDate"
 	def dt = new Date()
-	doLogging dt.month
+	switch(dt.month + 1){
+		case 1:
+			doLogging "Jan ${dt.day + 1}"
+			break;
+		case 2:
+			doLogging "Feb ${dt.day + 1}"
+			break;
+		case 3:
+			doLogging "Mar ${dt.day + 1}"
+			break;
+		case 4:
+			doLogging "Apr ${dt.day + 1}"
+			break;
+		case 5:
+			doLogging "May ${dt.day + 1}"
+			break;
+		case 6:
+			doLogging "Jun ${dt.day + 1}"
+			break;
+		case 7:
+			doLogging "Jul ${dt.day + 1}"
+			break;
+		case 8:
+			doLogging "Aug ${dt.day + 1}"
+			break;
+		case 9:
+			doLogging "Sep ${dt.day + 1}"
+			break;
+		case 10:
+			doLogging "Oct ${dt.day + 1}"
+			break;
+		case 11:
+			doLogging "Nov ${dt.day + 1}"
+			break;
+		case 12:
+			doLogging "Dec ${dt.day + 1}"
+			break;
+
+	}
 }
 
 def setTemperature(value) {
