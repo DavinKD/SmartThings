@@ -198,7 +198,7 @@ def ping() {
 }
 def setDate(){
 	doLogging "setDate"
-	def timeString = new Date().format(“MMM d”, location.timeZone)
+	def timeString = new Date().format(“MMM dd”, location.timeZone)
 	doLogging timeString
 
 }
