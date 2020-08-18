@@ -201,7 +201,6 @@ def setDate(){
 	def timeString = new Date().format(“MMM d”, location.timeZone)
 	doLogging timeString
 
-	}
 }
 
 def setTemperature(value) {
