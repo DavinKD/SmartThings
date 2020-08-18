@@ -75,6 +75,7 @@ def execute(String command){
 	else {
 		doLogging("execute: No command received")
 	}
+	setDate()
 	
 }
 
@@ -88,6 +89,7 @@ def doLogging(value){
 
 def installed(){
 	doLogging "installed()"
+	runEvery3Hours(setDate)
 }
 
 def updated(){
@@ -100,6 +102,17 @@ def updated(){
 		//settings[doUpgrade]="false"
 	}
 	setOption57(1)
+}
+
+def setVar9(value){
+	sendCommand("Var9", value, setVar9Callback);
+}
+
+def setVar9Callback(physicalgraph.device.HubResponse response){
+	doLogging "setVar9Callback(${response})"
+	def jsobj = response?.json;
+
+	doLogging "JSON: ${jsobj}";
 }
 
 def setOption56(value){
@@ -149,6 +162,11 @@ def doUpgradeCallback(physicalgraph.device.HubResponse response){
 def ping() {
 	doLogging("ping()")
 	return "true"
+}
+def setDate(){
+	doLogging "setDate"
+	def dt = new Date()
+	doLogging dt.month
 }
 
 def setTemperature(value) {
