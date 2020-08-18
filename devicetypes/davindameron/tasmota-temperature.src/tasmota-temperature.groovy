@@ -86,10 +86,12 @@ def execute(String command){
 
 			if (json."${settings.SensorName}"){
 				setTemperature(json."${settings.SensorName}"."Temperature");
+				setDate();
 			}						
 			if (json."StatusSNS"){
 				if (json."StatusSNS"."${settings.SensorName}"){
 					setTemperature(json."StatusSNS"."${settings.SensorName}"."Temperature");
+					setDate();
 				}
 			}
 			if (json."Wifi"){
@@ -108,7 +110,6 @@ def execute(String command){
 	else {
 		doLogging("execute: No command received")
 	}
-	setDate()
 	
 }
 
@@ -199,8 +200,7 @@ def ping() {
 def setDate(){
 	doLogging "setDate"
 	def timeString = new Date().format("MMM dd", location.timeZone)
-	doLogging timeString
-
+	setVar9(timeString)
 }
 
 def setTemperature(value) {
