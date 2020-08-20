@@ -33,6 +33,8 @@ Public Class SmartThingsMQTTService1
     End Class
 
     Dim tQueue As ConcurrentQueue(Of tMessage) = New ConcurrentQueue(Of tMessage)()
+    Dim processQueueThread As New Thread(Sub() processQueue())
+    Dim checkQueueThread As New Thread(Sub() processQueue())
 
     Protected Overrides Sub OnStart(ByVal args() As String)
         Try
@@ -53,9 +55,13 @@ Public Class SmartThingsMQTTService1
             End With
 
 
-            Dim evaluator As New Thread(Sub() processQueue())
-            With evaluator
+            With processQueueThread
                 .IsBackground = True ' not necessary...
+                .Start()
+            End With
+
+            With checkQueueThread
+                .IsBackground = True
                 .Start()
             End With
 
@@ -71,6 +77,21 @@ Public Class SmartThingsMQTTService1
         readDeviceList()
     End Sub
 
+    Sub checkQueue()
+        While Not bStopping
+            Try
+                If Not processQueueThread.IsAlive Then
+                    WriteToErrorLog("checkQueue(): ProcessQueueThread was crashed!")
+                    With processQueueThread
+                        .IsBackground = True ' not necessary...
+                        .Start()
+                    End With
+                End If
+            Catch ex As Exception
+                WriteToErrorLog("checkQueue(): " & Err.Description)
+            End Try
+        End While
+    End Sub
     Async Sub processQueue()
         While Not bStopping
             Try
