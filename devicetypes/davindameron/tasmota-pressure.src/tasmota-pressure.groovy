@@ -2,16 +2,14 @@ metadata {
 	definition(name: "Tasmota Pressure", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThings", vid: "generic-temperature-measurement", ocfDeviceType: "oic.d.thermostat") {
 		capability "venturecircle58707.pumpPressure"
 		capability "Execute"
-		capability "Signal Strength"
-		capability "Sensor"
         	capability "Health Check"
 	}
 
 	// UI tile definitions
 	tiles(scale: 2) {
 
-        valueTile("temperature", "device.temperature", width: 2, height: 2) {
-            state("temperature", label:'${currentValue}', unit:"F",
+        valueTile("pressure", "device.pressue", width: 2, height: 2) {
+            state("pressure", label:'${currentValue}', unit:"psi",
                 backgroundColors:[
                     [value: 31, color: "#153591"],
                     [value: 44, color: "#1e9cbb"],
@@ -23,11 +21,9 @@ metadata {
                 ]
             )
         }
-	valueTile("lqi", "device.lqi", decoration: "flat", width: 2, height: 2) {
-		state "default", label: 'Signal Strength ${currentValue}%'
 	}
-	main "temperature"
-		details(["temperature", "lqi"])
+	main "pressure"
+		details(["pressure"])
 	}
 
     
