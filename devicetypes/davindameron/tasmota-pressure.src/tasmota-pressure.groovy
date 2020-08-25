@@ -84,13 +84,13 @@ def execute(String command){
 			}
 
 			if (json."${settings.SensorName}"){
-				setTemperature(json."${settings.SensorName}"."Temperature");
-				setDate();
+				//setTemperature(json."${settings.SensorName}"."Temperature");
+				//setDate();
 			}						
 			if (json."StatusSNS"){
 				if (json."StatusSNS"."${settings.SensorName}"){
-					setTemperature(json."StatusSNS"."${settings.SensorName}"."Temperature");
-					setDate();
+					//setTemperature(json."StatusSNS"."${settings.SensorName}"."Temperature");
+					//setDate();
 				}
 			}
 			if (json."Wifi"){
@@ -135,17 +135,6 @@ def updated(){
 		//settings[doUpgrade]="false"
 	//}
 	//setOption57(1)
-}
-
-def setVar9(value){
-	sendCommand("Var9", value, setVar9Callback);
-}
-
-def setVar9Callback(physicalgraph.device.HubResponse response){
-	doLogging "setVar9Callback(${response})"
-	def jsobj = response?.json;
-
-	doLogging "JSON: ${jsobj}";
 }
 
 def setOption56(value){
@@ -202,13 +191,11 @@ def setDate(){
 	setVar9(timeString)
 }
 
-def setTemperature(value) {
+def setPressure(value) {
     def map = [:]
-    map.name = "temperature"
+    map.name = "pressure"
     map.value = value
-    map.unit = "F"
-    doLogging "Temperature Report: $map.value"
-    doLogging "Temperature Scale: $map.unit"
+    map.unit = "psi"
 
     sendEvent(map)
 }
