@@ -20,7 +20,6 @@ metadata {
                     [value: 96, color: "#bc2323"]
                 ]
             )
-        }
 	}
 	main "pressure"
 		details(["pressure"])
