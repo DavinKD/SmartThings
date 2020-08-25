@@ -5,6 +5,15 @@ metadata {
         	capability "Health Check"
 	}
 
+	// UI tile definitions
+	tiles(scale: 2) {
+
+        valueTile("pressure", "device.pumpPressure", width: 2, height: 2) {
+            state("pressure", label:'${currentValue}', unit:"psi")
+	}
+	main "pressure"
+		details(["pressure"])
+	}
 
     
 	preferences {
@@ -16,7 +25,6 @@ metadata {
 		input(name: "MQTTTopic", type: "string", title: "MQTT Topic", description: "MQTT Topic", displayDuringSetup: true, required: false)
 	}
 }
-
 def sendCommand(String command, callback) {
     return sendCommand(command, null);
 }
