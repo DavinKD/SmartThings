@@ -179,10 +179,6 @@ def setDate(){
 }
 
 def setPressure(value) {
-    def map = [:]
-    map.name = "pressure"
-    map.value = value
-    map.unit = "psi"
-
-    sendEvent(map)
+	doLogging "setting pressure"
+	device.pressure=value
 }
