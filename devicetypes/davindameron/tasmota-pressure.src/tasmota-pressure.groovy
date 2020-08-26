@@ -174,5 +174,5 @@ def ping() {
 
 def setPressure(value) {
 	doLogging "setting pressure"
-	sendEvent(name: "pressure", value: value)
+	sendEvent(name: "Pressure", value: value)
 }
