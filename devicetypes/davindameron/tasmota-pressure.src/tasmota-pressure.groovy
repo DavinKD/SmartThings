@@ -177,7 +177,7 @@ def setPressure(value) {
     def map = [:]
     map.name = "pressure"
     map.value = value
-    map.unit = "PSI"
+    map.unit = "psi"
 
     sendEvent(map)
 
