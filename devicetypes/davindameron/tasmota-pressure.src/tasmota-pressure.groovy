@@ -66,6 +66,9 @@ def execute(String command){
 			if (json."StatusSTS"){
 				json = json."StatusSTS"
 			}
+			if (json."Mult6"){
+				setPressure(json."Mult6")
+			}
 
 			if (json."${settings.SensorName}"){
 				//setTemperature(json."${settings.SensorName}"."Temperature");
