@@ -8,7 +8,7 @@ metadata {
 	// UI tile definitions
 	tiles(scale: 2) {
 
-        valueTile("pressure", "device.pumpPressure", width: 2, height: 2) {
+        valueTile("pressure", "device.pumppressure", width: 2, height: 2) {
             state("pressure", label:'${currentValue}', unit:"psi")
 	}
 	main "pressure"
