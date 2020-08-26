@@ -1,7 +1,7 @@
 metadata {
 	definition(name: "Tasmota Pressure", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThings", vid: "generic-temperature-measurement", ocfDeviceType: "oic.d.thermostat") {
 		capability "venturecircle58707.pumpPressure"
-		capability "Execute"
+		//capability "Execute"
         	capability "Health Check"
 	}
 
