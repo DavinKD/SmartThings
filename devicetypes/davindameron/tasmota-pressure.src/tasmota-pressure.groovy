@@ -174,5 +174,12 @@ def ping() {
 
 def setPressure(value) {
 	doLogging "setting pressure"
-	sendEvent(name: "pressure", value: value)
+    def map = [:]
+    map.name = "pressure"
+    map.value = value
+    map.unit = "PSI"
+
+    sendEvent(map)
+
+	//sendEvent(name: "pressure", value: value)
 }
