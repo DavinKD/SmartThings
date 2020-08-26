@@ -1,6 +1,6 @@
 metadata {
-	definition(name: "Tasmota Pressure", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThingsCommunity", vid: "42735677-564a-3a0c-be7d-9baa9836ee70", ocfDeviceType: "oic.d.thermostat") {
-		capability "venturecircle58707.pumppressure"
+	definition(name: "Tasmota Pressure", namespace: "davindameron", author: "Davin Dameron") {
+		capability "venturecircle58707.filterpumppressure"
 		capability "Execute"
         	capability "Health Check"
 	}
@@ -8,7 +8,7 @@ metadata {
 	// UI tile definitions
 	tiles(scale: 2) {
 
-        valueTile("pressure", "device.pumppressure", width: 2, height: 2) {
+        valueTile("pressure", "device.filterpumppressure", width: 2, height: 2) {
             state("pressure", label:'${currentValue}', unit:"psi")
 	}
 	main "pressure"
