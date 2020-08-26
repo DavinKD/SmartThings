@@ -109,7 +109,6 @@ def doLogging(value){
 
 def installed(){
 	doLogging "installed()"
-	runEvery3Hours(setDate)
 }
 
 def updated(){
@@ -172,13 +171,8 @@ def ping() {
 	doLogging("ping()")
 	return "true"
 }
-def setDate(){
-	doLogging "setDate"
-	def timeString = new Date().format("MMM dd", location.timeZone).replace(" ", "%20")
-	setVar9(timeString)
-}
 
 def setPressure(value) {
 	doLogging "setting pressure"
-	pressure=value
+	venturecircle58707.pumppressure = value
 }
