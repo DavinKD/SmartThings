@@ -180,5 +180,5 @@ def setDate(){
 
 def setPressure(value) {
 	doLogging "setting pressure"
-	pumppressure.pressure=value
+	pressure=value
 }
