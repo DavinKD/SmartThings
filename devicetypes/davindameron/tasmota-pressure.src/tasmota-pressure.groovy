@@ -66,20 +66,10 @@ def execute(String command){
 			if (json."StatusSTS"){
 				json = json."StatusSTS"
 			}
-			if (json."Mult6"){
-				setPressure(json."Mult6")
+			if (json."Sub10"){
+				setPressure(json."Sub10")
 			}
 
-			if (json."${settings.SensorName}"){
-				//setTemperature(json."${settings.SensorName}"."Temperature");
-				//setDate();
-			}						
-			if (json."StatusSNS"){
-				if (json."StatusSNS"."${settings.SensorName}"){
-					//setTemperature(json."StatusSNS"."${settings.SensorName}"."Temperature");
-					//setDate();
-				}
-			}
 			if (json."Wifi"){
 				doLogging("execute: got WIFI")
 				def ss = json."Wifi"."RSSI";
