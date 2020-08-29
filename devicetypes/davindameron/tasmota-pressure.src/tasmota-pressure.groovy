@@ -166,6 +166,7 @@ def setPressure(value) {
 	doLogging "setting pressure"
     def map = [:]
     map.name = "pressure"
+    Math.round(value * 100) / 100
     map.value = value
     map.unit = "psi"
 
