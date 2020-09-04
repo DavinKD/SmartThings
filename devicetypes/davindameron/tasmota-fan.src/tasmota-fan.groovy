@@ -1,7 +1,7 @@
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Tasmota Fan", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.fan", vid:"generic-fan") {
+	definition(name: "Tasmota Fan", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.fan", mnmn: "SmartThingsCommunity", vid: "a7df6312-e1c3-3105-902f-59692216362b") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
