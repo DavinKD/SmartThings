@@ -1,7 +1,7 @@
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Tasmota Plug", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug", vid:"generic-switch") {
+	definition(name: "Tasmota Plug", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.smartplug", mnmn: "SmartThingsCommunity", vid: "a7df6312-e1c3-3105-902f-59692216362b") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
