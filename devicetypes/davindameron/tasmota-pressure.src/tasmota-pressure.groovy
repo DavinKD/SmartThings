@@ -1,6 +1,7 @@
 metadata {
 	definition(name: "Tasmota Pressure", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThingsCommunity", vid: "20fa5af0-3800-3f23-b6c4-71aad8623f36") {
 		capability "venturecircle58707.filterpumppressure"
+		capability "Signal Strength"
 		capability "Execute"
         	capability "Health Check"
 	}
