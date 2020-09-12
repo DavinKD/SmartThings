@@ -1,5 +1,5 @@
 metadata {
-	definition(name: "Tasmota PH", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThingsCommunity", vid: "4b70c4de-3b11-30b8-937b-3729133ac27f") {
+	definition(name: "Tasmota PH", namespace: "davindameron", author: "Davin Dameron", mnmn: "SmartThingsCommunity", vid: "74c51c23-11cc-3986-9442-d3e3a90305e0") {
 		capability "venturecircle58707.poolph"
 		capability "Signal Strength"
 		capability "Execute"
