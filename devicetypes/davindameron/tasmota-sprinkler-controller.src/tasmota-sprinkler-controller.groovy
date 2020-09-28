@@ -227,6 +227,7 @@ private String convertPortToHex(port) {
 def createCommand(String command, payload, callback){
 	if(settings.useMQTTCommands=="true"){
 		def dni = null;
+		payload=payload.replace(" ", "%20");
 		def path="/?topic=cmnd/${settings.MQTTTopic}/${command}&payload=${payload}"
 		doLogging(path);
 
