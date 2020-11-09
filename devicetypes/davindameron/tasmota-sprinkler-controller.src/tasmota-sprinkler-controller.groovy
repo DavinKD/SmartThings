@@ -327,7 +327,7 @@ def updateSchedule() {
 	
 	def timeVal;
 	
-	def timerVal = "{'Enable':";
+	def timerVal = "{\"Enable\":";
 	
 	doLogging device.currentValue("switch");
 	if(device.currentValue("switch") =="on"){
@@ -336,7 +336,7 @@ def updateSchedule() {
 	else{
 		timerVal += "0";
 	}
-	timerVal += ",'Mode':";
+	timerVal += ",\"Mode\":";
 	if(StartSunrise=="true"){
 		timerVal +="1";
 		if(StartOffSetMinutes < 10){
@@ -371,7 +371,7 @@ def updateSchedule() {
 			timeVal += ":" + StartMinute;
 		}
 	}
-	timerVal += ",'Time':'" + timeVal + "','Window':0,'Days':'";
+	timerVal += ",\"Time':\"" + timeVal + "\",\"Window\":0,\"Days\":'";
 	if(doSunday=="true"){
 		timerVal += "1";
 	}
@@ -414,7 +414,7 @@ def updateSchedule() {
 	else{
 		timerVal += "0";
 	}
-	timerVal += "','Repeat':1,'Action':3}"
+	timerVal += "\",\"Repeat\":1,\"Action\":3}"
 	doLogging timerVal;
 
 
