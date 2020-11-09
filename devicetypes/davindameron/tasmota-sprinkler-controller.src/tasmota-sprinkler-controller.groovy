@@ -327,7 +327,7 @@ def updateSchedule() {
 	
 	def timeVal;
 	
-	def timerVal = "{'Arm':";
+	def timerVal = "{'Enable':";
 	
 	doLogging device.currentValue("switch");
 	if(device.currentValue("switch") =="on"){
