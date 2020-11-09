@@ -371,7 +371,7 @@ def updateSchedule() {
 			timeVal += ":" + StartMinute;
 		}
 	}
-	timerVal += ",\"Time':\"" + timeVal + "\",\"Window\":0,\"Days\":'";
+	timerVal += ",\"Time\":\"" + timeVal + "\",\"Window\":0,\"Days\":\"";
 	if(doSunday=="true"){
 		timerVal += "1";
 	}
