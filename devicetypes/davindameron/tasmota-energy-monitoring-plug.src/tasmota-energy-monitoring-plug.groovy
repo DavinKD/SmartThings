@@ -255,8 +255,8 @@ def refresh() {
 		sendCommand("Status", "0", refreshCallback)
 	}
 	else {
-		sendCommand("Status", "11", refreshCallback)
-		sendCommand("Status", "8", refreshCallback)
+		//sendCommand("Status", "11", refreshCallback)
+		//sendCommand("Status", "8", refreshCallback)
 	}
 }
 
