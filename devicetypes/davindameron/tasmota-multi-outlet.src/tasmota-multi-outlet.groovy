@@ -98,12 +98,12 @@ def poll() {
 
 def refresh() {
 	doLogging "refresh()"
-	sendCommand("Status", "11", refreshCallback)
+	//sendCommand("Status", "11", refreshCallback)
 }
 
 def refresh2() {
 	doLogging "refresh2()"
-	sendCommand("Status", "0", refreshCallback)
+	//sendCommand("Status", "0", refreshCallback)
 }
 
 
