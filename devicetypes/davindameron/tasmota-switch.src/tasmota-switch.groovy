@@ -227,7 +227,7 @@ def poll() {
 
 def refresh() {
 	doLogging "refresh()"
-	sendCommand("Status", "11", refreshCallback)
+	//sendCommand("Status", "11", refreshCallback)
 }
 
 
