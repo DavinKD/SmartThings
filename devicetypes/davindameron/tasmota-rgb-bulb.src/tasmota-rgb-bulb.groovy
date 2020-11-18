@@ -260,12 +260,12 @@ def doUpgradeCallback(physicalgraph.device.HubResponse response){
 
 def poll() {
 	doLogging "POLL"
-	sendCommand("Status", "11", refreshCallback)
+	//sendCommand("Status", "11", refreshCallback)
 }
 
 def refresh() {
 	doLogging "refresh()"
-	sendCommand("Status", "11", refreshCallback)
+	//sendCommand("Status", "11", refreshCallback)
 }
 
 
