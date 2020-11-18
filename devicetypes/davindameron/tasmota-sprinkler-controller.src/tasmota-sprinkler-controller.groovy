@@ -179,15 +179,15 @@ def poll() {
 
 def refresh() {
 	doLogging "refresh()"
-	sendCommand("Status", "11", refreshCallback)
-	sendCommand("Rule1", "", updateRulesCallback)
-	sendCommand("Rule2", "", updateRulesCallback)
-	sendCommand("Rule3", "", updateRulesCallback)
+	//sendCommand("Status", "11", refreshCallback)
+	//sendCommand("Rule1", "", updateRulesCallback)
+	//sendCommand("Rule2", "", updateRulesCallback)
+	//sendCommand("Rule3", "", updateRulesCallback)
 }
 
 def refresh2() {
 	doLogging "refresh2()"
-	sendCommand("Status", "0", refreshCallback)
+	//sendCommand("Status", "0", refreshCallback)
 }
 
 
