@@ -25,14 +25,13 @@ import groovy.transform.Field
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "Tasmota RGB Bulb", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.light", vid:"generic-rgb-color-bulb") {
+	definition(name: "Tasmota RGB Group", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "oic.d.light", vid:"generic-rgb-color-bulb") {
 		capability "Polling"
 		capability "Refresh"
 		capability "Switch"
 		capability "Color Control"
         	capability "Switch Level"
 		capability "Execute"
-		capability "Signal Strength"
 
 		command "loopOn"
 		command "loopOff"
@@ -77,22 +76,12 @@ metadata {
     
     preferences {
         
-        input(name: "ipAddress", type: "string", title: "IP Address", description: "IP Address of Sonoff", displayDuringSetup: true, required: true)
-	input(name: "username", type: "string", title: "Username", description: "Username", displayDuringSetup: false, required: false)
-	input(name: "password", type: "password", title: "Password (sent cleartext)", description: "Caution: password is sent cleartext", displayDuringSetup: false, required: false)
 	input(name: "useMQTTCommands", type: "boolean", title: "Use MQTT for Commands?", displayDuringSetup: true, required: false)
 	input(name: "useMQTT", type: "boolean", title: "Use MQTT for Updates?", displayDuringSetup: true, required: false)
 	input(name: "MQTTProxy", type: "string", title: "MQTT Proxy Web Server", description: "MQTT Proxy Web Server", displayDuringSetup: true, required: false)
 	input(name: "MQTTTopic", type: "string", title: "MQTT Topic", description: "MQTT Topic", displayDuringSetup: true, required: false)
 	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
         input(name: "PowerChannel", type: "number", title: "Power Channel (1-8)", description: "Power Channel of the Light", displayDuringSetup: true, required: true)
-        input(name: "redLevel", type: "number", title: "Red Level (0-255)", range: "0..255", description: "Level of red LEDs", displayDuringSetup: true, required: true)
-        input(name: "greenLevel", type: "number", title: "Green Level (0-255)", range: "0..255", description: "Level of green LEDs", displayDuringSetup: true, required: true)
-        input(name: "blueLevel", type: "number", title: "Blue Level (0-255)", range: "0..255", description: "Level of blue LEDs", displayDuringSetup: true, required: true)
-        input(name: "warmLevel", type: "number", title: "Warm White Level (0-255)", range: "0..255", description: "Level of warm white LEDs", displayDuringSetup: true, required: true)
-        input(name: "coldLevel", type: "number", title: "Cold White Level (0-255)", range: "0..255", description: "Level of cold white LEDs", displayDuringSetup: true, required: true)
-	input(name: "useDev", type: "boolean", title: "Use Dev Versions for Upgrade?", displayDuringSetup: true, required: false)
-	input(name: "doUpgrade", type: "boolean", title: "Perform Upgrade?", displayDuringSetup: true, required: false)
 	input(name: "loopRate", type: "number", title: "Color loop rate (1-20 Fast-Slow)", range: "1..20", description: "range 1-20", defaultValue: 5, required: false, displayDuringSetup: true)           
 	}
 }
@@ -125,15 +114,6 @@ def execute(String command){
 						setSwitchState(on);
 					}
 				}
-				if (json."Wifi"){
-					doLogging("execute: got WIFI")
-					def ss = json."Wifi"."RSSI";
-					//ss = (ss*255)/100;
-					sendEvent(name: "lqi", value: ss);
-
-					def rssi = json."Wifi"."Signal";
-					sendEvent(name: "rssi", value: rssi);
-				}						
 				//Color Temp
 				if (json."CT"!=null) {
 					def kelvin = Math.round((json.CT + 6)*13.84)
@@ -203,8 +183,6 @@ def installed(){
 
 def updated(){
 	doLogging "updated()"
-	def rgbwwvalue = "${settings.redLevel},${settings.greenLevel},${settings.blueLevel},${settings.warmLevel},${settings.coldLevel}"
-	setRgbww(rgbwwvalue)
 	if (doUpgrade=="true"){
 		doLogging "doUpgrade is true"
 		setOTAURL()
@@ -215,48 +193,6 @@ def updated(){
 	setOption57(1)
 }
 
-def setOption56(value){
-	sendCommand("setOption56", value, setOption56Callback);
-}
-
-def setOption56Callback(physicalgraph.device.HubResponse response){
-	doLogging "setOption56Callback(${response})"
-	def jsobj = response?.json;
-
-	doLogging "JSON: ${jsobj}";
-}
-
-def setOption57(value){
-	sendCommand("setOption57", value, setOption56Callback);
-}
-
-def setOption57Callback(physicalgraph.device.HubResponse response){
-	doLogging "setOption57Callback(${response})"
-	def jsobj = response?.json;
-
-	doLogging "JSON: ${jsobj}";
-}
-
-def setOTAURL(){
-	if (useDev=="true"){
-		sendCommand("OtaUrl", "http://192.168.0.40/tasmota.bin", setOTAURLCallback);
-	}
-	else {
-		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/release/tasmota.bin", setOTAURLCallback);
-	}
-}
-
-def setOTAURLCallback(physicalgraph.device.HubResponse response){
-	doLogging "setOTAURLCallback(${response})"
-}
-
-def doUpgrade(){
-	sendCommand("Upgrade", "1", doUpgradeCallback)
-}
-
-def doUpgradeCallback(physicalgraph.device.HubResponse response){
-	doUpgradeCallback "doUpgradeCallback(${response})"
-}
 
 def poll() {
 	doLogging "POLL"
