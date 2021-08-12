@@ -129,30 +129,12 @@ def execute(String command){
 					json = json."StatusSTS"
 				}
 				def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-				if (json."POWER${PowerChannel}"!=null) {
-					doLogging("execute: got power channel")
-					def on = json."POWER${PowerChannel}".toString().contains("ON");
+				if (json."STATE"!=null) {
+					doLogging("execute: got state")
+					def on = json."STATE".toString().contains("ON");
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 				}
-				if(PowerChannel==1) {
-					if (json."POWER"!=null) {
-						doLogging("execute: got power channel")
-						def on = json."POWER".toString().contains("ON");
-						doLogging("execute: setting switch state")
-						setSwitchState(on);
-					}
-				}
-				if (json."Wifi"){
-					doLogging("execute: got WIFI")
-					def ss = json."Wifi"."RSSI";
-					//ss = (ss*255)/100;
-					sendEvent(name: "lqi", value: ss);
-
-					def rssi = json."Wifi"."Signal";
-					sendEvent(name: "rssi", value: rssi);
-				}						
-				//Color Temp
 				if (json."CT"!=null) {
 					def kelvin = Math.round((((json.CT + 6)*-1)+653)*13.84)
 					doLogging "Kelvin is ${kelvin}"
