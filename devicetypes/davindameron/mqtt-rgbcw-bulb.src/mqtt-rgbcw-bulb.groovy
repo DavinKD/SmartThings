@@ -129,9 +129,9 @@ def execute(String command){
 					json = json."StatusSTS"
 				}
 				def PowerChannel = PowerChannel ?: settings?.PowerChannel ?: device.latestValue("PowerChannel");
-				if (json."STATE"!=null) {
+				if (json."state"!=null) {
 					doLogging("execute: got state")
-					def on = json."STATE".toString().contains("ON");
+					def on = json."state".toString().contains("ON");
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 				}
