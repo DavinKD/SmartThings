@@ -135,7 +135,7 @@ def execute(String command){
 					doLogging("execute: setting switch state")
 					setSwitchState(on);
 				}
-				if (json."CT"!=null) {
+				if (json."color_temp"!=null) {
 					def kelvin = Math.round((((json.CT + 6)*-1)+653)*13.84)
 					doLogging "Kelvin is ${kelvin}"
 					sendEvent(name: "colorTemperature", value: kelvin)
@@ -217,50 +217,6 @@ def updated(){
 	setOption57(1)
 }
 
-def setOption56(value){
-	sendCommand("setOption56", value, setOption56Callback);
-}
-
-def setOption56Callback(physicalgraph.device.HubResponse response){
-	doLogging "setOption56Callback(${response})"
-	def jsobj = response?.json;
-
-	doLogging "JSON: ${jsobj}";
-}
-
-def setOption57(value){
-	sendCommand("setOption57", value, setOption56Callback);
-}
-
-def setOption57Callback(physicalgraph.device.HubResponse response){
-	doLogging "setOption57Callback(${response})"
-	def jsobj = response?.json;
-
-	doLogging "JSON: ${jsobj}";
-}
-
-
-def setOTAURL(){
-	if (useDev=="true"){
-		sendCommand("OtaUrl", "http://192.168.0.40/tasmota.bin", setOTAURLCallback);
-	}
-	else {
-		sendCommand("OtaUrl", "http://thehackbox.org/tasmota/release/tasmota.bin", setOTAURLCallback);
-	}
-}
-
-def setOTAURLCallback(physicalgraph.device.HubResponse response){
-	doLogging "setOTAURLCallback(${response})"
-}
-
-def doUpgrade(){
-	sendCommand("Upgrade", "1", doUpgradeCallback)
-}
-
-def doUpgradeCallback(physicalgraph.device.HubResponse response){
-	doUpgradeCallback "doUpgradeCallback(${response})"
-}
-
 def reload(){
 	doLogging "reload()"
 }
@@ -272,21 +228,9 @@ def poll() {
 
 def refresh() {
 	doLogging "refresh()"
-	sendCommand("Status", "11", refreshCallback)
 }
 
 
-def refreshCallback(physicalgraph.device.HubResponse response){
-	doLogging "refreshCallback()"
-	def jsobj = response?.json;
-
-	doLogging "JSON: ${jsobj}";
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT!="true"){
-		updateStatus(jsobj);
-	}
-
-}
 
 def sendCommand(String command, callback) {
     return sendCommand(command, null);
@@ -371,7 +315,7 @@ def setColorTemperature(kelvin) {
 		def bulbValue = Math.round((((kelvin/13.84)-6)*-1)+653) 
 		doLogging "bulb value ${bulbValue}"
 
-		def commandName = "CT";
+		def commandName = "set/color_temp";
 		def payload = bulbValue;
 
 		doLogging "COMMAND: $commandName ($payload)"
