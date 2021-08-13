@@ -150,14 +150,14 @@ def execute(String command){
 				}
 				//color
 				if (json."color"."hex"!=null) {
-					rgbHex2 = json."color"."hex"
-					List hsvList = colorUtil.hexToHsv(rgbHex2)
+					String rgbHex = json."color"."hex"
+					List hsvList = colorUtil.hexToHsv(rgbHex)
 					Integer iHue = hsvList[0]
 					Integer iSaturation = hsvList[1]
 					//iHue = iHue / 360 * 100
 					doLogging "SendEvent hue to ${iHue}"
 					doLogging "SendEvent saturation to ${iSaturation}"
-					String rgbHex = colorUtil.hsvToHex(iHue, iSaturation)					
+					//String rgbHex = colorUtil.hsvToHex(iHue, iSaturation)					
 
 					doLogging "SendEvent Color to ${rgbHex}"
 					sendEvent(name: "hue", value: iHue)
