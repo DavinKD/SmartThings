@@ -495,10 +495,10 @@ def setColor(Map colorHSMap) {
     String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)
     doLogging "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
 
-	def commandName = "set/color_hs";
+	def commandName = "set";
     
     Integer tasHue = boundedHue*3.6
-	def payload = "${tasHue},${boundedSaturation},${device.currentValue("level")}";
+	def payload = "{"color":{"h":${tasHue},"s":${boundedSaturation},"b":${device.currentValue("level")}}"
 
 	doLogging "COMMAND: $commandName ($payload)"
 
