@@ -141,10 +141,10 @@ def execute(String command){
 					sendEvent(name: "colorTemperature", value: kelvin)
 				}
 				//level
-				if (json."Dimmer"!=null) {
-					def level = json."Dimmer";
+				if (json."brightness"!=null) {
+					def level = json."brightness";
 					doLogging "SendEvent level to $level";
-					sendEvent(name:"level", value:level);
+					sendEvent(name:"level", value:(level*100)/254);
 				}
 				//color
 				if (json."Color"!=null) {
@@ -472,8 +472,8 @@ def setVar1Callback(physicalgraph.device.HubResponse response){
 def setLevel(level){
 	doLogging "Setting level to: $level"
 
-	def commandName = "Dimmer";
-	def payload = level;
+	def commandName = "set/brightness";
+	def payload = (level*254)/100;
 
 	doLogging "COMMAND: $commandName ($payload)"
 
