@@ -154,19 +154,16 @@ def execute(String command){
 					//sendEvent(name: "color", value: json."Color".substring(0,6))
 					
 				}
-				if (json."HSBColor"!=null) {
-					def values = json."HSBColor".split(',')
-					Integer iHue = values[0].toInteger()
-					Integer iSaturation = values[1].toInteger()
+				if (json."hue"!=null) {
+					Integer iHue = json."hue"
 					iHue = iHue / 360 * 100
 					doLogging "SendEvent hue to ${iHue}"
-					doLogging "SendEvent saturation to ${iSaturation}"
-					String rgbHex = colorUtil.hsvToHex(iHue, iSaturation)					
-
-					doLogging "SendEvent Color to ${rgbHex}"
 					sendEvent(name: "hue", value: iHue)
-					sendEvent(name: "saturation", value: iSaturation)
-					sendEvent(name: "color", value: rgbHex)
+				}
+				if (json."saturation"!=null) {
+					Integer iSat = json."saturation"
+					doLogging "SendEvent hue to ${iSat}"
+					sendEvent(name: "hue", value: iSat)
 				}
 				//Loop
 				if (json."Scheme"!=null) {
@@ -398,23 +395,6 @@ def setPowerCallback(physicalgraph.device.HubResponse response){
 	}
 }
 
-def setVar1(value){
-	doLogging "Setting Var1 to: $value"
-
-	def commandName = "Backlog";
-	def payload = value;
-
-	doLogging "COMMAND: $commandName ($payload)"
-
-	def command = createCommand(commandName, payload, "setVar1Callback");;
-
-    	sendHubCommand(command);
-}
-def setVar1Callback(physicalgraph.device.HubResponse response){
-	doLogging "Finished Setting Var1, JSON: ${response.json}"
-	//Has to use MQTT
-}
-
 def setLevel(level){
 	doLogging "Setting level to: $level"
 
@@ -515,7 +495,7 @@ def setColor(Map colorHSMap) {
     String rgbHex = colorUtil.hsvToHex(boundedHue, boundedSaturation)
     doLogging "bounded hue and saturation: $boundedHue, $boundedSaturation; hex conversion: $rgbHex"
 
-	def commandName = "HSBColor";
+	def commandName = "set/color_hs";
     
     Integer tasHue = boundedHue*3.6
 	def payload = "${tasHue},${boundedSaturation},${device.currentValue("level")}";
