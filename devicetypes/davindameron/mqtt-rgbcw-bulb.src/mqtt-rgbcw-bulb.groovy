@@ -136,7 +136,7 @@ def execute(String command){
 					setSwitchState(on);
 				}
 				if (json."color_temp"!=null) {
-					def kelvin = Math.round((((json.CT + 6)*-1)+653)*13.84)
+					def kelvin = Math.round((((json.color_temp + 6)*-1)+653)*13.84)
 					doLogging "Kelvin is ${kelvin}"
 					sendEvent(name: "colorTemperature", value: kelvin)
 				}
