@@ -143,7 +143,7 @@ def execute(String command){
 				//level
 				if (json."brightness"!=null) {
 					def level = json."brightness";
-					Integer iLevel = level.toInteger()
+					Integer iLevel = level.toInteger();
 					iLevel = iLevel*100/254;
 					doLogging "SendEvent level to $iLevel";
 					sendEvent(name:"level", value:(iLevel);
