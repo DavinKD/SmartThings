@@ -150,9 +150,8 @@ def execute(String command){
 				}
 				//color
 				if (json."color"!=null) {
-					def values = json."color".split(',')
-					Integer iHue = values[0].toInteger()
-					Integer iSaturation = values[1].toInteger()
+					Integer iHue = json."color"."hue"
+					Integer iSaturation = json."color"."saturation"
 					iHue = iHue / 360 * 100
 					doLogging "SendEvent hue to ${iHue}"
 					doLogging "SendEvent saturation to ${iSaturation}"
