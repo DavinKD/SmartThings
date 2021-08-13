@@ -149,22 +149,21 @@ def execute(String command){
 					sendEvent(name:"level", value:iLevel);
 				}
 				//color
-				if (json."Color"!=null) {
-					doLogging "SendEvent Color to ${json."Color".substring(0,6)}"
-					//sendEvent(name: "color", value: json."Color".substring(0,6))
-					
-				}
-				if (json."hue"!=null) {
-					Integer iHue = json."hue"
+				if (json."color"!=null) {
+					def values = json."color".split(',')
+					Integer iHue = values[0].toInteger()
+					Integer iSaturation = values[1].toInteger()
 					iHue = iHue / 360 * 100
 					doLogging "SendEvent hue to ${iHue}"
+					doLogging "SendEvent saturation to ${iSaturation}"
+					String rgbHex = colorUtil.hsvToHex(iHue, iSaturation)					
+
+					doLogging "SendEvent Color to ${rgbHex}"
 					sendEvent(name: "hue", value: iHue)
+					sendEvent(name: "saturation", value: iSaturation)
+					sendEvent(name: "color", value: rgbHex)
 				}
-				if (json."saturation"!=null) {
-					Integer iSat = json."saturation"
-					doLogging "SendEvent hue to ${iSat}"
-					sendEvent(name: "hue", value: iSat)
-				}
+				
 				//Loop
 				if (json."Scheme"!=null) {
 					doLogging "Scheme [${json.Scheme}]"
