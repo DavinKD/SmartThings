@@ -150,8 +150,8 @@ def execute(String command){
 				}
 				//color
 				if (json."color"."hex"!=null) {
-					rgbHex = json."color"."hex"
-					List hsvList = colorUtil.hexToHsv(rgbHex)
+					rgbHex2 = json."color"."hex"
+					List hsvList = colorUtil.hexToHsv(rgbHex2)
 					Integer iHue = hsvList[0]
 					Integer iSaturation = hsvList[1]
 					//iHue = iHue / 360 * 100
