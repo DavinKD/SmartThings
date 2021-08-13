@@ -146,7 +146,7 @@ def execute(String command){
 					Integer iLevel = level.toInteger();
 					iLevel = iLevel*100/254;
 					doLogging "SendEvent level to $iLevel";
-					sendEvent(name:"level", value:(iLevel);
+					sendEvent(name:"level", value:iLevel);
 				}
 				//color
 				if (json."Color"!=null) {
