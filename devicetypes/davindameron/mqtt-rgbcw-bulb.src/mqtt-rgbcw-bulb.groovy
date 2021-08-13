@@ -498,7 +498,7 @@ def setColor(Map colorHSMap) {
 	def commandName = "set";
     
     Integer tasHue = boundedHue*3.6
-	def payload = ""\u007B"" + ""color"":" + ""\u007B"" + ""h"":" + tasHue + ",""s"":" + boundedSaturation + ",""b"":" + {device.currentValue("level") + ""\u007D"" + ""\u007D""
+	def payload = "{" + """color"":" + "{""h"":" + tasHue + ",""s"":" + boundedSaturation + ",""b"":" + {device.currentValue("level") + "}" + "}"
 
 	doLogging "COMMAND: $commandName ($payload)"
 
