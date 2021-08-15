@@ -28,14 +28,18 @@ metadata {
 		main "water"
 		details(["water","wet","dry"])
 	}
+    preferences {
+        
+	input(name: "MQTTProxy", type: "string", title: "MQTT Proxy Web Server", description: "MQTT Proxy Web Server", displayDuringSetup: true, required: false)
+	input(name: "MQTTTopic", type: "string", title: "MQTT Topic", description: "MQTT Topic", displayDuringSetup: true, required: false)
+	input(name: "debugLogging", type: "boolean", title: "Turn on debug logging?", displayDuringSetup:true, required: false)
+	}
 }
 
 
 def execute(String command){
 	doLogging "execute($command)";
 	
-	def useMQTT = useMQTT ?: settings?.useMQTT ?: device.latestValue("useMQTT");
-	if (useMQTT=="true"){
 		if (command) {
 			def json = new groovy.json.JsonSlurper().parseText(command);
 			if (json) {
@@ -58,7 +62,6 @@ def execute(String command){
 		else {
 			doLogging("execute: No command received")
 		}
-	}
 	
 }
 
@@ -96,7 +99,6 @@ def sendCommand(String command, payload, callback) {
 }
 
 def createCommand(String command, payload, callback){
-	if(settings.useMQTTCommands=="true"){
 		def dni = null;
 		def path="/?topic=zigbee2mqtt/${settings.MQTTTopic}/${command}&payload=${payload}"
 		doLogging(path);
@@ -115,52 +117,6 @@ def createCommand(String command, payload, callback){
 		];
 
 		def hubAction = new physicalgraph.device.HubAction(params, dni, options);
-	}
-	else{
-
-		def ipAddress = ipAddress ?: settings?.ipAddress ?: device.latestValue("ipAddress");
-		def username = username ?: settings?.username ?: device.latestValue("username");
-		def password = password ?: settings?.password ?: device.latestValue("password");
-
-		doLogging("createCommandAction(${command}:${payload}) to device at ${ipAddress}:80");
-
-		if (!ipAddress) {
-			doLogging("aborting. ip address of device not set");
-			return null;
-		}
-
-		def path = "/cm"
-		if (payload){
-			path += "?cmnd=${command}%20${payload}"
-		}
-		else{
-			path += "?cmnd=${command}"
-		}
-
-		if (username){
-			path += "&user=${username}"
-			if (password){
-				path += "&password=${password}"
-			}
-		}
-
-		def dni = null;
-		doLogging(path);
-
-		def params = [
-		method: "GET",
-		path: path,
-		headers: [
-		    HOST: "${ipAddress}:80"
-		]
-		]
-
-		def options = [
-		callback : callback
-		];
-
-		def hubAction = new physicalgraph.device.HubAction(params, dni, options);
-	}
 }
 
 
