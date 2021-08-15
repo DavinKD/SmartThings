@@ -46,11 +46,11 @@ def execute(String command){
 				doLogging("execute: Values received: ${json}")
 				//Color Temp
 				if (json."water_leak"!=null) {
-					if (json."water_leak"=="true") {
+					if (json."water_leak"==true) {
 						doLogging "Setting wet"
 						sendEvent(name: "water", value: "wet")
 					}
-					if (json."water_leak"=="false") {
+					if (json."water_leak"==false) {
 						doLogging "Setting not wet"
 						sendEvent(name: "water", value: "dry")
 					}
