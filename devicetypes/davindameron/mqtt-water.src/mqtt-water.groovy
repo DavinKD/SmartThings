@@ -56,6 +56,10 @@ def execute(String command){
 					}
 					doLogging json."water_leak"
 				}
+				if (json."battery"!=null) {
+					doLogging "Setting battery"
+					sendEvent(name: "battery", value: json."battery")
+				}
 			}
 			else {
 				doLogging("execute: No json received: ${command}")
