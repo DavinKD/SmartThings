@@ -77,7 +77,7 @@ def execute(String command){
 					}
 				}
 				if (json."x_axis"!=null) {
-					sendEvent(name: "threeAxis", value: json."x_axis"+json."y_axis"+json."z_axis")
+					sendEvent(name: "threeAxis", value: json."x_axis"+","+json."y_axis"+","+json."z_axis")
 				}
 				if (json."battery"!=null) {
 					sendEvent(name: "battery", value: json."battery")
