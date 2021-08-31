@@ -72,7 +72,7 @@ def execute(String command){
 					if (json."moving"==true) {
 						sendEvent(name: "acceleration", value: "active")
 					}
-					if (json."contact"==false) {
+					if (json."moving"==false) {
 						sendEvent(name: "acceleration", value: "inactive")
 					}
 				}
