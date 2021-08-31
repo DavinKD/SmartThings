@@ -3,7 +3,7 @@ import groovy.transform.Field
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "MQTT Motion", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "x.com.st.d.sensor.motion", mnmn:"SmartThings", vid:"SmartThings-smartthings-SmartSense_Motion") {
+	definition(name: "MQTT Motion", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "x.com.st.d.sensor.motion", mnmn:"SmartThings", vid:"generic-motion") {
 		capability "Motion Sensor"
 		capability "Temperature Measurement"
 		capability "Sensor"
