@@ -66,8 +66,7 @@ def execute(String command){
 					sendEvent(name: "battery", value: json."battery")
 				}
 				if (json."temperature"!=null) {
-					def fTemp as Double
-					fTemp =  json."temperature"
+					def fTemp = json."temperature" as Double
 					fTemp = fTemp * 9/5
 					fTemp = fTemp + 32
 
