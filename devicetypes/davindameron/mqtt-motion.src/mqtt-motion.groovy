@@ -3,7 +3,7 @@ import groovy.transform.Field
 metadata {
 	//Based on work by Brett Sheleski for Tasomota-Power
 
-	definition(name: "MQTT Motion", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "x.com.st.d.sensor.contact", mnmn:"SmartThings", vid:"SmartThings-smartthings-SmartSense_Multi_Sensor") {
+	definition(name: "MQTT Motion", namespace: "davindameron", author: "Davin Dameron", ocfDeviceType: "x.com.st.d.sensor.motion", mnmn:"SmartThings", vid:"SmartThings-smartthings-SmartSense_Motion") {
 		capability "Motion Sensor"
 		capability "Temperature Measurement"
 		capability "Sensor"
@@ -37,7 +37,8 @@ metadata {
 		}
 		main(["motion", "temperature"])
 		details(["motion", "temperature", "battery"])
-	}    preferences {
+	}    
+	preferences {
         
 	input(name: "MQTTProxy", type: "string", title: "MQTT Proxy Web Server", description: "MQTT Proxy Web Server", displayDuringSetup: true, required: false)
 	input(name: "MQTTTopic", type: "string", title: "MQTT Topic", description: "MQTT Topic", displayDuringSetup: true, required: false)
